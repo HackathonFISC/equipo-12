@@ -38,7 +38,8 @@ def _secret_env_values() -> list[str]:
         upper_name = name.upper()
         if not any(marker in upper_name for marker in _SECRET_NAME_MARKERS):
             continue
-        if not value or not value.strip():
+        value = value.strip()
+        if not value:
             continue
         found.append(value)
     return sorted(set(found), key=len, reverse=True)
@@ -72,33 +73,68 @@ def load_runtime_config() -> RuntimeConfig:
     return RuntimeConfig(modo=modo, model_name=model_name)
 
 
-def _replace_literals(text: str, secrets: list[str]) -> str:
-    if not secrets:
-        return text
-    pattern = re.compile("|".join(re.escape(secret) for secret in secrets))
-    return pattern.sub("[REDACTED]", text)
+def _long_secret_spans(text: str, secrets: list[str]) -> list[tuple[int, int]]:
+    spans: list[tuple[int, int]] = []
+    for secret in secrets:
+        start = 0
+        while True:
+            index = text.find(secret, start)
+            if index < 0:
+                break
+            spans.append((index, index + len(secret)))
+            start = index + 1
+    return spans
 
 
-def _replace_standalone(text: str, secrets: list[str]) -> str:
-    if not secrets:
-        return text
-    parts = [
-        rf"(?<![A-Za-z0-9]){re.escape(secret)}(?![A-Za-z0-9])" for secret in secrets
-    ]
-    return re.compile("|".join(parts)).sub("[REDACTED]", text)
+def _short_secret_spans(text: str, secrets: list[str]) -> list[tuple[int, int]]:
+    spans: list[tuple[int, int]] = []
+    for secret in secrets:
+        pattern = re.compile(
+            rf"(?<![A-Za-z0-9]){re.escape(secret)}(?![A-Za-z0-9])"
+        )
+        spans.extend(match.span() for match in pattern.finditer(text))
+    return spans
 
 
-def redact_secrets(text: str) -> str:
-    """Replace key-shaped tokens, then secret env values, with [REDACTED].
+def _merge_spans(spans: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Merge overlapping or adjacent half-open spans."""
+    if not spans:
+        return []
+    ordered = sorted(spans)
+    merged: list[tuple[int, int]] = [ordered[0]]
+    for start, end in ordered[1:]:
+        prev_start, prev_end = merged[-1]
+        if start <= prev_end:
+            merged[-1] = (prev_start, max(prev_end, end))
+        else:
+            merged.append((start, end))
+    return merged
 
-    Env vars whose names contain KEY, TOKEN, SECRET, PASSWORD, or CREDENTIAL
-    are treated as secrets. Values of length 8 or more are removed as
-    substrings, longest first. Shorter values are removed only as standalone
-    tokens. The raw secret is never returned or printed.
-    """
-    text = _KEY_SHAPED_RE.sub("[REDACTED]", text)
+
+def _secret_spans(text: str) -> list[tuple[int, int]]:
     secrets = _secret_env_values()
     long_secrets = [secret for secret in secrets if len(secret) >= 8]
     short_secrets = [secret for secret in secrets if len(secret) < 8]
-    text = _replace_literals(text, long_secrets)
-    return _replace_standalone(text, short_secrets)
+    spans = [match.span() for match in _KEY_SHAPED_RE.finditer(text)]
+    spans.extend(_long_secret_spans(text, long_secrets))
+    spans.extend(_short_secret_spans(text, short_secrets))
+    return _merge_spans(spans)
+
+
+def redact_secrets(text: str) -> str:
+    """Replace merged secret spans in the original text with [REDACTED].
+
+    Env vars whose names contain KEY, TOKEN, SECRET, PASSWORD, or CREDENTIAL
+    are stripped and treated as secrets. Key-shaped tokens, long secret
+    substrings, and short standalone tokens are collected on the original
+    text, then overlapping or adjacent spans are replaced together. The raw
+    secret is never returned or printed.
+    """
+    parts: list[str] = []
+    cursor = 0
+    for start, end in _secret_spans(text):
+        parts.append(text[cursor:start])
+        parts.append("[REDACTED]")
+        cursor = end
+    parts.append(text[cursor:])
+    return "".join(parts)

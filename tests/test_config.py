@@ -170,6 +170,51 @@ class RuntimeConfigTests(unittest.TestCase):
         self.assertEqual(redacted, sentence)
         self.assertEqual(printed, "")
 
+    def test_redact_secrets_strips_newline_from_long_password(self) -> None:
+        password = "hunter22"
+        line = f"login failed for {password}"
+        with _temporary_env({"DB_PASSWORD": password + "\n"}):
+            redacted, printed = _captured_call(redact_secrets, line)
+        if password in redacted or password in printed or (password + "\n") in redacted:
+            self.fail("stripped password was exposed")
+        self.assertEqual(redacted, "login failed for [REDACTED]")
+
+    def test_redact_secrets_strips_newline_from_short_token(self) -> None:
+        token = "q7z4"
+        with _temporary_env({"API_TOKEN": token + "\n"}):
+            redacted, printed = _captured_call(redact_secrets, f"token={token}")
+        if "[REDACTED]" not in redacted or token in redacted or token in printed:
+            self.fail("short token with trailing newline was exposed")
+
+    def test_redact_secrets_hides_key_shaped_value_with_suffix(self) -> None:
+        secret = "sk-" + "abcdefghij" + "+SUPERSECRET"
+        line = f"used {secret} today"
+        with _temporary_env({"OPENAI_API_KEY": secret}):
+            redacted, printed = _captured_call(redact_secrets, line)
+        leaked = (
+            "SUPERSECRET" in redacted
+            or "sk-abcdefghij" in redacted
+            or secret in redacted
+            or secret in printed
+            or "SUPERSECRET" in printed
+        )
+        if leaked or redacted != "used [REDACTED] today":
+            self.fail("key-shaped env secret left a remainder")
+
+    def test_redact_secrets_hides_prefixed_key_shaped_value(self) -> None:
+        secret = "hello-sk-abcdefghijklmnop"
+        line = f"used {secret} today"
+        with _temporary_env({"PREFIXED_API_KEY": secret}):
+            redacted, printed = _captured_call(redact_secrets, line)
+        leaked = (
+            "hello-" in redacted
+            or "sk-abcdefghijklmnop" in redacted
+            or secret in redacted
+            or secret in printed
+        )
+        if leaked or redacted != "used [REDACTED] today":
+            self.fail("prefixed key-shaped secret left a remainder")
+
     def test_redact_secrets_keeps_text_when_secret_value_blank(self) -> None:
         sample = "hello   world"
         for blank in ("", "   "):
