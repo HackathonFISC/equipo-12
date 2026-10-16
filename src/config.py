@@ -72,14 +72,33 @@ def load_runtime_config() -> RuntimeConfig:
     return RuntimeConfig(modo=modo, model_name=model_name)
 
 
+def _replace_literals(text: str, secrets: list[str]) -> str:
+    if not secrets:
+        return text
+    pattern = re.compile("|".join(re.escape(secret) for secret in secrets))
+    return pattern.sub("[REDACTED]", text)
+
+
+def _replace_standalone(text: str, secrets: list[str]) -> str:
+    if not secrets:
+        return text
+    parts = [
+        rf"(?<![A-Za-z0-9]){re.escape(secret)}(?![A-Za-z0-9])" for secret in secrets
+    ]
+    return re.compile("|".join(parts)).sub("[REDACTED]", text)
+
+
 def redact_secrets(text: str) -> str:
-    """Replace secret env values and key-shaped substrings with [REDACTED].
+    """Replace key-shaped tokens, then secret env values, with [REDACTED].
 
     Env vars whose names contain KEY, TOKEN, SECRET, PASSWORD, or CREDENTIAL
-    are treated as secrets. The raw secret is never returned or printed.
+    are treated as secrets. Values of length 8 or more are removed as
+    substrings, longest first. Shorter values are removed only as standalone
+    tokens. The raw secret is never returned or printed.
     """
+    text = _KEY_SHAPED_RE.sub("[REDACTED]", text)
     secrets = _secret_env_values()
-    if secrets:
-        pattern = re.compile("|".join(re.escape(secret) for secret in secrets))
-        text = pattern.sub("[REDACTED]", text)
-    return _KEY_SHAPED_RE.sub("[REDACTED]", text)
+    long_secrets = [secret for secret in secrets if len(secret) >= 8]
+    short_secrets = [secret for secret in secrets if len(secret) < 8]
+    text = _replace_literals(text, long_secrets)
+    return _replace_standalone(text, short_secrets)

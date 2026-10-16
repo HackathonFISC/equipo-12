@@ -154,6 +154,22 @@ class RuntimeConfigTests(unittest.TestCase):
         if "[REDACTED]" not in redacted or fake in redacted or fake in printed:
             self.fail("short secret value was exposed")
 
+    def test_redact_secrets_keeps_key_token_intact_around_short_secret(self) -> None:
+        fragment = "abCD"
+        token = "sk-mnop" + fragment + "wxyz9876"
+        line = f"prefix {token} suffix"
+        with _temporary_env({"SHORT_API_KEY": fragment}):
+            redacted, printed = _captured_call(redact_secrets, line)
+        if redacted != "prefix [REDACTED] suffix" or fragment in printed or token in printed:
+            self.fail("key-shaped token was split by a short secret")
+
+    def test_redact_secrets_short_value_does_not_match_inside_words(self) -> None:
+        sentence = "color report for sector north"
+        with _temporary_env({"TINY_SECRET": "or"}):
+            redacted, printed = _captured_call(redact_secrets, sentence)
+        self.assertEqual(redacted, sentence)
+        self.assertEqual(printed, "")
+
     def test_redact_secrets_keeps_text_when_secret_value_blank(self) -> None:
         sample = "hello   world"
         for blank in ("", "   "):
