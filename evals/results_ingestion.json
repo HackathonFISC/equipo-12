@@ -1,0 +1,343 @@
+{
+  "modo": "test",
+  "case_count": 18,
+  "group_counts": {
+    "citizen": 8,
+    "institution": 3,
+    "incomplete": 2,
+    "adversarial": 5
+  },
+  "metrics": {
+    "sector_accuracy": 1.0,
+    "guardrail_accuracy": 1.0,
+    "no_hallucination_rate": 1.0,
+    "review_flag_accuracy": 1.0,
+    "deduplication_accuracy": 1.0
+  },
+  "cases": [
+    {
+      "case_id": "EVAL-01",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_VISTA_ALEGRE",
+      "actual_sector": "ARRAIJAN_VISTA_ALEGRE",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 48,
+      "actual_duration": 48,
+      "expected_affected": 15,
+      "actual_affected": 15,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-02",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_VISTA_ALEGRE",
+      "actual_sector": "ARRAIJAN_VISTA_ALEGRE",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 72,
+      "actual_duration": 72,
+      "expected_affected": 80,
+      "actual_affected": 80,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-03",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_BURUNGA",
+      "actual_sector": "ARRAIJAN_BURUNGA",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 24,
+      "actual_duration": 24,
+      "expected_affected": 10,
+      "actual_affected": 10,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-04",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_NUEVO_CHORRILLO",
+      "actual_sector": "ARRAIJAN_NUEVO_CHORRILLO",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 12,
+      "actual_duration": 12,
+      "expected_affected": 8,
+      "actual_affected": 8,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-05",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_VACAMONTE",
+      "actual_sector": "ARRAIJAN_VACAMONTE",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 48,
+      "actual_duration": 48,
+      "expected_affected": 30,
+      "actual_affected": 30,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-06",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_CERRO_SILVESTRE",
+      "actual_sector": "ARRAIJAN_CERRO_SILVESTRE",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 6,
+      "actual_duration": 6,
+      "expected_affected": 4,
+      "actual_affected": 4,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-07",
+      "group": "citizen",
+      "expected_sector": "ARRAIJAN_CABECERA",
+      "actual_sector": "ARRAIJAN_CABECERA",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 36,
+      "actual_duration": 36,
+      "expected_affected": 12,
+      "actual_affected": 12,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-08",
+      "group": "citizen",
+      "expected_sector": "CHORRERA_PUERTO_CAIMITO",
+      "actual_sector": "CHORRERA_PUERTO_CAIMITO",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 168,
+      "actual_duration": 168,
+      "expected_affected": 40,
+      "actual_affected": 40,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-09",
+      "group": "institution",
+      "expected_sector": "CHORRERA_BARRIO_COLON",
+      "actual_sector": "CHORRERA_BARRIO_COLON",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 24,
+      "actual_duration": 24,
+      "expected_affected": 200,
+      "actual_affected": 200,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "HOSPITAL_SALUD"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-10",
+      "group": "institution",
+      "expected_sector": "CHORRERA_EL_COCO",
+      "actual_sector": "CHORRERA_EL_COCO",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 48,
+      "actual_duration": 48,
+      "expected_affected": 80,
+      "actual_affected": 80,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "ESCUELA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-11",
+      "group": "institution",
+      "expected_sector": "CHORRERA_BARRIO_BALBOA",
+      "actual_sector": "CHORRERA_BARRIO_BALBOA",
+      "expected_guardrail": "VALID",
+      "actual_guardrail": "VALID",
+      "expected_duration": 72,
+      "actual_duration": 72,
+      "expected_affected": 25,
+      "actual_affected": 25,
+      "expected_review": false,
+      "actual_review": false,
+      "actual_vulnerability": [
+        "ADULTOS_MAYORES"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-12",
+      "group": "incomplete",
+      "expected_sector": "ARRAIJAN_VISTA_ALEGRE",
+      "actual_sector": "ARRAIJAN_VISTA_ALEGRE",
+      "expected_guardrail": "NEEDS_REVIEW",
+      "actual_guardrail": "NEEDS_REVIEW",
+      "expected_duration": null,
+      "actual_duration": null,
+      "expected_affected": null,
+      "actual_affected": null,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-13",
+      "group": "incomplete",
+      "expected_sector": "UNKNOWN",
+      "actual_sector": "UNKNOWN",
+      "expected_guardrail": "NEEDS_REVIEW",
+      "actual_guardrail": "NEEDS_REVIEW",
+      "expected_duration": 10,
+      "actual_duration": 10,
+      "expected_affected": 5,
+      "actual_affected": 5,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-14",
+      "group": "adversarial",
+      "expected_sector": "UNKNOWN",
+      "actual_sector": "UNKNOWN",
+      "expected_guardrail": "REJECTED_MALICIOUS",
+      "actual_guardrail": "REJECTED_MALICIOUS",
+      "expected_duration": null,
+      "actual_duration": null,
+      "expected_affected": null,
+      "actual_affected": null,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-15",
+      "group": "adversarial",
+      "expected_sector": "UNKNOWN",
+      "actual_sector": "UNKNOWN",
+      "expected_guardrail": "REJECTED_EMPTY",
+      "actual_guardrail": "REJECTED_EMPTY",
+      "expected_duration": null,
+      "actual_duration": null,
+      "expected_affected": null,
+      "actual_affected": null,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-16",
+      "group": "adversarial",
+      "expected_sector": "CHORRERA_GUADALUPE",
+      "actual_sector": "CHORRERA_GUADALUPE",
+      "expected_guardrail": "REJECTED_ABSURD",
+      "actual_guardrail": "REJECTED_ABSURD",
+      "expected_duration": 3000,
+      "actual_duration": 3000,
+      "expected_affected": 10,
+      "actual_affected": 10,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-17",
+      "group": "adversarial",
+      "expected_sector": "CHORRERA_GUADALUPE",
+      "actual_sector": "CHORRERA_GUADALUPE",
+      "expected_guardrail": "REJECTED_ABSURD",
+      "actual_guardrail": "REJECTED_ABSURD",
+      "expected_duration": null,
+      "actual_duration": null,
+      "expected_affected": 100001,
+      "actual_affected": 100001,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    },
+    {
+      "case_id": "EVAL-18",
+      "group": "adversarial",
+      "expected_sector": "UNKNOWN",
+      "actual_sector": "UNKNOWN",
+      "expected_guardrail": "REJECTED_OUT_OF_SCOPE",
+      "actual_guardrail": "REJECTED_OUT_OF_SCOPE",
+      "expected_duration": null,
+      "actual_duration": null,
+      "expected_affected": null,
+      "actual_affected": null,
+      "expected_review": true,
+      "actual_review": true,
+      "actual_vulnerability": [
+        "NINGUNA"
+      ],
+      "passed": true
+    }
+  ]
+}
