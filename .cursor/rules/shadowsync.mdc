@@ -1,0 +1,38 @@
+---
+description: Uso obligatorio del MCP ShadowSync para compartir contexto del equipo sin un git push por cada cambio
+alwaysApply: true
+---
+
+# ShadowSync
+
+Canal en vivo del equipo (Joaquín, Edward, Franz) en `https://sync.belta.dev`. No sustituye git ni los commits del hackathon. Evita un push solo para que otra IA vea el código.
+
+La configuración local ya está en `.cursor/mcp.json` (servidor `shadowsync`). El token compartido está en `.env` como `SHADOWSYNC_TOKEN`. El autor de esta máquina es `SHADOWSYNC_AUTHOR`. No copies el token a README, commits, logs ni a esta regla.
+
+## Obligatorio
+
+1. Antes de editar contratos o un archivo que otro pueda estar tocando, llama `fetch_team_context` y revisa archivos recientes y locks.
+2. Antes de editar ese archivo, llama `set_file_lock` con `author` = `SHADOWSYNC_AUTHOR`. Al terminar, llama otra vez con `locked: false`.
+3. Después de un cambio de contrato, módulo o decisión, llama `push_context_update` con la ruta relativa del repo, el archivo o el diff, y una descripción breve. Usa `is_full_file: false` si envías un diff.
+4. No publiques `.env`, `.git`, claves, `node_modules` ni `__pycache__`.
+
+Herramientas: `push_context_update(author, file_path, code_or_diff, description, is_full_file)`, `fetch_team_context(since_version, author_filter)`, `set_file_lock(author, file_path, locked, note)`.
+
+## Configuración
+
+Un solo token para todo el equipo. Cada persona pone su nombre en `SHADOWSYNC_AUTHOR` (`franz`, `joaquin` o `edward`). El servidor no comprueba esa identidad.
+
+```json
+{
+  "mcpServers": {
+    "shadowsync": {
+      "url": "https://sync.belta.dev/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer <SHADOWSYNC_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+`/health` no pide token. REST: `/v1/push`, `/v1/context`, `/v1/lock`. WebSocket: `wss://sync.belta.dev/v1/stream?token=<SHADOWSYNC_TOKEN>`.

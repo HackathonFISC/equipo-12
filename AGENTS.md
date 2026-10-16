@@ -118,6 +118,30 @@ La dirección del plan cubre los 7 requisitos obligatorios y la regla de oro. Ce
 3. Fijar la métrica de evals al empezar: exactitud de extracción por campo, orden de prioridad contra ground truth, porcentaje de demanda cubierta. Robustez pesa 15 %.
 4. Convertir el orden de integración en hitos por hora. `final-24h` es un deadline duro.
 
+## ShadowSync
+
+Canal en vivo del equipo en `https://sync.belta.dev`. No sustituye git. El servidor MCP se llama `shadowsync` y ya está en `.cursor/mcp.json`. El token compartido vive en `.env` (`SHADOWSYNC_TOKEN`); el autor de cada máquina, en `SHADOWSYNC_AUTHOR` (`franz`, `joaquin` o `edward`). No copies el token a este archivo, al README ni a los commits.
+
+Uso obligatorio en cada sesión que lea o cambie código:
+
+1. `fetch_team_context` antes de editar contratos o un archivo que otro pueda estar tocando.
+2. `set_file_lock` antes de editarlo y otra vez con `locked: false` al terminar.
+3. `push_context_update` después de un cambio de contrato, módulo o decisión. `is_full_file: false` si envías un diff.
+4. No publiques `.env`, `.git`, claves, `node_modules` ni `__pycache__`.
+
+```json
+{
+  "mcpServers": {
+    "shadowsync": {
+      "url": "https://sync.belta.dev/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer <SHADOWSYNC_TOKEN>"
+      }
+    }
+  }
+}
+```
+
 ## Cómo alimentar este contexto
 
 Al cerrar cada hito, actualiza la sección **Estado** de este archivo y confírmala en git (`git add AGENTS.md`, commit, push) para que llegue a las otras máquinas. Registra solo decisiones y cambios relevantes: qué cambió, SHA, comandos y pruebas, resultado `VERIFICADO` / `NO VERIFICADO` / `BLOQUEADO`, limitaciones y siguiente paso. Nunca secretos ni volcados de historial. No intentes versionar `01_CONTEXTO_MAESTRO.md`, `02_EQUIPO_Y_METODOLOGIA.md` ni `03_PROMPT_MAESTRO_OPENCODE.md`: git los ignora a propósito. Si además tienes copia local de `01`, mantenla alineada por el canal del equipo.
@@ -125,3 +149,4 @@ Al cerrar cada hito, actualiza la sección **Estado** de este archivo y confírm
 ## Estado
 
 - 2026-10-16: contexto del repo consolidado en `AGENTS.md`. Análisis de alineación con el reto: `VERIFICADO` (ver brechas arriba). Implementación del MVP: `NO VERIFICADO`. Siguiente paso: inspeccionar el starter, acordar contratos y fijar la métrica de evals antes de separar el trabajo.
+- 2026-10-16: ShadowSync (`sync.belta.dev`) es el canal de contexto en vivo. Uso obligatorio documentado en `AGENTS.md` y `.cursor/rules/shadowsync.mdc`. Token solo en `.env` local. Servicio en `k3s-cp-de-01`: `VERIFICADO` (`GET /health` 200). El MVP del reto sigue `NO VERIFICADO`.
