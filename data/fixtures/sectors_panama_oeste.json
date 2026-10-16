@@ -1,0 +1,81 @@
+{
+  "sectors": [
+    {
+      "sector_id": "ARRAIJAN_VISTA_ALEGRE",
+      "name": "Vista Alegre",
+      "district": "Arraijan",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["vista alegre", "chino de vista alegre", "xtra de vista alegre"]
+    },
+    {
+      "sector_id": "ARRAIJAN_BURUNGA",
+      "name": "Burunga",
+      "district": "Arraijan",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["burunga", "loma cova"]
+    },
+    {
+      "sector_id": "ARRAIJAN_NUEVO_CHORRILLO",
+      "name": "Nuevo Chorrillo",
+      "district": "Arraijan",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["nuevo chorrillo"]
+    },
+    {
+      "sector_id": "ARRAIJAN_VACAMONTE",
+      "name": "Vacamonte",
+      "district": "Arraijan",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["vacamonte"]
+    },
+    {
+      "sector_id": "ARRAIJAN_CERRO_SILVESTRE",
+      "name": "Cerro Silvestre",
+      "district": "Arraijan",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["cerro silvestre"]
+    },
+    {
+      "sector_id": "ARRAIJAN_CABECERA",
+      "name": "Arraijan Cabecera",
+      "district": "Arraijan",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["arraijan cabecera", "centro de arraijan"]
+    },
+    {
+      "sector_id": "CHORRERA_BARRIO_COLON",
+      "name": "Barrio Colon",
+      "district": "La Chorrera",
+      "provenance": "ASSUMPTION",
+      "aliases": ["barrio colon", "hospital nicolas solano"]
+    },
+    {
+      "sector_id": "CHORRERA_BARRIO_BALBOA",
+      "name": "Barrio Balboa",
+      "district": "La Chorrera",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["barrio balboa", "parque feuillet"]
+    },
+    {
+      "sector_id": "CHORRERA_GUADALUPE",
+      "name": "Guadalupe",
+      "district": "La Chorrera",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["guadalupe"]
+    },
+    {
+      "sector_id": "CHORRERA_EL_COCO",
+      "name": "El Coco",
+      "district": "La Chorrera",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["el coco"]
+    },
+    {
+      "sector_id": "CHORRERA_PUERTO_CAIMITO",
+      "name": "Puerto Caimito",
+      "district": "La Chorrera",
+      "provenance": "SYNTHETIC_DEMO",
+      "aliases": ["puerto caimito"]
+    }
+  ]
+}

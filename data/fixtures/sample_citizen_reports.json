@@ -1,0 +1,53 @@
+{
+  "reports": [
+    {
+      "report_id": "SYN-001",
+      "raw_text": "Llevamos dos dias sin agua por el chino de Vista Alegre.",
+      "source_channel": "whatsapp",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "ARRAIJAN_VISTA_ALEGRE"
+    },
+    {
+      "report_id": "SYN-002",
+      "raw_text": "En Loma Cova, Burunga, no sube el agua desde ayer.",
+      "source_channel": "whatsapp",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "ARRAIJAN_BURUNGA"
+    },
+    {
+      "report_id": "SYN-003",
+      "raw_text": "El Hospital Nicolas Solano reporta tanques bajos.",
+      "source_channel": "phone",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "CHORRERA_BARRIO_COLON"
+    },
+    {
+      "report_id": "SYN-004",
+      "raw_text": "Cerca del Parque Feuillet no hay agua en las casas.",
+      "source_channel": "whatsapp",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "CHORRERA_BARRIO_BALBOA"
+    },
+    {
+      "report_id": "SYN-005",
+      "raw_text": "Puerto Caimito sigue sin agua desde el lunes.",
+      "source_channel": "phone",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "CHORRERA_PUERTO_CAIMITO"
+    },
+    {
+      "report_id": "SYN-006",
+      "raw_text": "sin agua en David, Chiriqui",
+      "source_channel": "whatsapp",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "UNKNOWN"
+    },
+    {
+      "report_id": "SYN-007",
+      "raw_text": "En El Coco las familias llevan tres dias sin servicio.",
+      "source_channel": "whatsapp",
+      "provenance": "SYNTHETIC_DEMO",
+      "expected_sector_id": "CHORRERA_EL_COCO"
+    }
+  ]
+}
