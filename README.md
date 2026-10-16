@@ -7,9 +7,9 @@ Reto: 0
 
 ## Equipo
 
-- Integrante 1
-- Integrante 2
-- Integrante 3
+- Joaquín Porsella (@porsellaj)
+- Edward Sparks (@EdwardSparks)
+- Franz Vera (@Meowty7)
 
 ## Problema
 
