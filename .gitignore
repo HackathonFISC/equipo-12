@@ -1,3 +1,6 @@
 01_CONTEXTO_MAESTRO.md
 02_EQUIPO_Y_METODOLOGIA.md
 03_PROMPT_MAESTRO_OPENCODE.md
+.env
+.env.*
+!.env.example
