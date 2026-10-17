@@ -101,6 +101,10 @@ class CoordinatorAppTests(unittest.TestCase):
         ids_in_js = set(re.findall(r'getElementById\("([^"]+)"\)', html))
         for element_id in ids_in_js:
             self.assertIn(f'id="{element_id}"', html, msg=f"missing id={element_id}")
+        self.assertIn('path === "/coordinacion"', html)
+        self.assertIn("status-rejected", html)
+        self.assertIn("status-partial", html)
+        self.assertNotIn('style="width:70%"', html)
 
     def test_user_html_ids_match_get_element_by_id(self) -> None:
         html = _USER_PATH.read_text(encoding="utf-8")
