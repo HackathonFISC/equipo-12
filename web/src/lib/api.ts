@@ -242,10 +242,13 @@ export function getHealth(): Promise<HealthResponse> {
   return requestJson<HealthResponse>("/api/health");
 }
 
-export function postReports(texts: string[]): Promise<CoordinatorSnapshot> {
+export function postReports(
+  texts: string[],
+  media: Record<string, unknown>[] = [],
+): Promise<CoordinatorSnapshot> {
   return requestJson<CoordinatorSnapshot>("/api/reports", {
     method: "POST",
-    body: JSON.stringify({ texts }),
+    body: JSON.stringify({ texts, media }),
   });
 }
 
