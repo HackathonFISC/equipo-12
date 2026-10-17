@@ -22,7 +22,8 @@ TRANSITIONS: Final[dict[TransitionKey, PlanState]] = {
     (PlanState.BORRADOR, None, False): PlanState.PENDIENTE,
     (PlanState.PENDIENTE, DecisionAction.APPROVE, False): PlanState.APROBADO,
     (PlanState.PENDIENTE, DecisionAction.REJECT, False): PlanState.RECHAZADO,
-    (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+        (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+        (PlanState.APROBADO, DecisionAction.REJECT, False): PlanState.RECHAZADO,
     (PlanState.BORRADOR, None, True): PlanState.ERROR_PARCIAL,
     (PlanState.PENDIENTE, None, True): PlanState.ERROR_PARCIAL,
 }

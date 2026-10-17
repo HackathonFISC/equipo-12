@@ -102,6 +102,18 @@ class CoordinatorServiceTests(unittest.TestCase):
         finally:
             db_path.unlink(missing_ok=True)
 
+    def test_snapshot_lists_every_catalog_sector(self) -> None:
+        store, db_path = _temp_store()
+        try:
+            sectors = CoordinatorService(store).snapshot()["sectors"]
+            self.assertIsInstance(sectors, list)
+            assert isinstance(sectors, list)
+            self.assertEqual(len(sectors), 11)
+            self.assertTrue(all(item["latitude"] is not None for item in sectors))
+            self.assertIn("Burunga", [item["name"] for item in sectors])
+        finally:
+            db_path.unlink(missing_ok=True)
+
     def test_approve_enqueues_simulated_outbox(self) -> None:
         store, db_path = _temp_store()
         try:

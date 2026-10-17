@@ -230,3 +230,55 @@ def resolve_sector_candidate(
             scope_reason=reason,
         )
     return SectorResolution(sector_id=SectorId.UNKNOWN)
+
+
+def sector_map(fixtures_dir: Path | None = None) -> list[dict[str, object]]:
+    """Sector names and demo anchors for the coordinator map.
+
+    Coordinates are the average of the place anchors in each sector. They are
+    demonstration points, not a survey and not the IDAAN pipe layer. A sector
+    with no reports is still listed so it is not invisible.
+    """
+    root = _fixtures_dir(fixtures_dir)
+    sectors_payload = _require_object(_read_json(root / SECTORS_FILENAME), SECTORS_FILENAME)
+    _validate_sectors(sectors_payload)
+    places_payload = _require_object(_read_json(root / "places_panama_oeste.json"), "places_panama_oeste.json")
+    totals: dict[str, list[float]] = {}
+    counts: dict[str, int] = {}
+    places = places_payload.get("places")
+    if isinstance(places, list):
+        for place in places:
+            if not isinstance(place, dict):
+                continue
+            sector_id = str(place.get("sector_id") or "")
+            latitude = place.get("latitude")
+            longitude = place.get("longitude")
+            if not isinstance(latitude, (int, float)) or not isinstance(longitude, (int, float)):
+                continue
+            bucket = totals.setdefault(sector_id, [0.0, 0.0])
+            bucket[0] += float(latitude)
+            bucket[1] += float(longitude)
+            counts[sector_id] = counts.get(sector_id, 0) + 1
+    rows: list[dict[str, object]] = []
+    records = sectors_payload.get("sectors")
+    if not isinstance(records, list):
+        return rows
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        sector_id = str(record.get("sector_id") or "")
+        count = counts.get(sector_id, 0)
+        latitude = None if count == 0 else round(totals[sector_id][0] / count, 5)
+        longitude = None if count == 0 else round(totals[sector_id][1] / count, 5)
+        rows.append(
+            {
+                "sector_id": sector_id,
+                "name": str(record.get("name") or sector_id),
+                "district": str(record.get("district") or ""),
+                "provenance": str(record.get("provenance") or ""),
+                "latitude": latitude,
+                "longitude": longitude,
+            }
+        )
+    rows.sort(key=lambda item: (str(item["district"]), str(item["name"])))
+    return rows

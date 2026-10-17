@@ -114,6 +114,31 @@ class ApprovalStoreTests(unittest.TestCase):
             self.assertEqual(rows[0][0], "SIMULATED")
             self.assertIsNone(rows[0][1])
 
+    def test_reject_after_approve_cancels_simulated_notices(self) -> None:
+        payload = _sample_payload()
+        self.store.create_plan("plan-1", payload)
+        self.store.apply_decision(
+            "plan-1",
+            _decision("plan-1", DecisionAction.APPROVE),
+            payload,
+        )
+        result = self.store.apply_decision(
+            "plan-1",
+            _decision("plan-1", DecisionAction.REJECT),
+            payload,
+        )
+        self.assertFalse(result.saved)
+        self.assertIn("cancelados", result.detail)
+        with self._conn() as conn:
+            state = conn.execute("SELECT state FROM plans WHERE id = 'plan-1'").fetchone()
+            statuses = conn.execute(
+                "SELECT status FROM outbox WHERE plan_id = 'plan-1'"
+            ).fetchall()
+        assert state is not None
+        self.assertEqual(state[0], PlanState.RECHAZADO.value)
+        self.assertTrue(statuses)
+        self.assertTrue(all(row[0] == "CANCELLED" for row in statuses))
+
     def test_reject_no_outbox(self) -> None:
         payload = _sample_payload()
         self.store.create_plan("plan-1", payload)

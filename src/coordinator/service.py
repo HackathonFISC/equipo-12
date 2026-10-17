@@ -23,6 +23,7 @@ from src.coordinator.engine import EngineOutput, PlanEngine, priority_engine
 from src.coordinator.state import PlanState, transition
 from src.coordinator.store import ApprovalStore
 from src.ingestion.agent import IngestionResult, ingest_report
+from src.ingestion.catalog import sector_map
 from src.ingestion.deduplicator import deduplicate_reports
 from src.orchestration.agent import orchestrate
 
@@ -177,6 +178,7 @@ class CoordinatorService:
             "traces": [t.model_dump(mode="json") for t in self._traces],
             "execution": execution_payload,
             "provenance_tags": sorted(tag_set),
+            "sectors": sector_map(),
         }
 
     def decide(self, decision: HumanDecision) -> ExecutionResult:

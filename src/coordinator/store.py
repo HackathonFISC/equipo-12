@@ -183,10 +183,17 @@ class ApprovalStore:
                     message TEXT NOT NULL,
                     created_at TEXT NOT NULL,
                     sent_at TEXT,
+                    status TEXT NOT NULL DEFAULT 'QUEUED',
                     FOREIGN KEY (plan_id) REFERENCES plans(id)
                 );
                 """
             )
+            columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(outbox)")}
+            if "status" not in columns:
+                conn.execute(
+                    "ALTER TABLE outbox ADD COLUMN status TEXT NOT NULL DEFAULT 'QUEUED'"
+                )
+            conn.commit()
         finally:
             conn.close()
 
@@ -414,6 +421,11 @@ class ApprovalStore:
                 payload_to_store = plan_payload
                 saved = True
                 detail = "plan approved and dispatch queued"
+            elif decision.action == DecisionAction.REJECT and current == PlanState.APROBADO:
+                detail = (
+                    "Se anuló la aprobación. Los avisos simulados quedaron cancelados. "
+                    "Un WhatsApp ya enviado no se puede retirar."
+                )
             elif decision.action == DecisionAction.REJECT:
                 detail = "plan rejected"
             elif decision.action == DecisionAction.CORRECT:
@@ -442,6 +454,11 @@ class ApprovalStore:
                 raise ValueError("plan state changed concurrently or plan missing")
 
             self._insert_decision(conn, decision)
+            if current == PlanState.APROBADO and decision.action == DecisionAction.REJECT:
+                conn.execute(
+                    "UPDATE outbox SET status = 'CANCELLED' WHERE plan_id = ?",
+                    (plan_id,),
+                )
 
             if self.fail_after == "decision":
                 raise RuntimeError("fault injection after decision insert")

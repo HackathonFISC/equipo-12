@@ -57,6 +57,7 @@ class DemoEngineTests(unittest.TestCase):
             (PlanState.PENDIENTE, DecisionAction.APPROVE, False): PlanState.APROBADO,
             (PlanState.PENDIENTE, DecisionAction.REJECT, False): PlanState.RECHAZADO,
             (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+            (PlanState.APROBADO, DecisionAction.REJECT, False): PlanState.RECHAZADO,
         }
         failure = {
             (PlanState.BORRADOR, None, True): PlanState.ERROR_PARCIAL,

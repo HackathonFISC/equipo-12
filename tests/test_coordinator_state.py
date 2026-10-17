@@ -15,6 +15,7 @@ class PlanStateTransitionTests(unittest.TestCase):
             (PlanState.PENDIENTE, DecisionAction.APPROVE, False): PlanState.APROBADO,
             (PlanState.PENDIENTE, DecisionAction.REJECT, False): PlanState.RECHAZADO,
             (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+            (PlanState.APROBADO, DecisionAction.REJECT, False): PlanState.RECHAZADO,
             (PlanState.BORRADOR, None, True): PlanState.ERROR_PARCIAL,
             (PlanState.PENDIENTE, None, True): PlanState.ERROR_PARCIAL,
         }
@@ -36,6 +37,10 @@ class PlanStateTransitionTests(unittest.TestCase):
         self.assertIs(
             transition(PlanState.PENDIENTE, DecisionAction.CORRECT),
             PlanState.BORRADOR,
+        )
+        self.assertIs(
+            transition(PlanState.APROBADO, DecisionAction.REJECT),
+            PlanState.RECHAZADO,
         )
 
     def test_failure_transitions(self) -> None:
@@ -79,6 +84,8 @@ class PlanStateTransitionTests(unittest.TestCase):
                 cases.append((state, action, False))
             cases.append((state, None, True))
         for current, action, failed in cases:
+            if current is PlanState.APROBADO and action is DecisionAction.REJECT and not failed:
+                continue
             with self.subTest(current=current, action=action, failed=failed):
                 with self.assertRaises(ValueError):
                     transition(current, action, failed=failed)
