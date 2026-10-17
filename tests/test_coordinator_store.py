@@ -18,17 +18,30 @@ from src.coordinator.store import ApprovalStore
 def _sample_payload(
     plan_id: str = "plan-1",
     sectors: list[str] | None = None,
+    *,
+    assignments: list[dict[str, object]] | None = None,
 ) -> str:
-    sectors = sectors or ["ARRAIJAN_VISTA_ALEGRE"]
-    assignments = [
-        {"vehicle_id": "cisterna-1", "sector_id": s, "order": i + 1, "volume_liters": 1000}
-        for i, s in enumerate(sectors)
-    ]
+    if assignments is None:
+        sectors = sectors or ["ARRAIJAN_VISTA_ALEGRE"]
+        assignments = [
+            {
+                "vehicle_id": "cisterna-1",
+                "sector_id": s,
+                "order": i + 1,
+                "volume_liters": 1000,
+            }
+            for i, s in enumerate(sectors)
+        ]
+        route_order = sectors
+    else:
+        route_order = [
+            str(a["sector_id"]) for a in assignments if "sector_id" in a
+        ]
     return json.dumps(
         {
             "plan_id": plan_id,
             "assignments": assignments,
-            "route_order": sectors,
+            "route_order": route_order,
             "constraints_satisfied": [],
             "unserved_demand": [],
             "explanation": "test",
@@ -157,11 +170,135 @@ class ApprovalStoreTests(unittest.TestCase):
 
         with self._conn() as conn:
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0], 1)
+            self.assertEqual(
+                conn.execute("SELECT COUNT(*) FROM decisions WHERE plan_id = ?", ("plan-1",)).fetchone()[
+                    0
+                ],
+                1,
+            )
             rejected = conn.execute(
                 "SELECT status FROM audit WHERE id = ?",
                 (second.audit_id,),
             ).fetchone()[0]
             self.assertEqual(rejected, "rejected")
+
+    def test_decision_plan_id_mismatch_writes_nothing(self) -> None:
+        payload = _sample_payload()
+        self.store.create_plan("plan-1", payload)
+        with self.assertRaises(ValueError):
+            self.store.apply_decision(
+                "plan-1",
+                _decision("other-plan", DecisionAction.APPROVE),
+                payload,
+            )
+        with self._conn() as conn:
+            self.assertEqual(
+                conn.execute("SELECT state FROM plans WHERE id = ?", ("plan-1",)).fetchone()[0],
+                PlanState.PENDIENTE.value,
+            )
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM decisions").fetchone()[0], 0)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM audit").fetchone()[0], 0)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0], 0)
+
+    def test_create_plan_does_not_enqueue_outbox(self) -> None:
+        payload = _sample_payload()
+        self.store.create_plan("plan-1", payload)
+        with self._conn() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0], 0)
+
+    def test_approve_outbox_rows_follow_unique_sectors(self) -> None:
+        two_sectors = _sample_payload(
+            assignments=[
+                {
+                    "vehicle_id": "cisterna-1",
+                    "sector_id": "ARRAIJAN_VISTA_ALEGRE",
+                    "order": 1,
+                    "volume_liters": 1000,
+                },
+                {
+                    "vehicle_id": "cisterna-1",
+                    "sector_id": "CHORRERA_EL_COCO",
+                    "order": 2,
+                    "volume_liters": 1000,
+                },
+            ]
+        )
+        self.store.create_plan("plan-1", two_sectors)
+        self.store.apply_decision(
+            "plan-1",
+            _decision("plan-1", DecisionAction.APPROVE),
+            two_sectors,
+        )
+        duplicate_sector = _sample_payload(
+            assignments=[
+                {
+                    "vehicle_id": "cisterna-1",
+                    "sector_id": "ARRAIJAN_BURUNGA",
+                    "order": 1,
+                    "volume_liters": 1000,
+                },
+                {
+                    "vehicle_id": "cisterna-2",
+                    "sector_id": "ARRAIJAN_BURUNGA",
+                    "order": 2,
+                    "volume_liters": 500,
+                },
+            ]
+        )
+        self.store.create_plan("plan-2", duplicate_sector)
+        self.store.apply_decision(
+            "plan-2",
+            _decision("plan-2", DecisionAction.APPROVE),
+            duplicate_sector,
+        )
+        with self._conn() as conn:
+            self.assertEqual(
+                conn.execute("SELECT COUNT(*) FROM outbox WHERE plan_id = ?", ("plan-1",)).fetchone()[
+                    0
+                ],
+                2,
+            )
+            channels = conn.execute(
+                "SELECT channel FROM outbox WHERE plan_id = ?",
+                ("plan-1",),
+            ).fetchall()
+            self.assertTrue(all(row[0] == "SIMULATED" for row in channels))
+            self.assertEqual(
+                conn.execute("SELECT COUNT(*) FROM outbox WHERE plan_id = ?", ("plan-2",)).fetchone()[
+                    0
+                ],
+                1,
+            )
+
+    def test_approve_empty_assignments_uses_unknown_sector(self) -> None:
+        payload = _sample_payload(assignments=[])
+        self.store.create_plan("plan-1", payload)
+        self.store.apply_decision(
+            "plan-1",
+            _decision("plan-1", DecisionAction.APPROVE),
+            payload,
+        )
+        with self._conn() as conn:
+            rows = conn.execute(
+                "SELECT sector_id, channel FROM outbox WHERE plan_id = ?",
+                ("plan-1",),
+            ).fetchall()
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0][0], "UNKNOWN")
+            self.assertEqual(rows[0][1], "SIMULATED")
+
+    def test_audit_summary_truncated_to_five_hundred_chars(self) -> None:
+        payload = _sample_payload()
+        self.store.create_plan("plan-1", payload)
+        long_comment = "x" * 600
+        self.store.apply_decision(
+            "plan-1",
+            _decision("plan-1", DecisionAction.REJECT, comment=long_comment),
+            payload,
+        )
+        with self._conn() as conn:
+            summary = conn.execute("SELECT input_summary FROM audit LIMIT 1").fetchone()[0]
+            self.assertLessEqual(len(summary), 500)
 
     def test_missing_plan_raises_without_side_effects(self) -> None:
         payload = _sample_payload()

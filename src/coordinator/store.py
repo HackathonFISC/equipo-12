@@ -331,7 +331,7 @@ class ApprovalStore:
                     output_summary=detail,
                     status="ok",
                 )
-        except RuntimeError:
+        except Exception:
             self._best_effort_error_partial(plan_id, current)
             raise
 
