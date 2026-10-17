@@ -15,14 +15,29 @@ from src.contracts import DecisionAction, HumanDecision
 from src.coordinator.service import CoordinatorService
 from src.coordinator.store import ApprovalStore
 
+_USER_HTML = Path(__file__).resolve().parent / "web" / "usuario.html"
 _PANEL_HTML = Path(__file__).resolve().parent / "web" / "panel.html"
-_MAX_JSON_BODY = 256 * 1024
+_MAX_JSON_BODY = 8 * 1024 * 1024
 
 
 def _json_response(handler: BaseHTTPRequestHandler, status: int, payload: dict[str, Any]) -> None:
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     handler.send_response(status)
     handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+def _html_file(handler: BaseHTTPRequestHandler, path: Path) -> None:
+    try:
+        html = path.read_text(encoding="utf-8")
+    except OSError:
+        _json_response(handler, 500, {"error": "panel unavailable"})
+        return
+    body = html.encode("utf-8")
+    handler.send_response(200)
+    handler.send_header("Content-Type", "text/html; charset=utf-8")
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
@@ -69,17 +84,11 @@ def serve(
 
         def do_GET(self) -> None:
             if self.path == "/" or self.path.startswith("/?"):
-                try:
-                    html = _PANEL_HTML.read_text(encoding="utf-8")
-                except OSError:
-                    _json_response(self, 500, {"error": "panel unavailable"})
-                    return
-                body = html.encode("utf-8")
-                self.send_response(200)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                self.wfile.write(body)
+                _html_file(self, _USER_HTML)
+                return
+
+            if self.path == "/coordinacion" or self.path.startswith("/coordinacion?"):
+                _html_file(self, _PANEL_HTML)
                 return
 
             if self.path == "/api/context":
@@ -102,14 +111,16 @@ def serve(
                         {"error": f"plan already exists: {service.plan_id}"},
                     )
                     return
-                texts = body.get("texts")
-                if texts is None or not isinstance(texts, list) or not all(
-                    isinstance(t, str) for t in texts
-                ):
+                texts = body.get("texts", [])
+                media = body.get("media", [])
+                if not isinstance(texts, list) or not all(isinstance(t, str) for t in texts):
                     _json_response(self, 400, {"error": "texts must be a list of strings"})
                     return
+                if not isinstance(media, list):
+                    _json_response(self, 400, {"error": "media must be a list"})
+                    return
                 try:
-                    service.run_reports(texts)
+                    service.run_reports(texts, media)
                 except ValueError as exc:
                     _json_response(self, 400, {"error": str(exc)})
                     return

@@ -64,6 +64,72 @@ def haversine_meters(latitude_a: float, longitude_a: float, latitude_b: float, l
     return 2 * radius * math.asin(math.sqrt(chord))
 
 
+PHOTO_MATCH_METERS = 2_000
+
+
+def locate_coordinates(
+    latitude: float,
+    longitude: float,
+    fixtures_dir: Path | None = None,
+) -> PlaceFix:
+    """Match a photo coordinate to the nearest demo anchor. Does not invent a place name."""
+    inside = (
+        _LATITUDE_RANGE[0] <= latitude <= _LATITUDE_RANGE[1]
+        and _LONGITUDE_RANGE[0] <= longitude <= _LONGITUDE_RANGE[1]
+    )
+    if not inside:
+        return PlaceFix(
+            sector_id=SectorId.UNKNOWN,
+            latitude=latitude,
+            longitude=longitude,
+            geo_precision=GeoPrecision.UNKNOWN,
+            out_of_scope=True,
+            scope_reason="la foto está fuera de Panamá Oeste",
+        )
+    payload = _read_places(fixtures_dir)
+    records = payload.get("places")
+    nearest: dict[str, object] | None = None
+    nearest_meters: float | None = None
+    nearest_alias = ""
+    if isinstance(records, list):
+        for record in records:
+            if not isinstance(record, dict):
+                continue
+            meters = haversine_meters(
+                latitude,
+                longitude,
+                float(record["latitude"]),
+                float(record["longitude"]),
+            )
+            aliases = record.get("aliases")
+            alias = aliases[0] if isinstance(aliases, list) and aliases else ""
+            if nearest_meters is None or meters < nearest_meters:
+                nearest = record
+                nearest_meters = meters
+                nearest_alias = alias if isinstance(alias, str) else ""
+    if (
+        nearest is None
+        or nearest_meters is None
+        or nearest_meters > PHOTO_MATCH_METERS
+        or not nearest_alias
+    ):
+        return PlaceFix(
+            sector_id=SectorId.UNKNOWN,
+            latitude=latitude,
+            longitude=longitude,
+            geo_precision=GeoPrecision.UNKNOWN,
+            scope_reason="la foto cae en Panamá Oeste, lejos de las anclas de demostración",
+        )
+    return PlaceFix(
+        sector_id=SectorId(str(nearest["sector_id"])),
+        place_id=str(nearest["place_id"]),
+        latitude=float(nearest["latitude"]),
+        longitude=float(nearest["longitude"]),
+        geo_precision=GeoPrecision.POINT,
+        matched_alias=nearest_alias,
+    )
+
+
 def _read_places(fixtures_dir: Path | None) -> dict[str, object]:
     path = _fixtures_dir(fixtures_dir) / PLACES_FILENAME
     if not path.is_file():

@@ -6,186 +6,248 @@
   <title>AguaJusta Oeste — Coordinación</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,560;9..144,640&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
-      --paper: #f3efe4;
-      --sheet: #fffdf8;
-      --ink: #1c2430;
-      --muted: #5c6774;
-      --line: #e2d9c8;
-      --water: #0f6e73;
-      --water-deep: #0b4f55;
-      --sand: #e7d3b0;
-      --clay: #a24b32;
-      --ok: #1f7a4d;
-      --quiet: #8d8678;
+      --mist: #e7eef0;
+      --paper: #f7f4ee;
+      --sheet: #fffcf7;
+      --ink: #142028;
+      --muted: #3d5160;
+      --line: #d5ddd8;
+      --water: #0c5c62;
+      --water-deep: #083e44;
+      --clay: #8d3b32;
+      --ok: #1c6b45;
+      --sand: #f0e2c8;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       color: var(--ink);
-      background:
-        radial-gradient(circle at 12% -10%, #d7ebe8 0, transparent 42%),
-        var(--paper);
-      font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+      background: var(--mist);
+      font-family: "Source Sans 3", "Segoe UI", sans-serif;
       font-size: 1.05rem;
-      line-height: 1.55;
+      line-height: 1.5;
     }
     header {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.9rem 1.1rem;
-      align-items: center;
-      padding: 1.25rem 1.5rem 1rem;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255, 253, 248, 0.92);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem 1.5rem;
+      padding: 1.15rem 1.5rem 0.9rem;
+      background: var(--water-deep);
+      color: #f4f7f6;
     }
-    .mark { width: 3.25rem; height: 3.25rem; }
+    .brand { display: flex; gap: 0.85rem; align-items: center; }
+    .mark { width: 3rem; height: 3rem; flex: none; }
     h1 {
       margin: 0;
       font-family: Fraunces, Georgia, serif;
-      font-size: 2rem;
+      font-size: 1.85rem;
       font-weight: 560;
       letter-spacing: -0.02em;
-      line-height: 1.1;
     }
-    .lede { margin: 0.2rem 0 0; color: var(--muted); }
+    .lede { margin: 0.15rem 0 0; color: #d5e4e2; }
     #status-badge {
-      justify-self: start;
-      grid-column: 2;
-      padding: 0.2rem 0.7rem;
+      padding: 0.35rem 0.8rem;
       border-radius: 999px;
-      background: var(--sand);
+      background: #f0e2c8;
+      color: var(--ink);
       font-weight: 700;
-      font-size: 0.92rem;
     }
     .notice {
-      grid-column: 1 / -1;
       margin: 0;
+      padding: 0.65rem 1.5rem;
+      background: #fff8ee;
       color: var(--water-deep);
-      font-size: 0.98rem;
+      border-bottom: 1px solid var(--line);
     }
-    main {
+    .tabs {
+      display: flex;
+      gap: 0.4rem;
+      padding: 0.75rem 1.5rem 0;
+      background: var(--paper);
+    }
+    .tab {
+      font: inherit;
+      font-weight: 700;
+      border: 1px solid transparent;
+      border-bottom: 0;
+      border-radius: 12px 12px 0 0;
+      padding: 0.55rem 1rem;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .tab.is-on {
+      background: var(--sheet);
+      color: var(--ink);
+      border-color: var(--line);
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 1rem 1rem 2rem; }
+    .grid-top, .grid-mid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
       gap: 1rem;
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 1.1rem;
     }
+    .grid-top { grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.25fr); }
+    .grid-mid { grid-template-columns: 1fr 1fr; }
     section {
       background: var(--sheet);
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 1rem 1.1rem 1.15rem;
-      margin-bottom: 1rem;
     }
+    .map-card { padding-bottom: 0.8rem; }
     h2 {
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.25rem;
       font-family: Fraunces, Georgia, serif;
-      font-size: 1.35rem;
+      font-size: 1.45rem;
       font-weight: 560;
     }
-    .hint { margin: 0 0 0.75rem; color: var(--muted); font-size: 0.95rem; }
-    label { display: block; margin: 0.4rem 0 0.25rem; font-weight: 700; }
+    .hint { margin: 0 0 0.75rem; color: var(--muted); }
+    label { display: block; margin: 0.35rem 0 0.25rem; font-weight: 700; }
     textarea, input[type="text"] {
       width: 100%;
-      border: 1px solid #cfc4b0;
-      border-radius: 10px;
-      padding: 0.65rem 0.75rem;
+      border: 1px solid #c9d4cf;
+      border-radius: 12px;
+      padding: 0.7rem 0.8rem;
       font: inherit;
       color: var(--ink);
       background: #fff;
     }
-    textarea { min-height: 8rem; resize: vertical; }
+    #camera-preview, #photo-preview {
+      width: 100%;
+      max-height: 240px;
+      margin-top: 0.6rem;
+      border-radius: 12px;
+      background: #142028;
+      object-fit: cover;
+    }
     .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
-    button {
+    button.action, button.ok, button.danger, button.ghost, #btn-revisar, #btn-corregir, #load-reports, #btn-camara, #btn-capturar, #btn-cerrar-camara, #btn-microfono {
       font: inherit;
       font-weight: 700;
-      border: 0;
       border-radius: 999px;
-      padding: 0.55rem 0.95rem;
+      padding: 0.55rem 1rem;
       cursor: pointer;
-      background: var(--water);
-      color: #fff;
     }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
-    button.danger { background: var(--clay); }
-    button.ok { background: var(--ok); }
-    button.ghost { background: transparent; color: var(--water-deep); border: 1px solid var(--water); }
-    .map-card { position: sticky; top: 0.8rem; }
-    #sector-map { width: 100%; }
-    #sector-map svg { width: 100%; height: auto; display: block; }
-    .legend { display: flex; flex-wrap: wrap; gap: 0.7rem 1rem; margin-top: 0.6rem; font-size: 0.92rem; }
-    .swatch { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 50%; margin-right: 0.3rem; }
-    ul { margin: 0.2rem 0 0; padding-left: 1.1rem; }
+    button.action, #load-reports { background: var(--water); color: #fff; }
+    button.ok { background: var(--ok); color: #fff; }
+    button.danger { background: var(--clay); color: #fff; }
+    button.ghost, #btn-revisar, #btn-corregir, #btn-camara, #btn-capturar, #btn-cerrar-camara, #btn-microfono {
+      background: #fff;
+      color: var(--water-deep);
+      border: 1px solid var(--water);
+    }
+    button:disabled { opacity: 0.42; cursor: not-allowed; }
+    #sector-map { height: 460px; border-radius: 14px; background: #d7e4e2; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 0.7rem 0 0.2rem; color: var(--muted); font-size: 0.95rem; }
+    .swatch { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 50%; margin-right: 0.3rem; }
+    .card-list { display: grid; gap: 0.55rem; }
+    .incident {
+      padding: 0.7rem 0.8rem;
+      border-radius: 12px;
+      background: #f3f7f6;
+    }
+    .incident strong { display: block; font-size: 1.08rem; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 0.4rem 0.35rem; border-bottom: 1px solid var(--line); }
-    th { color: var(--muted); font-weight: 700; }
+    th, td { text-align: left; padding: 0.45rem 0.3rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-size: 0.92rem; }
     .empty { color: var(--muted); margin: 0; }
     .priority-item, .trace-item { padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
-    .stub-badge {
-      margin-left: 0.4rem;
-      font-size: 0.8rem;
-      color: var(--muted);
+    .stub-badge { margin-left: 0.35rem; color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+    ul { margin: 0.2rem 0 0; padding-left: 1.15rem; }
+    .pin-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(20, 32, 40, 0.35);
     }
-    @media (max-width: 860px) {
-      main { grid-template-columns: 1fr; }
-      .map-card { position: static; }
-      h1 { font-size: 1.7rem; }
+    .sector-tip {
+      background: rgba(255, 252, 247, 0.94);
+      border: 0;
+      border-radius: 8px;
+      color: #142028;
+      font-family: "Source Sans 3", sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      box-shadow: none;
+      padding: 1px 6px;
+    }
+    .leaflet-tooltip-top.sector-tip::before { display: none; }
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(20, 32, 40, 0.35);
+    }
+    @media (max-width: 900px) {
+      .grid-top, .grid-mid { grid-template-columns: 1fr; }
+      #sector-map { height: 360px; }
+      h1 { font-size: 1.55rem; }
     }
   </style>
 </head>
 <body>
   <header>
-    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
-      <rect width="64" height="64" rx="16" fill="#0f6e73"/>
-      <path d="M18 40c6-14 22-14 28 0" fill="none" stroke="#f3efe4" stroke-width="3" stroke-linecap="round"/>
-      <path d="M16 44h32v6H16z" fill="#e7d3b0"/>
-      <circle cx="32" cy="22" r="5" fill="#f3efe4"/>
-    </svg>
-    <div>
-      <h1>AguaJusta Oeste</h1>
-      <p class="lede">Coordinación de cisternas en Panamá Oeste</p>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="18" fill="#0c5c62"/>
+        <path d="M18 38c6-13 22-13 28 0" fill="none" stroke="#f7f4ee" stroke-width="3" stroke-linecap="round"/>
+        <rect x="16" y="42" width="32" height="7" rx="2" fill="#f0e2c8"/>
+        <circle cx="32" cy="22" r="4.5" fill="#f7f4ee"/>
+      </svg>
+      <div>
+        <h1>AguaJusta Oeste</h1>
+        <p class="lede">Plan de cisternas para Arraiján y La Chorrera</p>
+      </div>
     </div>
     <span id="status-badge">Sin plan</span>
-    <p class="notice">Los avisos a los residentes quedan en una bandeja simulada (SIMULATED) y no se envían por WhatsApp ni por SMS. Si el equipo configuró un número propio, la aprobación puede enviar un solo mensaje de prueba a ese número.</p>
   </header>
+  <p class="notice">Los avisos a los residentes quedan en una bandeja simulada (SIMULATED) y no se envían por WhatsApp ni por SMS. Si el equipo configuró un número propio, la aprobación puede enviar un solo mensaje de prueba a ese número.</p>
+  <nav class="tabs" aria-label="Vistas">
+    <button type="button" class="tab is-on" id="tab-operacion">Operación</button>
+    <button type="button" class="tab" id="tab-coordinacion">Coordinación</button>
+  </nav>
   <main>
-    <div>
-      <section>
-        <h2>Reportes</h2>
-        <p class="hint">Escriba un reporte por línea. El sistema no inventa el lugar, las horas ni la cantidad de personas.</p>
-        <label for="reports-input">Texto de los reportes</label>
-        <textarea id="reports-input" placeholder="Ejemplo: 48 horas sin agua y 15 personas en el chino de Vista Alegre"></textarea>
-        <div class="row">
-          <button type="button" id="load-reports">Cargar y generar borrador</button>
-          <button type="button" class="ghost" id="btn-revisar" disabled>Enviar a revisión</button>
-        </div>
-      </section>
-      <section>
-        <h2>Incidentes</h2>
-        <p class="hint">Los reportes del mismo lugar se unen. Una mención general del sector no se suma si ya hay un lugar concreto.</p>
-        <div id="queue"><p class="empty">Todavía no hay incidentes consolidados.</p></div>
-      </section>
-      <section>
-        <h2>Prioridad</h2>
-        <p class="hint">El puntaje sale de las horas sin agua, de las personas afectadas y de la vulnerabilidad. La cantidad de quejas no lo cambia.</p>
-        <div id="priority"><p class="empty">Todavía no hay prioridades.</p></div>
-      </section>
-      <section>
-        <h2>Ruta propuesta</h2>
-        <p class="hint">La ruta, los litros y el turno los calcula el programa. No son una política del IDAAN.</p>
-        <div id="plan-routes"><p class="empty">Todavía no hay un plan.</p></div>
-      </section>
-      <section>
-        <h2>Sin cisterna</h2>
-        <div id="unserved"><p class="empty">Ningún sector del plan quedó sin cisterna.</p></div>
-      </section>
-      <section>
+    <div id="view-operacion">
+      <div class="grid-top">
+        <section>
+          <h2>Reportes</h2>
+          <p class="hint">Un reporte por línea. El sistema no inventa el lugar, las horas ni la cantidad de personas.</p>
+          <label for="reports-input">Texto de los reportes</label>
+          <textarea id="reports-input" placeholder="Ejemplo: 48 horas sin agua y 15 personas en el chino de Vista Alegre"></textarea>
+          <div class="row">
+            <button type="button" class="action" id="load-reports">Cargar y generar borrador</button>
+            <button type="button" id="btn-revisar" disabled>Enviar a revisión</button>
+          </div>
+        </section>
+        <section class="map-card">
+          <h2>Mapa</h2>
+          <p class="hint">Arraiján y La Chorrera. Las posiciones son anclas de demostración, no un levantamiento ni la red del IDAAN.</p>
+          <div id="sector-map"></div>
+          <div class="legend">
+            <span><i class="swatch" style="background:#0c5c62"></i>Con cisterna</span>
+            <span><i class="swatch" style="background:#8d3b32"></i>Con reportes, sin cisterna</span>
+            <span><i class="swatch" style="background:#8a93a0"></i>Sin reportes</span>
+          </div>
+        </section>
+      </div>
+      <div class="grid-mid" style="margin-top:1rem">
+        <section>
+          <h2>Incidentes</h2>
+          <p class="hint">Los reportes del mismo lugar se unen. Una mención general no se suma si ese sector ya tiene un lugar concreto.</p>
+          <div id="queue"><p class="empty">Todavía no hay incidentes consolidados.</p></div>
+        </section>
+        <section>
+          <h2>Ruta propuesta</h2>
+          <p class="hint">El orden, los litros y el turno los calcula el programa. No son una política del IDAAN.</p>
+          <div id="plan-routes"><p class="empty">Todavía no hay un plan.</p></div>
+          <h2 style="margin-top:1rem">Sin cisterna</h2>
+          <div id="unserved"><p class="empty">Ningún sector del plan quedó sin cisterna.</p></div>
+        </section>
+      </div>
+      <section style="margin-top:1rem">
         <h2>Decisión</h2>
-        <p class="hint">Nadie del sistema aprueba su propio plan. Rechazar un plan ya aprobado cancela los avisos simulados. Un WhatsApp ya enviado no se puede retirar.</p>
+        <p class="hint">La aprobación es de una persona. Anular un plan aprobado cancela los avisos simulados. Un WhatsApp ya enviado no se puede retirar.</p>
         <label for="actor-name">Nombre de quien decide</label>
         <input type="text" id="actor-name" value="coordinador">
         <label for="decision-comment">Comentario</label>
@@ -193,36 +255,37 @@
         <div class="row">
           <button type="button" class="ok" id="btn-aprobar" disabled>Aprobar</button>
           <button type="button" class="danger" id="btn-rechazar" disabled>Rechazar</button>
-          <button type="button" class="ghost" id="btn-corregir" disabled>Corregir</button>
+          <button type="button" id="btn-corregir" disabled>Corregir</button>
         </div>
         <div id="execution"><p class="empty">Todavía no hay una decisión.</p></div>
       </section>
-      <section>
-        <h2>Trazas</h2>
-        <div id="traces"><p class="empty">Todavía no hay trazas.</p></div>
-      </section>
     </div>
-    <div>
-      <section class="map-card">
-        <h2>Mapa de sectores</h2>
-        <p class="hint">Las posiciones son anclas de demostración. No son un levantamiento ni la red del IDAAN.</p>
-        <div id="sector-map"></div>
-        <div class="legend">
-          <span><i class="swatch" style="background:#0f6e73"></i>Con cisterna</span>
-          <span><i class="swatch" style="background:#a24b32"></i>Con reportes, sin cisterna</span>
-          <span><i class="swatch" style="background:#8d8678"></i>Sin reportes</span>
-        </div>
-      </section>
+    <div id="view-coordinacion" hidden>
       <section>
+        <h2>Detalle para coordinación</h2>
+        <p class="hint">Puntaje, trazas de los agentes y sectores que no reportaron. Esta vista no cambia el plan: la decisión se toma en Operación.</p>
+        <h2 style="margin-top:0.5rem">Prioridad</h2>
+        <p class="hint">Horas sin agua, personas afectadas y vulnerabilidad. La cantidad de quejas no cambia el puntaje. Los pesos son de prototipo, no del IDAAN.</p>
+        <div id="priority"><p class="empty">Todavía no hay prioridades.</p></div>
+      </section>
+      <section style="margin-top:1rem">
         <h2>Sectores sin reportes</h2>
         <p class="hint">No entran al plan. El catálogo no trae población ni vulnerabilidad, así que no se les inventa una prioridad.</p>
         <div id="silent-sectors"><p class="empty">Cargando el catálogo.</p></div>
       </section>
+      <section style="margin-top:1rem">
+        <h2>Trazas</h2>
+        <p class="hint">Qué agente actuó y con qué resultado. No incluyen claves ni el texto libre de los reportes completos.</p>
+        <div id="traces"><p class="empty">Todavía no hay trazas.</p></div>
+      </section>
     </div>
   </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (function () {
       var ctx = null;
+      var map = null;
+      var layer = null;
       var NAMES = {
         "Barrio Colon": "Barrio Colón",
         "Arraijan Cabecera": "Arraiján Cabecera",
@@ -235,6 +298,7 @@
         duration: "Duración",
         affected: "Personas afectadas"
       };
+      var DEPOT = { latitude: 8.881, longitude: -79.782, name: "Depósito de demostración" };
 
       function postJson(url, payload) {
         return fetch(url, {
@@ -266,7 +330,15 @@
         for (var i = 0; i < sectors.length; i++) {
           if (sectors[i].sector_id === sectorId) return niceName(sectors[i].name);
         }
-        return String(sectorId || "Sector desconocido").replaceAll("_", " ");
+        return String(sectorId || "Sector desconocido").replace(/_/g, " ");
+      }
+
+      function sectorPoint(sectorId) {
+        var sectors = (ctx && ctx.sectors) || [];
+        for (var i = 0; i < sectors.length; i++) {
+          if (sectors[i].sector_id === sectorId) return sectors[i];
+        }
+        return null;
       }
 
       function stateLabel(state) {
@@ -289,26 +361,43 @@
         document.getElementById("btn-revisar").disabled = state !== "borrador";
       }
 
+      function showView(which) {
+        var operation = which === "operacion";
+        document.getElementById("view-operacion").hidden = !operation;
+        document.getElementById("view-coordinacion").hidden = operation;
+        document.getElementById("tab-operacion").className = operation ? "tab is-on" : "tab";
+        document.getElementById("tab-coordinacion").className = operation ? "tab" : "tab is-on";
+        if (operation && map) {
+          setTimeout(function () { map.invalidateSize(); }, 60);
+        }
+      }
+
       function renderQueue(clusters) {
         var el = document.getElementById("queue");
         if (!clusters || !clusters.length) {
           el.innerHTML = "<p class=\"empty\">Todavía no hay incidentes consolidados.</p>";
           return;
         }
-        var html = "<ul>";
+        var html = "<div class=\"card-list\">";
         clusters.forEach(function (c) {
           var count = c.report_count != null ? c.report_count : 0;
           var people = c.estimated_affected_count != null ? c.estimated_affected_count : "sin dato";
-          var note = "";
-          if (c.geo_precision === "SECTOR") {
-            note = " Mención general del sector: queda para revisión.";
-          }
-          html += "<li><strong>" + esc(sectorName(c.sector_id)) + "</strong> — " +
-            esc(count) + (count === 1 ? " reporte" : " reportes") +
-            ", " + esc(people) + " personas afectadas." + esc(note) + "</li>";
+          var hours = c.max_duration_hours != null ? c.max_duration_hours + " horas sin agua" : "horas sin dato";
+          var note = c.geo_precision === "SECTOR" ? " Mención general del sector, queda para revisión." : "";
+          html += "<article class=\"incident\"><strong>" + esc(sectorName(c.sector_id)) + "</strong>" +
+            esc(count) + (count === 1 ? " reporte" : " reportes") + " · " +
+            esc(people) + " personas · " + esc(hours) + "." + esc(note) + "</article>";
         });
-        html += "</ul>";
+        html += "</div>";
         el.innerHTML = html;
+      }
+
+      function clusterSector(clusterId) {
+        var clusters = (ctx && ctx.clusters) || [];
+        for (var i = 0; i < clusters.length; i++) {
+          if (clusters[i].cluster_id === clusterId) return clusters[i].sector_id;
+        }
+        return clusterId;
       }
 
       function renderPriorities(priorities) {
@@ -322,9 +411,7 @@
           html += "<div class=\"priority-item\">";
           html += "<div><strong>" + esc(sectorName(clusterSector(p.cluster_id))) + "</strong> · puntaje " +
             esc(p.score) + "<span class=\"stub-badge\">" + esc(p.formula_version || "") + "</span></div>";
-          if (p.explanation && p.explanation.indexOf("priority-v1:") !== 0) {
-            html += "<div>" + esc(p.explanation) + "</div>";
-          }
+          if (p.explanation) html += "<div>" + esc(p.explanation) + "</div>";
           if (p.breakdown && p.breakdown.length) {
             html += "<ul>";
             p.breakdown.forEach(function (b) {
@@ -338,12 +425,17 @@
         el.innerHTML = html;
       }
 
-      function clusterSector(clusterId) {
-        var clusters = (ctx && ctx.clusters) || [];
-        for (var i = 0; i < clusters.length; i++) {
-          if (clusters[i].cluster_id === clusterId) return clusters[i].sector_id;
+      function localPlanText(text) {
+        var extra = "";
+        var cut = text.indexOf(" La mención general");
+        if (cut !== -1) {
+          extra = text.slice(cut);
+          text = text.slice(0, cut);
         }
-        return clusterId;
+        if (text.indexOf("priority-v1 plan") === 0 || text.indexOf("Plan priority-v1") === 0) {
+          text = "El programa asigna las cisternas según la capacidad y la jornada. Los litros por persona, la velocidad y el depósito son supuestos de la demostración, no una política del IDAAN.";
+        }
+        return text + extra;
       }
 
       function renderPlan(plan) {
@@ -352,7 +444,7 @@
           el.innerHTML = "<p class=\"empty\">Todavía no hay un plan.</p>";
           return;
         }
-        var html = "<p><strong>Identificador:</strong> " + esc(plan.plan_id || "") + "</p>";
+        var html = "";
         if (plan.explanation) html += "<p>" + esc(localPlanText(plan.explanation)) + "</p>";
         if (plan.assignments && plan.assignments.length) {
           html += "<table><thead><tr><th>Cisterna</th><th>Sector</th><th>Turno</th><th>Litros</th></tr></thead><tbody>";
@@ -366,20 +458,7 @@
           html += "<p><strong>Orden de visita:</strong> " +
             plan.route_order.map(function (id) { return esc(sectorName(id)); }).join(" → ") + "</p>";
         }
-        el.innerHTML = html;
-      }
-
-      function localPlanText(text) {
-        var extra = "";
-        var cut = text.indexOf(" La mención general");
-        if (cut !== -1) {
-          extra = text.slice(cut);
-          text = text.slice(0, cut);
-        }
-        if (text.indexOf("priority-v1 plan") === 0) {
-          text = "Plan de demostración. El programa asigna las cisternas según la capacidad y la jornada. Los litros por persona, la velocidad y el depósito son supuestos, no una política del IDAAN.";
-        }
-        return text + extra;
+        el.innerHTML = html || "<p class=\"empty\">Todavía no hay un plan.</p>";
       }
 
       function renderUnserved(plan) {
@@ -403,8 +482,17 @@
           return;
         }
         el.innerHTML = "<ul>" + silent.map(function (s) {
-          return "<li>" + esc(niceName(s.name)) + " (" + esc(niceName(s.district)) + ")</li>";
+          return "<li>" + esc(niceName(s.name)) + ", " + esc(niceName(s.district)) + "</li>";
         }).join("") + "</ul>";
+      }
+
+      function pin(color) {
+        return L.divIcon({
+          className: "",
+          html: "<div class=\"pin-dot\" style=\"background:" + color + "\"></div>",
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
+        });
       }
 
       function renderMap(sectors, clusters, plan) {
@@ -412,10 +500,19 @@
         var points = (sectors || []).filter(function (s) {
           return typeof s.latitude === "number" && typeof s.longitude === "number";
         });
-        if (!points.length) {
-          el.innerHTML = "<p class=\"empty\">No hay coordenadas de demostración para dibujar el mapa.</p>";
+        if (!window.L) {
+          el.innerHTML = "<p class=\"empty\">El mapa necesita conexión para cargar el callejero.</p>";
           return;
         }
+        if (!map) {
+          map = L.map(el, { scrollWheelZoom: false }).setView([8.91, -79.78], 12);
+          L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap",
+            maxZoom: 19
+          }).addTo(map);
+          layer = L.layerGroup().addTo(map);
+        }
+        layer.clearLayers();
         var reported = {};
         (clusters || []).forEach(function (c) { reported[c.sector_id] = true; });
         var assigned = {};
@@ -424,56 +521,49 @@
           (plan.assignments || []).forEach(function (a) { assigned[a.sector_id] = true; });
           (plan.unserved_demand || []).forEach(function (id) { unserved[id] = true; });
         }
-        var minLat = points[0].latitude, maxLat = points[0].latitude;
-        var minLon = points[0].longitude, maxLon = points[0].longitude;
+        var bounds = [];
         points.forEach(function (s) {
-          minLat = Math.min(minLat, s.latitude);
-          maxLat = Math.max(maxLat, s.latitude);
-          minLon = Math.min(minLon, s.longitude);
-          maxLon = Math.max(maxLon, s.longitude);
-        });
-        var padLat = Math.max(0.02, (maxLat - minLat) * 0.18);
-        var padLon = Math.max(0.02, (maxLon - minLon) * 0.18);
-        minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
-        function xy(lat, lon) {
-          var x = 36 + ((lon - minLon) / (maxLon - minLon)) * 560;
-          var y = 28 + ((maxLat - lat) / (maxLat - minLat)) * 360;
-          return [x, y];
-        }
-        var svg = "<svg viewBox=\"0 0 640 440\" role=\"img\" aria-label=\"Mapa de sectores de Panamá Oeste\">";
-        svg += "<rect width=\"640\" height=\"440\" rx=\"18\" fill=\"#e7f2f1\"/>";
-        svg += "<path d=\"M40 300 C 140 250, 220 340, 340 280 C 460 220, 520 300, 600 240\" fill=\"none\" stroke=\"#b7d5d2\" stroke-width=\"28\" stroke-linecap=\"round\"/>";
-        var placed = [];
-        points.forEach(function (s) {
-          var pos = xy(s.latitude, s.longitude);
-          var color = "#8d8678";
-          if (assigned[s.sector_id]) color = "#0f6e73";
-          else if (reported[s.sector_id] || unserved[s.sector_id]) color = "#a24b32";
-          var label = niceName(s.name);
-          var offsets = [[12, 4], [12, -14], [-8, 18], [12, 18]];
-          var chosen = offsets[0];
-          for (var i = 0; i < offsets.length; i++) {
-            var candidate = { x: pos[0] + offsets[i][0], y: pos[1] + offsets[i][1] };
-            var crowded = placed.some(function (p) {
-              return Math.abs(p.x - candidate.x) < 96 && Math.abs(p.y - candidate.y) < 15;
-            });
-            if (!crowded) {
-              chosen = offsets[i];
-              break;
-            }
+          var color = "#8a93a0";
+          var status = "Sin reportes en este lote";
+          if (assigned[s.sector_id]) {
+            color = "#0c5c62";
+            status = "Con cisterna en el plan";
+          } else if (reported[s.sector_id] || unserved[s.sector_id]) {
+            color = "#8d3b32";
+            status = "Con reportes, sin cisterna";
           }
-          var textX = pos[0] + chosen[0];
-          var textY = pos[1] + chosen[1];
-          if (textX > 520) textX = pos[0] - 8;
-          placed.push({ x: textX, y: textY });
-          svg += "<circle cx=\"" + pos[0].toFixed(1) + "\" cy=\"" + pos[1].toFixed(1) + "\" r=\"7\" fill=\"" + color + "\"/>";
-          var anchor = textX < pos[0] ? "end" : "start";
-          svg += "<text x=\"" + textX.toFixed(1) + "\" y=\"" + textY.toFixed(1) +
-            "\" text-anchor=\"" + anchor + "\" font-size=\"13\" font-family=\"Atkinson Hyperlegible, sans-serif\" fill=\"#1c2430\">" +
-            esc(label) + "</text>";
+          var marker = L.marker([s.latitude, s.longitude], { icon: pin(color) });
+          marker.bindTooltip(niceName(s.name), {
+            permanent: true,
+            direction: "top",
+            offset: [0, -8],
+            className: "sector-tip"
+          });
+          marker.addTo(layer);
+          bounds.push([s.latitude, s.longitude]);
         });
-        svg += "</svg>";
-        el.innerHTML = svg;
+        var line = [[DEPOT.latitude, DEPOT.longitude]];
+        if (plan && plan.route_order) {
+          plan.route_order.forEach(function (id) {
+            var point = sectorPoint(id);
+            if (point && typeof point.latitude === "number") line.push([point.latitude, point.longitude]);
+          });
+          line.push([DEPOT.latitude, DEPOT.longitude]);
+        }
+        if (line.length > 2) {
+          L.polyline(line, { color: "#0c5c62", weight: 3, opacity: 0.85 }).addTo(layer);
+        }
+        L.marker([DEPOT.latitude, DEPOT.longitude], { icon: pin("#142028") })
+          .bindPopup("<strong>" + esc(DEPOT.name) + "</strong><br>Cerca de La Chorrera. No es un patio real del IDAAN.")
+          .addTo(layer);
+        bounds.push([DEPOT.latitude, DEPOT.longitude]);
+        if (bounds.length) {
+          var frame = bounds.slice();
+          setTimeout(function () {
+            map.invalidateSize();
+            map.fitBounds(frame, { padding: [40, 40], maxZoom: 13 });
+          }, 80);
+        }
       }
 
       function renderTraces(traces) {
@@ -498,16 +588,16 @@
         }
         var detail = execution.detail || "";
         var known = {
-          "plan approved and dispatch queued": "Plan aprobado. Los avisos a los residentes quedaron en la bandeja simulada.",
-          "plan rejected": "Plan rechazado. No se enviaron avisos.",
-          "plan returned to borrador": "El plan volvió a borrador.",
-          "plan is already approved": "Ese plan ya estaba aprobado."
+          "plan aprobado y avisos encolados": "Plan aprobado. Los avisos a los residentes quedaron en la bandeja simulada.",
+          "plan rechazado": "Plan rechazado. No se enviaron avisos.",
+          "plan devuelto a borrador": "El plan volvió a borrador.",
+          "el plan ya estaba aprobado": "Ese plan ya estaba aprobado."
         };
         var text = known[detail] || detail;
-        if (detail.indexOf("whatsapp sent to team number") !== -1) {
+        if (detail.indexOf("WhatsApp de prueba enviado") !== -1 && text.indexOf("mensaje de prueba") === -1) {
           text += " Se envió un mensaje de prueba al número del equipo.";
         }
-        if (detail.indexOf("whatsapp send failed") !== -1) {
+        if (detail.indexOf("falló el envío") !== -1 && text.indexOf("No se pudo") === -1) {
           text += " No se pudo enviar el mensaje de prueba.";
         }
         el.innerHTML = "<p>" + esc(text) + "</p>";
@@ -531,9 +621,16 @@
         return fetch("/api/context").then(function (r) { return r.json(); }).then(applyContext);
       }
 
+      document.getElementById("tab-operacion").addEventListener("click", function () { showView("operacion"); });
+      document.getElementById("tab-coordinacion").addEventListener("click", function () { showView("coordinacion"); });
+
       document.getElementById("load-reports").addEventListener("click", function () {
         var raw = document.getElementById("reports-input").value;
         var texts = raw.split("\n").map(function (l) { return l.trim(); }).filter(function (l) { return l.length > 0; });
+        if (!texts.length) {
+          alert("Escriba al menos un reporte.");
+          return;
+        }
         postJson("/api/reports", { texts: texts }).then(applyContext).catch(function (e) { alert(e.message); });
       });
 
@@ -553,13 +650,12 @@
             return;
           }
         }
-        var payload = {
+        postJson("/api/decision", {
           plan_id: ctx.plan.plan_id,
           action: action,
           actor: document.getElementById("actor-name").value.trim() || "coordinador",
           comment: document.getElementById("decision-comment").value
-        };
-        postJson("/api/decision", payload).then(applyContext).catch(function (e) { alert(e.message); });
+        }).then(applyContext).catch(function (e) { alert(e.message); });
       }
 
       document.getElementById("btn-aprobar").addEventListener("click", function () { sendDecision("APPROVE"); });

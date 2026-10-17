@@ -16,6 +16,7 @@ from pathlib import Path
 from src.coordinator.app import serve
 
 _PANEL_PATH = Path(__file__).resolve().parents[1] / "src" / "coordinator" / "web" / "panel.html"
+_USER_PATH = Path(__file__).resolve().parents[1] / "src" / "coordinator" / "web" / "usuario.html"
 
 _VISTA_LINES = [
     "48 horas sin agua y 15 personas por el chino de Vista Alegre",
@@ -90,16 +91,37 @@ class CoordinatorAppTests(unittest.TestCase):
     def test_panel_html_ids_match_get_element_by_id(self) -> None:
         html = _PANEL_PATH.read_text(encoding="utf-8")
         self.assertIn("btn-aprobar", html)
+        self.assertNotIn('id="btn-camara"', html)
+        self.assertNotIn('id="btn-microfono"', html)
         ids_in_js = set(re.findall(r'getElementById\("([^"]+)"\)', html))
         for element_id in ids_in_js:
             self.assertIn(f'id="{element_id}"', html, msg=f"missing id={element_id}")
 
-    def test_get_root_returns_html(self) -> None:
+    def test_user_html_ids_match_get_element_by_id(self) -> None:
+        html = _USER_PATH.read_text(encoding="utf-8")
+        for forbidden in ("btn-aprobar", "btn-rechazar", "btn-corregir", "btn-revisar", "SIMULATED"):
+            self.assertNotIn(forbidden, html)
+        for required in ("btn-camara", "btn-microfono", "btn-camara-frontal", "btn-camara-trasera"):
+            self.assertIn(required, html)
+        ids_in_js = set(re.findall(r'getElementById\("([^"]+)"\)', html))
+        for element_id in ids_in_js:
+            self.assertIn(f'id="{element_id}"', html, msg=f"missing id={element_id}")
+
+    def test_get_root_returns_the_public_page(self) -> None:
         req = urllib.request.Request(_url(self.base, "/"), method="GET")
+        with urllib.request.urlopen(req) as resp:
+            html = resp.read().decode("utf-8")
+        self.assertIn("btn-camara-frontal", html)
+        self.assertIn("btn-microfono", html)
+        self.assertNotIn("btn-aprobar", html)
+
+    def test_coordinator_page_keeps_the_decision(self) -> None:
+        req = urllib.request.Request(_url(self.base, "/coordinacion"), method="GET")
         with urllib.request.urlopen(req) as resp:
             html = resp.read().decode("utf-8")
         self.assertIn("btn-aprobar", html)
         self.assertIn("SIMULATED", html)
+        self.assertNotIn('id="btn-camara"', html)
 
     def test_context_before_reports(self) -> None:
         status, ctx = _get_json(self.base, "/api/context")
@@ -212,7 +234,7 @@ class CoordinatorAppTests(unittest.TestCase):
         try:
             conn.putrequest("POST", "/api/reports")
             conn.putheader("Content-Type", "application/json")
-            conn.putheader("Content-Length", str(256 * 1024 + 1))
+            conn.putheader("Content-Length", str(8 * 1024 * 1024 + 1))
             conn.endheaders()
             resp = conn.getresponse()
             self.assertEqual(resp.status, 413)

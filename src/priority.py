@@ -48,7 +48,7 @@ _VULNERABILITY_LABEL = {
 
 def _duration_points(hours: int | None) -> tuple[float, str]:
     if hours is None:
-        return 0.0, "sin dato de duracion"
+        return 0.0, "sin dato de duración"
     if hours < 0:
         raise ValueError("max_duration_hours must be >= 0")
     capped = min(float(hours), MAX_HOURS)
@@ -63,7 +63,7 @@ def _affected_points(count: int | None) -> tuple[float, str]:
         raise ValueError("estimated_affected_count must be >= 0")
     capped = min(count, MAX_AFFECTED)
     points = round(capped / MAX_AFFECTED * WEIGHT_AFFECTED, 2)
-    return points, f"{count} afectados est. (tope {MAX_AFFECTED})"
+    return points, f"{count} personas afectadas (tope {MAX_AFFECTED})"
 
 
 def _vulnerability_points(

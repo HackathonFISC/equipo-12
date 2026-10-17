@@ -26,6 +26,7 @@ from src.contracts import (
 )
 from src.ingestion.catalog import resolve_sector_candidate, validate_fixtures
 from src.ingestion.geolocator import geolocate_report
+from src.ingestion.media import MediaReading, take_media, read_citizen_media
 from src.ingestion.guardrails import (
     enforce_post_extraction_guardrails,
     extract_text_signals,
@@ -305,6 +306,47 @@ def _tool_traces(report: ReportInput, messages: list[ModelMessage]) -> list[Trac
     return traces
 
 
+def _stamp_media(
+    result: IngestionResult,
+    media_trace: TraceEntry | None,
+    notes: tuple[str, ...],
+) -> IngestionResult:
+    traces = list(result.traces)
+    if media_trace is not None:
+        traces.insert(0, media_trace)
+    uncertainties = list(result.extracted.uncertainties)
+    for note in notes:
+        if note not in uncertainties:
+            uncertainties.append(note)
+    extracted = result.extracted
+    if notes:
+        extracted = extracted.model_copy(
+            update={"uncertainties": uncertainties, "requiere_revision": True}
+        )
+    return result.model_copy(update={"extracted": extracted, "traces": traces})
+
+
+def _media_needs_review(
+    report: ReportInput,
+    reading: MediaReading,
+    media_trace: TraceEntry,
+) -> IngestionResult:
+    reason = reading.uncertainties[0] if reading.uncertainties else "adjunto sin texto"
+    extracted = ReportExtracted(
+        report_id=report.report_id,
+        candidate_sector_id=SectorId.UNKNOWN,
+        evidence_type=EvidenceType.UNVERIFIED_CLAIM,
+        confidence=0.0,
+        requiere_revision=True,
+        guardrail_status=GuardrailStatus.NEEDS_REVIEW,
+        guardrail_reason=reason,
+        provenance=report.provenance,
+        vulnerability_flags=[VulnerabilityFlag.NINGUNA],
+        uncertainties=list(reading.uncertainties),
+    )
+    return IngestionResult(extracted=extracted, traces=[media_trace])
+
+
 def ingest_report(
     report: ReportInput,
     *,
@@ -318,6 +360,33 @@ def ingest_report(
     ERROR traces with requiere_revision. There is no retry loop.
     """
     runtime = config or load_runtime_config()
+    attachment = take_media(report.report_id)
+    media_trace: TraceEntry | None = None
+    media_notes: tuple[str, ...] = ()
+    if attachment is not None:
+        reading = read_citizen_media(attachment)
+        media_trace = _trace(
+            report.report_id,
+            reading.action,
+            attachment.filename,
+            reading.text or (reading.uncertainties[0] if reading.uncertainties else ""),
+            "ok",
+        )
+        media_notes = reading.uncertainties
+        if reading.outside:
+            rejected = _rejected(
+                report,
+                GuardrailStatus.REJECTED_OUT_OF_SCOPE,
+                reading.uncertainties[0] if reading.uncertainties else "fuera de alcance",
+            )
+            rejected.traces.insert(0, media_trace)
+            return rejected
+        combined = " ".join(
+            part.strip() for part in (report.raw_text, reading.text) if part and part.strip()
+        )
+        if not combined:
+            return _media_needs_review(report, reading, media_trace)
+        report = report.model_copy(update={"raw_text": combined})
     try:
         validate_fixtures()
     except ValueError as exc:
@@ -325,7 +394,7 @@ def ingest_report(
 
     inspection = inspect_input_guardrails(report.raw_text)
     if inspection.status is not GuardrailStatus.VALID:
-        return _rejected(report, inspection.status, inspection.reason)
+        return _stamp_media(_rejected(report, inspection.status, inspection.reason), media_trace, ())
 
     selected: Model | str
     if model is not None:
@@ -383,8 +452,12 @@ def ingest_report(
             "ok",
         )
     )
-    return IngestionResult(
-        extracted=extracted,
-        traces=traces,
-        usage_requests=result.usage.requests,
+    return _stamp_media(
+        IngestionResult(
+            extracted=extracted,
+            traces=traces,
+            usage_requests=result.usage.requests,
+        ),
+        media_trace,
+        media_notes,
     )

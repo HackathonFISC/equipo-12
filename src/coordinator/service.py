@@ -6,6 +6,7 @@ for a new batch of reports.
 
 from __future__ import annotations
 
+import base64
 import json
 from datetime import UTC, datetime
 
@@ -25,6 +26,7 @@ from src.coordinator.store import ApprovalStore
 from src.ingestion.agent import IngestionResult, ingest_report
 from src.ingestion.catalog import sector_map
 from src.ingestion.deduplicator import deduplicate_reports
+from src.ingestion.media import CitizenMedia, remember_media
 from src.orchestration.agent import orchestrate
 
 _FIXED_REPORT_TS = datetime(2026, 10, 16, 12, 0, tzinfo=UTC)
@@ -80,23 +82,19 @@ class CoordinatorService:
             results.append(result)
         return results
 
-    def run_reports(self, texts: list[str]) -> EngineOutput:
+    def run_reports(
+        self,
+        texts: list[str],
+        media: list[dict[str, object]] | None = None,
+    ) -> EngineOutput:
         """Run the orchestrator for one batch and store the draft. Does not approve it."""
         if self._plan_id is not None:
             raise ValueError(f"plan already exists: {self._plan_id}")
         reports: list[ReportInput] = []
         for text in texts:
-            report_id = f"svc-{self._next_report_num}"
-            self._next_report_num += 1
-            reports.append(
-                ReportInput(
-                    report_id=report_id,
-                    raw_text=text,
-                    source_channel=_SOURCE_CHANNEL,
-                    provenance=_PROVENANCE,
-                    timestamp=_FIXED_REPORT_TS,
-                )
-            )
+            reports.append(self._report_input(text))
+        for item in media or []:
+            reports.append(self._report_from_media(item))
         result = orchestrate(reports)
         self._extracted = list(result.extracted)
         self._traces.extend(result.traces)
@@ -107,6 +105,35 @@ class CoordinatorService:
         )
         self._persist(output, list(result.clusters))
         return output
+
+    def _report_input(self, text: str) -> ReportInput:
+        report_id = f"svc-{self._next_report_num}"
+        self._next_report_num += 1
+        return ReportInput(
+            report_id=report_id,
+            raw_text=text,
+            source_channel=_SOURCE_CHANNEL,
+            provenance=_PROVENANCE,
+            timestamp=_FIXED_REPORT_TS,
+        )
+
+    def _report_from_media(self, item: dict[str, object]) -> ReportInput:
+        kind = item.get("kind")
+        encoded = item.get("content_base64")
+        filename = item.get("filename")
+        if kind not in ("audio", "image") or not isinstance(encoded, str) or not encoded.strip():
+            raise ValueError("media item is incomplete")
+        safe_name = str(filename or "adjunto").replace("\\", "/").split("/")[-1][:80]
+        try:
+            data = base64.b64decode(encoded, validate=True)
+        except Exception as exc:
+            raise ValueError("media item is not valid base64") from exc
+        report = self._report_input("")
+        remember_media(
+            report.report_id,
+            CitizenMedia(str(kind), safe_name, data, _optional_coord(item.get("latitude")), _optional_coord(item.get("longitude"))),
+        )
+        return report
 
     def consolidate(self) -> list[NormalizedIncidentCluster]:
         return deduplicate_reports(self._extracted)
@@ -207,6 +234,12 @@ class CoordinatorService:
         else:
             self._state = transition(PlanState.PENDIENTE, decision.action)
         return result
+
+
+def _optional_coord(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return float(value)
 
 
 __all__ = ["CoordinatorService"]
