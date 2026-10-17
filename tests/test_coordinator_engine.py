@@ -17,7 +17,9 @@ from src.contracts import (
     ProvenanceTag,
     SectorId,
 )
+from src.contracts import DecisionAction
 from src.coordinator.engine import demo_engine
+from src.coordinator.state import TRANSITIONS, PlanState
 
 
 def _cluster(**overrides: object) -> NormalizedIncidentCluster:
@@ -49,6 +51,64 @@ def _float_field_names(model_cls: type[BaseModel]) -> set[str]:
 
 
 class DemoEngineTests(unittest.TestCase):
+    def test_transition_map_legal_edges(self) -> None:
+        human = {
+            (PlanState.BORRADOR, None, False): PlanState.PENDIENTE,
+            (PlanState.PENDIENTE, DecisionAction.APPROVE, False): PlanState.APROBADO,
+            (PlanState.PENDIENTE, DecisionAction.REJECT, False): PlanState.RECHAZADO,
+            (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+        }
+        failure = {
+            (PlanState.BORRADOR, None, True): PlanState.ERROR_PARCIAL,
+            (PlanState.PENDIENTE, None, True): PlanState.ERROR_PARCIAL,
+        }
+        self.assertEqual(human | failure, dict(TRANSITIONS))
+
+    def test_stub_engine_order_scoring_and_assignments(self) -> None:
+        clusters = [
+            _cluster(
+                cluster_id="tie-b",
+                max_duration_hours=12,
+                estimated_affected_count=5,
+                sector_id=SectorId.CHORRERA_BARRIO_BALBOA,
+            ),
+            _cluster(
+                cluster_id="high",
+                max_duration_hours=30,
+                estimated_affected_count=20,
+                sector_id=SectorId.ARRAIJAN_BURUNGA,
+            ),
+            _cluster(
+                cluster_id="tie-a",
+                max_duration_hours=12,
+                estimated_affected_count=3,
+                sector_id=SectorId.ARRAIJAN_CABECERA,
+            ),
+        ]
+        out = demo_engine(clusters)
+        by_id = {p.cluster_id: p for p in out.priorities}
+        self.assertEqual(by_id["high"].score, 50.0)
+        self.assertEqual(by_id["tie-a"].score, 15.0)
+        self.assertEqual(by_id["tie-b"].score, 17.0)
+
+        expected_route = [
+            SectorId.ARRAIJAN_BURUNGA.value,
+            SectorId.ARRAIJAN_CABECERA.value,
+            SectorId.CHORRERA_BARRIO_BALBOA.value,
+        ]
+        self.assertEqual(out.plan.route_order, expected_route)
+        self.assertEqual(len(out.plan.assignments), 3)
+        for idx, assignment in enumerate(out.plan.assignments, start=1):
+            self.assertEqual(assignment.vehicle_id, "cisterna-1")
+            self.assertEqual(assignment.order, idx)
+        self.assertEqual(out.plan.assignments[0].volume_liters, 20)
+        self.assertEqual(out.plan.assignments[1].volume_liters, 3)
+        self.assertEqual(out.plan.assignments[2].volume_liters, 5)
+        self.assertEqual(
+            [a.sector_id.value for a in out.plan.assignments],
+            expected_route,
+        )
+
     def test_determinism_same_input(self) -> None:
         clusters = [
             _cluster(cluster_id="a", max_duration_hours=10, sector_id=SectorId.ARRAIJAN_BURUNGA),

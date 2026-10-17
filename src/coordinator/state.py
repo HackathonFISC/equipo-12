@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Final
 
 from src.contracts import DecisionAction
 
@@ -15,7 +16,16 @@ class PlanState(StrEnum):
     ERROR_PARCIAL = "ERROR_PARCIAL"
 
 
-_TERMINAL = frozenset({PlanState.APROBADO, PlanState.RECHAZADO, PlanState.ERROR_PARCIAL})
+TransitionKey = tuple[PlanState, DecisionAction | None, bool]
+
+TRANSITIONS: Final[dict[TransitionKey, PlanState]] = {
+    (PlanState.BORRADOR, None, False): PlanState.PENDIENTE,
+    (PlanState.PENDIENTE, DecisionAction.APPROVE, False): PlanState.APROBADO,
+    (PlanState.PENDIENTE, DecisionAction.REJECT, False): PlanState.RECHAZADO,
+    (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+    (PlanState.BORRADOR, None, True): PlanState.ERROR_PARCIAL,
+    (PlanState.PENDIENTE, None, True): PlanState.ERROR_PARCIAL,
+}
 
 
 def transition(
@@ -25,25 +35,15 @@ def transition(
     failed: bool = False,
 ) -> PlanState:
     if failed:
-        if current in (PlanState.BORRADOR, PlanState.PENDIENTE):
-            return PlanState.ERROR_PARCIAL
+        key: TransitionKey = (current, None, True)
+        if key in TRANSITIONS:
+            return TRANSITIONS[key]
         raise ValueError(f"cannot enter ERROR_PARCIAL from {current}")
 
-    if current == PlanState.BORRADOR:
-        if action is None:
-            return PlanState.PENDIENTE
+    key = (current, action, False)
+    if key not in TRANSITIONS:
+        if current in (PlanState.APROBADO, PlanState.RECHAZADO, PlanState.ERROR_PARCIAL):
+            raise ValueError(f"illegal transition from terminal state {current}")
         raise ValueError(f"illegal transition from {current} with action {action}")
 
-    if current == PlanState.PENDIENTE:
-        if action == DecisionAction.APPROVE:
-            return PlanState.APROBADO
-        if action == DecisionAction.REJECT:
-            return PlanState.RECHAZADO
-        if action == DecisionAction.CORRECT:
-            return PlanState.BORRADOR
-        raise ValueError(f"illegal transition from {current} with action {action}")
-
-    if current in _TERMINAL:
-        raise ValueError(f"illegal transition from terminal state {current}")
-
-    raise ValueError(f"unknown state {current}")
+    return TRANSITIONS[key]

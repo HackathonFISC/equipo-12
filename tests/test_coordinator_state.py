@@ -5,10 +5,21 @@ from __future__ import annotations
 import unittest
 
 from src.contracts import DecisionAction
-from src.coordinator.state import PlanState, transition
+from src.coordinator.state import TRANSITIONS, PlanState, transition
 
 
 class PlanStateTransitionTests(unittest.TestCase):
+    def test_transition_map_exact_legal_edges(self) -> None:
+        expected = {
+            (PlanState.BORRADOR, None, False): PlanState.PENDIENTE,
+            (PlanState.PENDIENTE, DecisionAction.APPROVE, False): PlanState.APROBADO,
+            (PlanState.PENDIENTE, DecisionAction.REJECT, False): PlanState.RECHAZADO,
+            (PlanState.PENDIENTE, DecisionAction.CORRECT, False): PlanState.BORRADOR,
+            (PlanState.BORRADOR, None, True): PlanState.ERROR_PARCIAL,
+            (PlanState.PENDIENTE, None, True): PlanState.ERROR_PARCIAL,
+        }
+        self.assertEqual(TRANSITIONS, expected)
+
     def test_legal_human_transitions(self) -> None:
         self.assertIs(
             transition(PlanState.BORRADOR, None),
