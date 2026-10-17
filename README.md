@@ -85,10 +85,51 @@ flowchart LR
 | Persistencia | SQLite transaccional (`BEGIN IMMEDIATE`) |
 | Servidor HTTP | `ThreadingHTTPServer` (stdlib) |
 | Mapa | Leaflet + Leaflet.heat + respaldo SVG offline |
+| Frontend | Astro 7 + islas React 19 + Tailwind (`web/`, build con Bun) |
+| Bot WhatsApp | Express 5 sobre Bun (`whatsapp-bot/`) |
 
 **Etiquetas de procedencia obligatorias:** `SYNTHETIC_DEMO`, `ASSUMPTION`, `OFFICIAL_SOURCE`.
 
 Detalle de fixtures, anclas y límites de datos: [`docs/FUENTES_Y_DATOS.md`](docs/FUENTES_Y_DATOS.md).
+
+## Frontend (`web/`)
+
+La UI que se sirve por defecto es el build de **Astro 7 + islas React** en `web/dist`:
+
+- `/` — landing del proyecto.
+- `/ciudadano` — `CitizenApp`: wizard de reporte en 4 pasos, GPS + anclas, resultado de los agentes en vivo, consulta con bandeja `SIMULATED`.
+- `/admin` y `/coordinacion` — `AdminApp`: mapa operativo (Leaflet + calor), desglose `priority-v1`, rutas OR-Tools, trazas y compuerta de aprobación humana (`PlanGate`).
+
+El HTML heredado (`UI=legacy` → `panel.html` y `usuario.html`) sigue disponible como respaldo; si falta una página del build, la ruta cae al HTML viejo.
+
+```bash
+cd web && bun install && bun run build
+```
+
+La imagen de producción copia `web/dist`; no requiere Node en el contenedor de Python.
+
+## Bot de WhatsApp (`whatsapp-bot/`)
+
+Servicio **Express 5 sobre Bun** (`whatsapp-bot/src/server.js`) detrás del perfil `whatsapp` de Compose:
+
+- `GET /webhook` — verificación `hub.verify_token` de Meta Cloud API.
+- `POST /webhook` — valida firma `X-Hub-Signature-256` (si hay `WHATSAPP_APP_SECRET`), deduplica por `message.id` y responde con un acuse automático (`src/services/conversation.js`).
+
+**Límite honesto:** el bot acusa recibo al ciudadano; **no** ingiere el texto en el pipeline de agentes. El reporte entra por `/ciudadano`, `/admin` o `POST /api/reports`. Variables: `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` (o `PHONE_NUMBER_ID`), `WHATSAPP_VERIFY_TOKEN`; opcional `WHATSAPP_APP_SECRET`. Sin las tres primeras el proceso no arranca y el perfil `whatsapp` no se levanta.
+
+## Despliegue (`deploy/`, `compose.yml`)
+
+Producción en Docker Compose sobre `k3s-cp-de-01`, publicada en `https://equipo12.belta.dev/` (Caddy del nodo → sidecar loopback `127.0.0.1:18081` panel, `127.0.0.1:18082` webhook):
+
+```bash
+./deploy/up.sh              # rsync del repo (sin .env/.git) + docker compose up -d --build
+./deploy/up.sh --dry-run    # ver el rsync sin aplicar
+curl -s https://equipo12.belta.dev/api/health
+```
+
+- `MODO`, `MODEL_NAME` y `OPENAI_API_KEY` se leen del `.env` del nodo (`~/equipo-12/.env`, jamás sincronizado por rsync); con `MODO=live` los agentes llaman a la API real del proveedor, con `test` (default) usan stubs determinísticos y no gastan cuota.
+- El perfil `whatsapp` solo se activa si el `.env` del nodo tiene `WHATSAPP_TOKEN`, `WHATSAPP_VERIFY_TOKEN` y el ID de teléfono.
+- Secretos nunca van en imágenes, git ni logs; la app además redacta patrones de claves en las trazas (`src/config.py`).
 
 **Límites explícitos del prototipo:**
 
@@ -112,6 +153,7 @@ Variables en `.env.example` (placeholders; **`MODO=test`** por defecto):
 | `MODEL_NAME` | Modelo para agentes en modo live |
 | `GOOGLE_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | Proveedores LLM (solo modo live) |
 | `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_TO` | Aviso opcional al equipo tras `APPROVE` |
+| `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | Webhook del bot (`whatsapp-bot/`): verificación de Meta y firma |
 
 Arranque del servidor:
 
@@ -124,7 +166,7 @@ Base: `http://127.0.0.1:8000/`
 | Ruta | Descripción |
 |------|-------------|
 | `/ciudadano` | Portal ciudadano (asistente, GPS, trazas de agentes) |
-| `/admin` | Centro de coordinación (mapa, prioridad, aprobación) |
+| `/admin`, `/coordinacion` | Centro de coordinación (mapa, prioridad, aprobación) |
 | `GET /api/health` | Estado del servicio |
 | `GET /api/context` | Snapshot para la UI |
 | `POST /api/preload` | Precarga fixtures de demo |
@@ -136,7 +178,7 @@ Base: `http://127.0.0.1:8000/`
 
 ## Evals
 
-Tres suites determinísticas (**44 casos**, ejecutadas en **`MODO=test`**) más **177 pruebas unitarias**.
+Tres suites determinísticas (**44 casos**, ejecutadas en **`MODO=test`**) más **191 pruebas unitarias**.
 
 ### Suite de ingesta (18 casos)
 
@@ -189,11 +231,11 @@ Salida: `evals/results_supervision.json`
 TMP=/tmp MODO=test .venv/bin/python -m unittest discover -s tests -v
 ```
 
-**177** pruebas OK (verificar en cada corrida).
+**191** pruebas OK (verificar en cada corrida).
 
 ## Bitácora de IA
 
-Con asistencia de IA (Cursor, Claude y agentes de código) se construyeron: contratos Pydantic compartidos, tres agentes en **`MODO=test`** con `FunctionModel` reproducible, motor **`priority-v1`**, integración **OR-Tools**, orquestador secuencial, portal dual v10 (`/ciudadano` + `/admin`) y las tres suites de evals (44 casos).
+Con asistencia de IA (Cursor, Claude y agentes de código) se construyeron: contratos Pydantic compartidos, tres agentes en **`MODO=test`** con `FunctionModel` reproducible, motor **`priority-v1`**, integración **OR-Tools**, orquestador secuencial, portal dual v10 (`/ciudadano` + `/admin`), frontend Astro + islas React con kit Tremor adaptado, bot de WhatsApp con webhook firmado, despliegue Compose en `k3s-cp-de-01` y las tres suites de evals (44 casos).
 
 **Auditado y corregido manualmente por el equipo:**
 
@@ -202,6 +244,8 @@ Con asistencia de IA (Cursor, Claude y agentes de código) se construyeron: cont
 - Disyunciones ponderadas en OR-Tools para lotes con sobrecupo de demanda.
 - Limpieza de **event loops** en hilos (Python 3.14) en `src/orchestration/agent.py`.
 - Bloqueo de outbox hasta **`APPROVE`**; paridad de IDs HTML/JS en el panel.
+- Rediseño OCI del panel (`web/`) con compuerta humana y consola de trazas.
+- Guardas `_reviewable_plan` que impiden revisar planes vacíos o `ERROR:`.
 
 Metodología detallada y registro por componente: [`docs/METODOLOGIA_Y_BITACORA_IA.md`](docs/METODOLOGIA_Y_BITACORA_IA.md). Diagrama de supervisión: [`docs/diagrama_supervision.md`](docs/diagrama_supervision.md).
 
