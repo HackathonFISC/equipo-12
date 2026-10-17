@@ -67,7 +67,7 @@ export function LocationDialog({
       <h2 className="font-display text-xl font-semibold text-ink">Ubicación del reporte</h2>
       <p className="mt-1 text-sm text-muted">
         Use GPS, elija un punto de referencia o escriba coordenadas. Las anclas son de
-        demostración <Badge variant="synthetic">ASSUMPTION</Badge>.
+        demostración <Badge variant="synthetic">DATOS DE EJEMPLO</Badge>.
       </p>
 
       <div className="mt-3 flex flex-wrap gap-2">

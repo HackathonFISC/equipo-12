@@ -47,33 +47,41 @@ export function ExtractionDialog({
 
       <div className="mt-3 space-y-2">
         <AgentCard
-          title="Agente 1 · Ingesta"
+          title="Ingesta · Recibe y ordena tu reporte"
           lines={[
             { label: "Sector", value: sector },
-            { label: "Horas", value: hours },
-            { label: "Afectados", value: people },
-            { label: "Vulnerabilidad", value: vulnerabilities || "ninguna" },
+            { label: "Horas sin agua", value: hours },
+            { label: "Personas afectadas", value: people },
+            { label: "Necesidad especial", value: vulnerabilities || "ninguna indicada" },
           ]}
         />
         <AgentCard
-          title="Agente 2 · Evaluación"
+          title="Evaluación · Mide la urgencia del caso"
           lines={[
-            { label: "Cluster", value: clusterId || "—" },
-            { label: "Prioridad", value: score },
-            { label: "Incertidumbre", value: uncertainties || "sin datos" },
+            { label: "Caso agrupado", value: clusterId ? "sí, unido a reportes del mismo lugar" : "todavía no" },
+            { label: "Urgencia (0 a 100)", value: score },
+            { label: "Lo que no pudimos confirmar", value: uncertainties || "nada: los datos alcanzan" },
           ]}
         />
         <AgentCard
-          title="Agente 3 · Planificación"
+          title="Planificación · Propone el reparto de cisternas"
           lines={[
-            { label: "Estado del plan", value: "ver panel de coordinación" },
+            { label: "Cómo va", value: "todavía lo revisa una persona de la coordinación" },
           ]}
         />
       </div>
 
+      <p className="mt-3 rounded-md bg-sunken p-3 text-sm text-ink">
+        <strong>Guarda tu código: {reportId}.</strong> Es tu llave para consultar.
+        En esta demostración <strong>no te llegará ningún mensaje por WhatsApp ni por
+        teléfono</strong>: para saber si tu sector recibe cisterna, entra a «Consultar
+        mi reporte» con ese código. El aviso de tu sector aparecerá ahí cuando la
+        coordinación apruebe el reparto.
+      </p>
       <p className="mt-3 text-xs text-muted">
-        El puntaje es determinístico (priority-v1). Ningún agente aprueba el plan: la
-        compuerta es humana.
+        La urgencia se calcula con una fórmula fija (horas sin agua, personas y
+        vulnerabilidad): reportar lo mismo muchas veces no la sube. Ningún programa
+        aprueba el reparto: lo decide una persona.
       </p>
       <div className="mt-4 flex justify-end">
         <Button type="button" variant="secondary" onClick={onClose}>

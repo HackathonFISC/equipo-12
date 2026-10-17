@@ -170,7 +170,7 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
           : null;
         const mergedNote =
           cluster && cluster.report_count > 1
-            ? "Su reporte se fusionó con reportes previos del mismo sector (≤ 800 m). Más quejas no suben la prioridad."
+            ? "Tu reporte se unió a reportes del mismo problema en tu sector (a menos de 800 m). Sigue contando, una sola vez: enviarlo de nuevo no sube la urgencia."
             : null;
         setExtraction({
           reportId,
@@ -179,12 +179,24 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
             : "Sector sin clasificar",
           place: report?.raw_location_mention ?? "",
           hours:
-            report?.duration_hours != null ? `${report.duration_hours} h` : "sin dato",
+            report?.duration_hours != null ? `${report.duration_hours} h` : "no indicado en tu reporte",
           people:
             report?.affected_count != null
               ? String(report.affected_count)
-              : "sin dato",
-          vulnerabilities: (report?.vulnerability_flags ?? []).join(", "),
+              : "no indicado en tu reporte",
+          vulnerabilities: (report?.vulnerability_flags ?? [])
+            .map((flag) =>
+              flag === "ADULTOS_MAYORES"
+                ? "Adultos mayores"
+                : flag === "EMBARAZADAS"
+                  ? "Embarazadas"
+                  : flag === "ENFERMEDAD"
+                    ? "Enfermedad"
+                    : flag === "INFANTES"
+                      ? "Niñez"
+                      : flag,
+            )
+            .join(", "),
           uncertainties: mergedNote
             ? `${mergedNote} ${(report?.uncertainties ?? []).join(" ")}`
             : (report?.uncertainties ?? []).join(" "),
@@ -193,8 +205,8 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
         });
         showToast(
           mergedNote
-            ? "Reporte duplicado: se fusionó con uno previo."
-            : "Reporte recibido.",
+            ? "Reporte recibido: se unió a uno del mismo lugar. Guarda tu código."
+            : "Reporte recibido. Guarda el código que ves en la ventana.",
         );
       } catch (submitError) {
         showToast(

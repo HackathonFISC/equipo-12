@@ -399,36 +399,36 @@ export function deriveTraces(snapshot: CoordinatorSnapshot): TraceStageCard[] {
   }
   return [
     {
-      label: "Agente 1 · Ingesta y Guardrails",
-      action: byActor.ingestion?.action ?? "ingest_report",
+      label: "Agente de ingesta · Recibe y ordena los reportes",
+      action: "Leer cada reporte, ubicarlo en su sector y descartar datos imposibles",
       traceId: byActor.ingestion?.trace_id ?? "trace-ing",
       status: byActor.ingestion?.status ?? "ok",
-      inputText: `${reportCount} reporte(s) de texto`,
-      outputText: `${reportCount} extracción(es) validadas`,
+      inputText: `${reportCount} reporte(s) escritos por vecinos`,
+      outputText: `${reportCount} reporte(s) ordenados y revisados`,
     },
     {
-      label: "Agente 2 · Evaluación de necesidad",
-      action: byActor.evaluation?.action ?? "assess_need",
+      label: "Agente de evaluación · Mide la urgencia de cada caso",
+      action: "Unir reportes del mismo lugar y valorar horas sin agua, personas y vulnerabilidad",
       traceId: byActor.evaluation?.trace_id ?? "trace-eval",
       status: byActor.evaluation?.status ?? "ok",
-      inputText: `${clusterCount} cluster(s) deduplicados`,
-      outputText: `${priorityCount} evaluación(es) cualitativas`,
+      inputText: `${clusterCount} caso(s) ya unidos (sin repetidos)`,
+      outputText: `${priorityCount} caso(s) valorados`,
     },
     {
-      label: "Agente 3 · Planificación OR-Tools",
-      action: byActor.planning?.action ?? "plan_routes",
+      label: "Agente de planificación · Arma el reparto de cisternas",
+      action: "Repartir las cisternas disponibles entre los casos, en orden de urgencia",
       traceId: byActor.planning?.trace_id ?? "trace-plan",
       status: byActor.planning?.status ?? "ok",
-      inputText: `${priorityCount} prioridad(es) · capacidad fija`,
-      outputText: `${assignCount} parada(s) · ${unservedCount} sector(es) sin cisterna`,
+      inputText: `${priorityCount} caso(s) ordenados por urgencia`,
+      outputText: `${assignCount} parada(s) de cisterna · ${unservedCount} sector(es) quedan sin cisterna en este plan`,
     },
     {
-      label: "Orquestador · Compuerta Humana",
-      action: byActor.orchestrator?.action ?? "run_orchestration",
+      label: "Compuerta humana · La coordinación decide",
+      action: "Una persona de la coordinación revisa el plan y lo aprueba, lo corrige o lo rechaza. Ningún agente se aprueba a sí mismo",
       traceId: byActor.orchestrator?.trace_id ?? "trace-orc",
       status: byActor.orchestrator?.status ?? "ok",
-      inputText: "Flujo 1 → 2 → 3",
-      outputText: `Estado: ${planStateLabel(snapshot.state)}`,
+      inputText: "El trabajo de los tres agentes, en orden: ingesta, evaluación y planificación",
+      outputText: `Cómo va el plan: ${planStateLabel(snapshot.state)}`,
     },
   ];
 }
@@ -514,31 +514,33 @@ export function lookupReport(
 
   const steps: [TrackingStep, TrackingStep, TrackingStep, TrackingStep] = [
     {
-      stage: "ETAPA 01 · Reporte recibido",
+      stage: "Reporte recibido",
       text: report
-        ? `Ingesta validó ${report.report_id} en ${sectorName(snapshot, sectorId)}.`
-        : "El incidente está consolidado en el lote activo.",
+        ? `Revisamos tu reporte ${report.report_id} y lo ubicamos en ${sectorName(snapshot, sectorId)}.`
+        : "Tu reporte ya está junto con los demás casos que se están atendiendo.",
       done: true,
     },
     {
-      stage: "ETAPA 02 · Deduplicación",
+      stage: "Agrupado con reportes del mismo lugar",
       text: cluster
-        ? `${placeHint} · ${cluster.report_count} reporte(s) agrupados (≤ 800 m). Más quejas no suben el puntaje.`
-        : "Todavía no hay cluster para este código.",
+        ? `${placeHint}: se juntaron ${cluster.report_count} reporte(s) del mismo problema (lugares a menos de 800 m). Tu reporte sigue contando, una sola vez.`
+        : "Todavía no se unió con otros reportes. Vuelve a consultar en un momento.",
       done: Boolean(cluster),
     },
     {
-      stage: "ETAPA 03 · Prioridad priority-v1",
+      stage: "Urgencia calculada",
       text: priority
-        ? `Puntaje determinístico: ${priority.score}/100 (${priority.formula_version}).`
-        : "El motor todavía no puntuó este incidente.",
+        ? `Urgencia: ${priority.score} de 100 (${priority.score >= 66 ? "alta" : priority.score >= 33 ? "media" : "baja"}). Se calcula siempre con la misma fórmula: horas sin agua, personas afectadas y vulnerabilidad. Reportar lo mismo muchas veces no sube la urgencia.`
+        : "Todavía no calculamos la urgencia de este caso.",
       done: Boolean(priority),
     },
     {
-      stage: "ETAPA 04 · Cisterna y supervisión",
+      stage: "Cisterna y decisión final",
       text: assignment
-        ? `Cisterna ${assignment.vehicle_id} · ${assignment.volume_liters} L · parada #${assignment.order}.`
-        : "Sin cisterna asignada en el turno actual.",
+        ? state === "aprobado"
+          ? `Cisterna asignada: camión ${assignment.vehicle_id}, ${assignment.volume_liters} litros, parada número ${assignment.order} de la ruta.`
+          : `Hay una cisterna propuesta para tu sector (camión ${assignment.vehicle_id}), pero todavía no está aprobada: puede cambiar.`
+        : "Todavía no hay cisterna para tu sector en este plan. Si se aprueba otro reparto, aquí mismo se verá.",
       done: Boolean(assignment && state === "aprobado"),
     },
   ];
@@ -546,7 +548,14 @@ export function lookupReport(
   let noticeText: string | null = null;
   if (notice) {
     noticeText = String(notice.message || "")
-      .replace(/^Aviso de demostracion para [A-Z_]+\.\s*/i, "")
+      .replace(
+        /^Aviso de demostracion para [A-Z_0-9]+\.\s*/i,
+        `Aviso para ${sectorName(snapshot, sectorId)}: `,
+      )
+      .replace(/La cisterna (\S+) llevaria (\d+) litros en el turno (\d+) del plan [^.]+\./i,
+        "La cisterna $1 llevaría $2 litros, en la parada número $3 de la ruta.")
+      .replace(/El plan \S+ no asigno cisterna\./i,
+        "En este reparto tu sector no recibió cisterna.")
       .replace(/\s*Este mensaje quedo en la bandeja simulada.*$/i, "");
     if (!noticeText) noticeText = notice.message;
   }
@@ -560,14 +569,14 @@ export function lookupReport(
       ? `${cluster.max_duration_hours} h`
       : report && report.duration_hours != null
         ? `${report.duration_hours} h`
-        : "sin dato";
+        : "no indicado";
 
   const people =
     cluster && cluster.estimated_affected_count != null
       ? String(cluster.estimated_affected_count)
       : report && report.affected_count != null
         ? String(report.affected_count)
-        : "sin dato";
+        : "no indicado";
 
   return {
     title: key,

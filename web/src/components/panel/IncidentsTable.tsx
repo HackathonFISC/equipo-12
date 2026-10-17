@@ -58,7 +58,6 @@ export function IncidentsTable({
   onOpen,
 }: IncidentsTableProps) {
   const [localDistrict, setLocalDistrict] = useState<DistrictFilter>("all");
-  const [rowMenu, setRowMenu] = useState<string | null>(null);
   const district = districtFilter ?? localDistrict;
 
   const visible = useMemo(() => {
@@ -178,40 +177,8 @@ export function IncidentsTable({
                       {STATUS_LABEL[row.status]}
                     </Badge>
                   </TableCell>
-                  <TableCell className="relative w-10 text-right">
-                    <button
-                      type="button"
-                      aria-label={`Más opciones de ${row.code}`}
-                      aria-expanded={rowMenu === row.clusterId}
-                      className="px-2 tracking-[0.2em] text-[#1c1c1a]"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setRowMenu((current) =>
-                          current === row.clusterId ? null : row.clusterId,
-                        );
-                      }}
-                    >
-                      ···
-                    </button>
-                    {rowMenu === row.clusterId ? (
-                      <div
-                        role="menu"
-                        className="absolute right-2 top-8 z-20 min-w-[9rem] rounded border border-[#00688b] bg-white py-1 text-left shadow-[0_1px_4px_rgba(28,28,26,0.16)]"
-                      >
-                        <button
-                          type="button"
-                          role="menuitem"
-                          className="block w-full px-3 py-1.5 text-left text-sm hover:bg-[#f6f4f3]"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setRowMenu(null);
-                            openRow(row.clusterId);
-                          }}
-                        >
-                          Ver detalle
-                        </button>
-                      </div>
-                    ) : null}
+                  <TableCell className="w-10 text-right text-xs text-muted">
+                    Ver →
                   </TableCell>
                 </TableRow>
               ))

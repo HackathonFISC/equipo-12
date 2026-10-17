@@ -219,7 +219,7 @@ export function MapView({
           ) : null}
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="synthetic">SYNTHETIC_DEMO</Badge>
+          <Badge variant="synthetic">DATOS DE EJEMPLO</Badge>
           {citizen ? (
             <a
               id="mapNewReport"
@@ -236,15 +236,12 @@ export function MapView({
         <Callout variant="warning" title="Datos ilustrativos">
           El calor refleja los reportes recibidos en la demo, no la prioridad del motor.
           Las anclas de ubicación son de demostración{" "}
-          <Badge variant="synthetic">ASSUMPTION</Badge> y los avisos al residente son{" "}
-          <Badge variant="simulated">SIMULATED</Badge>.
+          <Badge variant="synthetic">DATOS DE EJEMPLO</Badge> y los avisos al residente son de{" "}<Badge variant="simulated">DEMOSTRACIÓN</Badge> (no llegan al teléfono).
         </Callout>
       ) : (
         <Callout variant="warning" title="Lectura operativa">
           El calor refleja reportes recibidos, no la prioridad del motor. Cruce este mapa
-          con el puntaje priority-v1 del panel lateral y la demanda no cubierta del
-          centro de coordinación. Las anclas de ubicación son de demostración{" "}
-          <Badge variant="synthetic">ASSUMPTION</Badge>.
+          con la urgencia de cada sector del panel lateral y con los sectores que quedaron sin cisterna. Los puntos de ubicación son de demostración{" "}<Badge variant="synthetic">DATOS DE EJEMPLO</Badge>.
         </Callout>
       )}
 
@@ -291,7 +288,7 @@ export function MapView({
           <Card>
             <h2 className="text-sm font-semibold text-ink">Sectores</h2>
             <p className="mt-1 text-xs text-muted">
-              Puntaje priority-v1 por sector del distrito filtrado.
+              Urgencia (0 a 100) por sector del distrito elegido.
             </p>
             <div id="mapSectorList" className="mt-3">
               {barData.length === 0 ? (

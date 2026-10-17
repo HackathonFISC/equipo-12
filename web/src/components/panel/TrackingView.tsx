@@ -32,7 +32,7 @@ export function TrackingView({
             autoComplete="off"
             value={code}
             onChange={(event) => onCodeChange(event.target.value)}
-            placeholder="Ejemplo: SYN-001"
+            placeholder="Escribe el código que te dieron al enviar tu reporte"
             className="min-w-48 h-11 min-w-0 flex-1 rounded-md border border-line bg-canvas px-3 text-sm text-ink"
           />
           <Button type="button" variant="primary" onClick={() => onPickCode(code)}>
@@ -116,24 +116,35 @@ export function TrackingView({
             <p className="mt-4 text-sm font-medium text-ink">
               {result.planStateLabel === "Aprobado"
                 ? `Cisterna asignada: ${result.vehicle}`
-                : `Propuesta de cisterna (aún sin aprobación humana): ${result.vehicle}`}
+                : `Cisterna propuesta para tu sector (todavía no aprobada, puede cambiar): ${result.vehicle}`}
             </p>
           ) : (
             <p className="mt-4 text-sm text-muted">
-              Sin cisterna asignada en el turno actual.
+              Todavía no hay cisterna para tu sector en este reparto. Vuelve a consultar: si se aprueba otro reparto, aquí se verá.
             </p>
           )}
 
-          <Callout variant="neutral" title="Aviso al residente" className="mt-4">
-            <Badge variant="simulated">SIMULATED</Badge>{" "}
+          <p className="mt-2 text-sm text-muted">
+            {result.planStateLabel === "Aprobado"
+              ? "Una persona de la coordinación ya aprobó este reparto. Lo que ves aquí es el plan final."
+              : result.planStateLabel === "Rechazado"
+                ? "La coordinación rechazó este reparto y pedirá uno nuevo. Tu reporte sigue vigente: no tienes que enviarlo otra vez."
+                : "El reparto todavía lo está revisando una persona de la coordinación: puede cambiar qué sector recibe cisterna."}
+          </p>
+
+          <Callout variant="neutral" title="¿Te va a llegar un aviso?" className="mt-4">
+            <Badge variant="simulated">DEMOSTRACIÓN</Badge>{" "}
+            En esta demostración <strong>no enviamos mensajes a tu teléfono</strong> (ni
+            WhatsApp ni SMS). El aviso de tu sector queda escrito aquí, en esta misma
+            página, y aparece cuando la coordinación aprueba el reparto.{" "}
             {result.notice ??
-              "Este incidente no tiene avisos en la bandeja simulada todav\u00eda."}
+              "Todavía no hay aviso para tu sector: aparecerá aquí en cuanto se apruebe el reparto."}
           </Callout>
         </Card>
       ) : (
         <Card>
           <p className="text-sm text-muted">
-            {emptyMessage ?? "Escriba un código para consultar el estado de un reporte."}
+            {emptyMessage ?? "Escribe el código que te dieron al enviar tu reporte. Si lo perdiste, tu reporte no se borra: pide ayuda a la coordinación de tu sector."}
           </p>
         </Card>
       )}

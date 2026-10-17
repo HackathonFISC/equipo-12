@@ -67,12 +67,20 @@ export function CitizenWizard({
 
   const summary = useMemo(() => {
     const sector = sectorName(snapshot, sectorId || "UNKNOWN");
+    const vulnLabel = (v: string) =>
+      v === "ADULTOS_MAYORES"
+        ? "Adultos mayores"
+        : v === "EMBARAZADAS"
+          ? "Embarazadas"
+          : v === "ENFERMEDAD"
+            ? "Enfermedad"
+            : "Niñez";
     const parts = [
       "Falta de agua en " + sector,
       district ? "(" + district + ")" : "",
       hours ? "lleva " + hours + " horas sin agua" : "",
       people ? "afecta a " + people + " personas" : "",
-      vulns.length ? "vulnerabilidad: " + vulns.join(", ") : "",
+      vulns.length ? "vulnerabilidad: " + vulns.map(vulnLabel).join(", ") : "",
     ].filter(Boolean);
     return parts.join(" · ");
   }, [district, hours, people, sectorId, snapshot, vulns]);
@@ -309,11 +317,16 @@ export function CitizenWizard({
           <p className="mt-2 text-sm text-muted">{summary}</p>
           <Callout
             variant="default"
-            title="Revisión automática primero"
+            title="Qué pasa cuando envías"
             className="mt-3"
           >
-            Al enviar, los tres agentes analizan el reporte. El puntaje es determinístico
-            (priority-v1); más quejas no suben la prioridad.
+            Tu reporte lo revisan tres agentes: el de ingesta lo ordena y lo ubica, el
+            de evaluación calcula la urgencia con una fórmula fija y el de
+            planificación propone un reparto de cisternas que una persona de la
+            coordinación debe aprobar. Reportar lo mismo muchas veces no
+            sube la urgencia. Al enviar verás un <strong>código</strong>: guárdalo (una
+            captura de pantalla basta). En esta demostración no enviamos WhatsApp ni
+            SMS; con ese código consultas aquí mismo si tu sector recibe cisterna.
           </Callout>
           <div className="mt-3 flex justify-between">
             <Button type="button" variant="secondary" onClick={() => setStep(2)}>
