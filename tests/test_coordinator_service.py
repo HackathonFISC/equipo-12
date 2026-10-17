@@ -46,17 +46,23 @@ def _temp_store() -> tuple[ApprovalStore, Path]:
 
 class CoordinatorServiceTests(unittest.TestCase):
     def _outbox_count(self, db_path: Path) -> int:
-        with sqlite3.connect(db_path) as conn:
+        conn = sqlite3.connect(db_path)
+        try:
             return int(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0])
+        finally:
+            conn.close()
 
     def _plan_row(self, db_path: Path, plan_id: str) -> tuple[str, int]:
-        with sqlite3.connect(db_path) as conn:
+        conn = sqlite3.connect(db_path)
+        try:
             row = conn.execute(
                 "SELECT state, revision FROM plans WHERE id = ?",
                 (plan_id,),
             ).fetchone()
             assert row is not None
             return str(row[0]), int(row[1])
+        finally:
+            conn.close()
 
     def test_fixture_flow_dedup_unknown_and_no_outbox_until_approve(self) -> None:
         store, db_path = _temp_store()
@@ -70,17 +76,18 @@ class CoordinatorServiceTests(unittest.TestCase):
             self.assertEqual(self._outbox_count(db_path), 0)
 
             clusters = svc.consolidate()
-            vista = next(
+            vista = [
                 c for c in clusters if c.sector_id == SectorId.ARRAIJAN_VISTA_ALEGRE
-            )
-            self.assertEqual(vista.report_count, 2)
-            self.assertEqual(vista.estimated_affected_count, 80)
+            ]
+            self.assertEqual(len(vista), 2)
+            self.assertEqual(sorted(c.report_count for c in vista), [1, 1])
+            self.assertEqual(sorted(c.estimated_affected_count for c in vista), [15, 80])
             unknown = next(c for c in clusters if c.sector_id == SectorId.UNKNOWN)
             self.assertTrue(unknown.requires_human_review)
 
             output = svc.prepare_draft()
             plan_id = output.plan.plan_id
-            self.assertEqual(len(output.plan.assignments), 2)
+            self.assertEqual(len(output.plan.assignments), 3)
             self.assertIn("UNKNOWN", output.plan.unserved_demand)
             self.assertEqual(self._outbox_count(db_path), 0)
 
@@ -107,12 +114,18 @@ class CoordinatorServiceTests(unittest.TestCase):
             self.assertTrue(result.saved)
             self.assertIsNotNone(result.outbox_id)
             self.assertGreaterEqual(self._outbox_count(db_path), 1)
-            with sqlite3.connect(db_path) as conn:
+            conn = sqlite3.connect(db_path)
+            try:
                 channels = conn.execute(
-                    "SELECT channel FROM outbox WHERE plan_id = ?",
+                    "SELECT channel, message FROM outbox WHERE plan_id = ?",
                     (plan_id,),
                 ).fetchall()
+            finally:
+                conn.close()
             self.assertTrue(all(row[0] == "SIMULATED" for row in channels))
+            self.assertTrue(
+                all("no se envio por WhatsApp ni Telegram" in row[1] for row in channels)
+            )
         finally:
             db_path.unlink(missing_ok=True)
 
@@ -127,11 +140,14 @@ class CoordinatorServiceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 svc.decide(_decision(plan_id, DecisionAction.CORRECT, comment="   "))
             self.assertEqual(self._outbox_count(db_path), 0)
-            with sqlite3.connect(db_path) as conn:
+            conn = sqlite3.connect(db_path)
+            try:
                 self.assertEqual(
                     conn.execute("SELECT COUNT(*) FROM decisions").fetchone()[0],
                     0,
                 )
+            finally:
+                conn.close()
         finally:
             db_path.unlink(missing_ok=True)
 

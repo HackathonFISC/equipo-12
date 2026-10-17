@@ -52,7 +52,7 @@
       "case_id": "SUP-08",
       "name": "simulated outbox only after APPROVE",
       "passed": true,
-      "detail": "rows=[('ARRAIJAN_VISTA_ALEGRE', 'SIMULATED')] expected=['ARRAIJAN_VISTA_ALEGRE']"
+      "detail": "rows=[('ARRAIJAN_VISTA_ALEGRE', 'SIMULATED'), ('UNKNOWN', 'SIMULATED')] expected=['ARRAIJAN_VISTA_ALEGRE', 'UNKNOWN']"
     },
     {
       "case_id": "SUP-09",

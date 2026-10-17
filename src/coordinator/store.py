@@ -8,8 +8,9 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+from src.communication.outbox import notices_for_panel
 from src.config import PROJECT_ROOT, redact_secrets
-from src.contracts import DecisionAction, ExecutionResult, HumanDecision
+from src.contracts import DecisionAction, ExecutionResult, HumanDecision, PlanDraft
 from src.coordinator.state import PlanState, transition
 
 _DEFAULT_DB = PROJECT_ROOT / "data" / "agua_justa.db"
@@ -55,6 +56,28 @@ def _sector_ids_from_payload(plan_payload: str) -> list[str]:
     return sectors if sectors else ["UNKNOWN"]
 
 
+def _notice_rows(plan_payload: str) -> list[tuple[str, str]]:
+    try:
+        data = json.loads(plan_payload)
+    except json.JSONDecodeError:
+        return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
+    if not isinstance(data, dict):
+        return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
+    candidate = data.get("plan") if isinstance(data.get("plan"), dict) else data
+    try:
+        plan = PlanDraft.model_validate(candidate)
+    except ValueError:
+        sectors = _sector_ids_from_payload(plan_payload)
+        return [
+            (sector_id, f"Simulated dispatch notification for sector {sector_id}")
+            for sector_id in sectors
+        ]
+    rows = notices_for_panel(plan)
+    if rows:
+        return rows
+    return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
+
+
 class ApprovalStore:
     def __init__(
         self,
@@ -77,7 +100,8 @@ class ApprovalStore:
         return conn
 
     def _init_schema(self) -> None:
-        with self._connect() as conn:
+        conn = self._connect()
+        try:
             conn.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS plans (
@@ -118,6 +142,8 @@ class ApprovalStore:
                 );
                 """
             )
+        finally:
+            conn.close()
 
     def create_plan(
         self,
@@ -127,17 +153,20 @@ class ApprovalStore:
         state: PlanState = PlanState.PENDIENTE,
     ) -> None:
         now = _now_iso()
-        with self._connect() as conn:
-            try:
-                conn.execute(
-                    """
-                    INSERT INTO plans (id, state, payload_json, revision, created_at, updated_at)
-                    VALUES (?, ?, ?, 0, ?, ?)
-                    """,
-                    (plan_id, state.value, payload_json, now, now),
-                )
-            except sqlite3.IntegrityError as exc:
-                raise ValueError(f"plan already exists: {plan_id}") from exc
+        conn = self._connect()
+        try:
+            conn.execute(
+                """
+                INSERT INTO plans (id, state, payload_json, revision, created_at, updated_at)
+                VALUES (?, ?, ?, 0, ?, ?)
+                """,
+                (plan_id, state.value, payload_json, now, now),
+            )
+            conn.commit()
+        except sqlite3.IntegrityError as exc:
+            raise ValueError(f"plan already exists: {plan_id}") from exc
+        finally:
+            conn.close()
 
     def _fetch_plan(self, conn: sqlite3.Connection, plan_id: str) -> sqlite3.Row | None:
         return conn.execute(
@@ -240,7 +269,7 @@ class ApprovalStore:
     ) -> list[str]:
         now = _now_iso()
         outbox_ids: list[str] = []
-        for sector_id in _sector_ids_from_payload(plan_payload):
+        for sector_id, message in _notice_rows(plan_payload):
             outbox_id = _new_id("obx")
             conn.execute(
                 """
@@ -252,7 +281,7 @@ class ApprovalStore:
                     plan_id,
                     sector_id,
                     _OUTBOX_CHANNEL,
-                    f"Simulated dispatch notification for sector {sector_id}",
+                    message,
                     now,
                 ),
             )
@@ -266,7 +295,8 @@ class ApprovalStore:
             error_state = transition(prior_state, None, failed=True)
         except ValueError:
             return
-        with self._connect() as conn:
+        conn = self._connect()
+        try:
             now = _now_iso()
             conn.execute(
                 "UPDATE plans SET state = ?, updated_at = ? WHERE id = ?",
@@ -280,6 +310,9 @@ class ApprovalStore:
                 output_summary=f"state={error_state.value}",
                 status="error",
             )
+            conn.commit()
+        finally:
+            conn.close()
 
     def apply_decision(
         self,

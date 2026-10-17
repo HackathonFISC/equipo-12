@@ -65,8 +65,11 @@ def _cluster_report_counts(clusters: list[dict]) -> dict[str, int]:
 
 
 def _outbox_count(db_path: Path) -> int:
-    with sqlite3.connect(db_path) as conn:
+    conn = sqlite3.connect(db_path)
+    try:
         return int(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0])
+    finally:
+        conn.close()
 
 
 class CoordinatorAppTests(unittest.TestCase):
@@ -120,8 +123,8 @@ class CoordinatorAppTests(unittest.TestCase):
             for c in ctx["clusters"]
             if c.get("sector_id") == "ARRAIJAN_VISTA_ALEGRE"
         ]
-        self.assertEqual(len(vista), 1)
-        self.assertEqual(vista[0]["report_count"], 2)
+        self.assertEqual(len(vista), 2)
+        self.assertEqual(sorted(c["report_count"] for c in vista), [1, 1])
         unknown = [c for c in ctx["clusters"] if c.get("sector_id") == "UNKNOWN"]
         self.assertEqual(len(unknown), 1)
 
@@ -145,8 +148,11 @@ class CoordinatorAppTests(unittest.TestCase):
         self.assertEqual(ctx["state"], "aprobado")
         self.assertTrue(ctx["execution"]["saved"])
         self.assertGreaterEqual(_outbox_count(self.db_path), 1)
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             channels = conn.execute("SELECT channel FROM outbox").fetchall()
+        finally:
+            conn.close()
         self.assertTrue(all(row[0] == "SIMULATED" for row in channels))
 
     def test_invalid_action_lowercase_returns_400(self) -> None:

@@ -63,12 +63,16 @@ def _decision(
 
 
 def _outbox_count(db_path: Path) -> int:
-    with sqlite3.connect(db_path) as conn:
+    conn = sqlite3.connect(db_path)
+    try:
         return int(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0])
+    finally:
+        conn.close()
 
 
 def _outbox_rows(db_path: Path, plan_id: str) -> list[tuple[str, str]]:
-    with sqlite3.connect(db_path) as conn:
+    conn = sqlite3.connect(db_path)
+    try:
         return [
             (str(row[0]), str(row[1]))
             for row in conn.execute(
@@ -76,21 +80,29 @@ def _outbox_rows(db_path: Path, plan_id: str) -> list[tuple[str, str]]:
                 (plan_id,),
             ).fetchall()
         ]
+    finally:
+        conn.close()
 
 
 def _plan_state(db_path: Path, plan_id: str) -> str:
-    with sqlite3.connect(db_path) as conn:
+    conn = sqlite3.connect(db_path)
+    try:
         row = conn.execute("SELECT state FROM plans WHERE id = ?", (plan_id,)).fetchone()
         assert row is not None
         return str(row[0])
+    finally:
+        conn.close()
 
 
 def _audit_text(db_path: Path) -> str:
-    with sqlite3.connect(db_path) as conn:
+    conn = sqlite3.connect(db_path)
+    try:
         audit = conn.execute(
             "SELECT input_summary, output_summary FROM audit",
         ).fetchall()
         decisions = conn.execute("SELECT comment FROM decisions").fetchall()
+    finally:
+        conn.close()
     parts = [str(c) for row in audit for c in row]
     parts.extend(str(row[0]) for row in decisions)
     return "\n".join(parts)
@@ -277,7 +289,9 @@ def _case_outbox_after_approve(
     if _outbox_count(db_path) != 0:
         return False, "outbox must be empty while pending", False
     svc.decide(_decision(plan_id, DecisionAction.APPROVE))
-    expected = sorted(_assignment_sector_ids(output))
+    expected = sorted(
+        set(_assignment_sector_ids(output)) | set(output.plan.unserved_demand)
+    )
     rows = _outbox_rows(db_path, plan_id)
     sectors = sorted({s for s, _ in rows})
     ok = (

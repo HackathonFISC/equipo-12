@@ -93,6 +93,24 @@ class CommunicatorTests(unittest.TestCase):
             self.assertEqual(first.outbox_id, second.outbox_id)
             self.assertEqual(len(list_notices("plan-1", db)), 2)
 
+    def test_two_trucks_for_one_sector_both_queue(self) -> None:
+        plan = _plan()
+        plan.assignments.append(
+            Assignment(
+                vehicle_id="cisterna-2",
+                sector_id=SectorId.ARRAIJAN_VISTA_ALEGRE,
+                order=2,
+                volume_liters=4000,
+            )
+        )
+        with TemporaryDirectory() as tmp:
+            db = Path(tmp) / "outbox.sqlite3"
+            result = communicate(plan, _decision(DecisionAction.APPROVE), db)
+            self.assertTrue(result.saved)
+            notices = list_notices("plan-1", db)
+        assigned = [row for row in notices if row["kind"] == "ASSIGNED"]
+        self.assertEqual(len(assigned), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

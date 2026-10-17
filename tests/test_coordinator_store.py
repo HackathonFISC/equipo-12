@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import json
 import os
 import sqlite3
@@ -75,8 +76,13 @@ class ApprovalStoreTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.db_path.unlink(missing_ok=True)
 
-    def _conn(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.db_path)
+    @contextmanager
+    def _conn(self):
+        conn = sqlite3.connect(self.db_path)
+        try:
+            yield conn
+        finally:
+            conn.close()
 
     def test_approve_persists_dispatch_and_audit(self) -> None:
         payload = _sample_payload()

@@ -68,6 +68,40 @@ def _unserved_body(plan_id: str, sector_id: str) -> str:
     )
 
 
+def notices_for_panel(plan: PlanDraft) -> list[tuple[str, str]]:
+    """One simulated notice per sector for the coordinator panel.
+
+    The first assignment for a sector supplies the liters and the turn.
+    A later truck for that same sector does not add a second row.
+    Unserved sectors that are not already assigned are included.
+    """
+    rows: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for assignment in plan.assignments:
+        sector_id = assignment.sector_id.value
+        if sector_id in seen:
+            continue
+        seen.add(sector_id)
+        rows.append(
+            (
+                sector_id,
+                _assigned_body(
+                    plan,
+                    assignment.vehicle_id,
+                    sector_id,
+                    assignment.volume_liters,
+                    assignment.order,
+                ),
+            )
+        )
+    for sector_id in plan.unserved_demand:
+        if sector_id in seen:
+            continue
+        seen.add(sector_id)
+        rows.append((sector_id, _unserved_body(plan.plan_id, sector_id)))
+    return rows
+
+
 def communicate(
     plan: PlanDraft,
     decision: HumanDecision,
@@ -135,7 +169,7 @@ def communicate(
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    f"notice-{plan.plan_id}-{sector_id}-ASSIGNED",
+                    f"notice-{plan.plan_id}-{sector_id}-{assignment.vehicle_id}-{assignment.order}-ASSIGNED",
                     outbox_id,
                     plan.plan_id,
                     audit_id,
@@ -152,7 +186,11 @@ def communicate(
                     _STATUS,
                 ),
             )
+        seen_unserved: set[str] = set()
         for sector_id in plan.unserved_demand:
+            if sector_id in seen_unserved:
+                continue
+            seen_unserved.add(sector_id)
             connection.execute(
                 """
                 INSERT INTO notices (
