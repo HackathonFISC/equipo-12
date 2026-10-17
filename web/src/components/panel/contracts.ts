@@ -244,6 +244,8 @@ export interface ShellHeaderProps {
   onScopeChange?: (value: DistrictScope) => void;
   onOpenMenu?: () => void;
   onHelp?: () => void;
+  query?: string;
+  onQueryChange?: (value: string) => void;
 }
 
 export interface SidebarNavProps {
@@ -258,9 +260,11 @@ export interface ShellProps {
   title: string;
   stateLabel?: PlanStateLabel;
   scope?: DistrictScope;
+  query?: string;
   children: ReactNode;
   onNavigate: (view: PanelView) => void;
   onScopeChange?: (value: DistrictScope) => void;
+  onQueryChange?: (value: string) => void;
 }
 
 export interface ToastProps {

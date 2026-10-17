@@ -79,11 +79,12 @@ def _build_agent() -> Agent[OrchestratorDeps, OrchestratorNote]:
         output_type=OrchestratorNote,
         deps_type=OrchestratorDeps,
         instructions=_INSTRUCTIONS,
+        model_settings={"parallel_tool_calls": False},
         retries=1,
         name="orchestrator",
     )
 
-    @agent.tool
+    @agent.tool(sequential=True)
     def run_ingestion(ctx: RunContext[OrchestratorDeps]) -> dict[str, object]:
         """Ingest every report already stored for this run.
 
@@ -103,7 +104,7 @@ def _build_agent() -> Agent[OrchestratorDeps, OrchestratorNote]:
         ctx.deps.traces.append(_trace("run_ingestion", summary, summary, "ok"))
         return {"status": "ok", "reports": len(extracted)}
 
-    @agent.tool
+    @agent.tool(sequential=True)
     def run_assessment(ctx: RunContext[OrchestratorDeps]) -> dict[str, object]:
         """Deduplicate ingested reports and score them with the priority agent.
 
@@ -127,7 +128,7 @@ def _build_agent() -> Agent[OrchestratorDeps, OrchestratorNote]:
         ctx.deps.traces.append(_trace("run_assessment", summary, summary, "ok"))
         return {"status": "ok", "clusters": len(clusters)}
 
-    @agent.tool
+    @agent.tool(sequential=True)
     def run_planning(ctx: RunContext[OrchestratorDeps]) -> dict[str, object]:
         """Call the planning agent, which must call the deterministic solver.
 
@@ -278,6 +279,7 @@ def orchestrate(
             f"reports={len(reports)}",
             deps=deps,
             model=selected,
+            model_settings={"parallel_tool_calls": False},
             usage_limits=runtime.usage_limits(),
         )
     except UsageLimitExceeded:

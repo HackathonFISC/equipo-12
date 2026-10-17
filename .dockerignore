@@ -1,0 +1,27 @@
+# Secretos y entorno local — nunca dentro de la imagen.
+.env
+.env.*
+!.env.example
+
+# Git y archivos locales del equipo.
+.git
+.gitignore
+01_CONTEXTO_MAESTRO.md
+02_EQUIPO_Y_METODOLOGIA.md
+03_PROMPT_MAESTRO_OPENCODE.md
+Retos_Hackathon_FISC_AI_Agents_2026.md
+
+# Estado local y artefactos.
+data/agua_justa.db
+data/agua_justa.db-*
+**/__pycache__/
+**/*.pyc
+.venv/
+.pytest_cache/
+whatsapp-bot/
+
+# Documentación y despliegue (no se ejecutan dentro del contenedor).
+docs/
+deploy/
+README.md
+AGENTS.md

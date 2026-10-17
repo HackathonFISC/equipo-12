@@ -30,7 +30,7 @@ const TableHead = forwardRef<
   HTMLTableSectionElement,
   HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, forwardedRef) => (
-  <thead ref={forwardedRef} className={cx("bg-sunken", className)} {...props} />
+  <thead ref={forwardedRef} className={cx("bg-white", className)} {...props} />
 ));
 
 TableHead.displayName = "TableHead";
@@ -42,7 +42,7 @@ const TableHeaderCell = forwardRef<
   <th
     ref={forwardedRef}
     className={cx(
-      "border-b border-line px-4 py-3.5 text-left text-sm font-semibold text-ink",
+      "border-b border-line px-4 py-2.5 text-left text-sm font-medium text-[#585655]",
       className,
     )}
     {...props}

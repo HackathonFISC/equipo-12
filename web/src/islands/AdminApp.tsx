@@ -1,8 +1,9 @@
 // App del centro de coordinación: métricas, compuerta humana, trazas y mapa
 // operativo. Portado del PanelApp.tsx anterior (misma lógica, rol admin fijo).
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Badge, Button, Callout, Card } from "../components/tremor";
+import { Badge, Button, Callout } from "../components/tremor";
 import { Shell } from "../components/panel/Shell";
+import { ConsoleWidget } from "../components/panel/ConsoleWidget";
 import { Toast } from "../components/panel/Toast";
 import { MetricsRow } from "../components/panel/MetricsRow";
 import { IncidentsTable } from "../components/panel/IncidentsTable";
@@ -228,7 +229,11 @@ export default function AdminApp({ initialView }: { initialView: PanelView }) {
       view={view}
       title={VIEW_TITLES[view] ?? "Coordinación"}
       stateLabel={stateLabel}
+      scope={districtFilter}
+      query={query}
       onNavigate={setView}
+      onScopeChange={setDistrictFilter}
+      onQueryChange={setQuery}
     >
       {busyText ? (
         <p className="mb-3 text-sm text-muted" role="status" aria-live="polite">
@@ -238,12 +243,42 @@ export default function AdminApp({ initialView }: { initialView: PanelView }) {
 
       {view === "admin" ? (
         <div className="space-y-4">
-          <Callout variant="warning" title="Datos sintéticos de demostración">
+          <header>
+            <h1 className="text-[28px] font-semibold leading-tight text-[#1c1c1a]">
+              Centro de coordinación
+            </h1>
+            <p className="mt-1 max-w-4xl text-sm text-[#585655]">
+              El plan de cisternas sale de horas sin agua, afectados y vulnerabilidad.
+              Más quejas no suben la prioridad. priority-v1 no es política del IDAAN y
+              ningún agente aprueba el plan.
+            </p>
+          </header>
+          <Callout variant="neutral" title="Datos sintéticos de demostración">
             Todos los datos de este panel son{" "}
             <Badge variant="synthetic">SYNTHETIC_DEMO</Badge> o{" "}
             <Badge variant="synthetic">ASSUMPTION</Badge>. La fórmula priority-v1 es
             política de prototipo, no del IDAAN. Ningún agente aprueba el plan.
           </Callout>
+
+          <section className="rounded-lg border border-[#e3e2df] bg-[#fafaf9] px-5 py-4">
+            <IncidentsTable
+              rows={incidentRows}
+              query={query}
+              status={statusFilter}
+              counts={{
+                all: incidentRows.length,
+                received: incidentRows.filter((row) => row.status === "received").length,
+                analyzing: incidentRows.filter((row) => row.status === "analyzing").length,
+                planned: incidentRows.filter((row) => row.status === "planned").length,
+                approved: incidentRows.filter((row) => row.status === "approved").length,
+              }}
+              onQueryChange={setQuery}
+              onStatusChange={setStatusFilter}
+              districtFilter={districtFilter}
+              onDistrictFilter={setDistrictFilter}
+              onOpenDetail={(clusterId) => setSelectedClusterId(clusterId)}
+            />
+          </section>
 
           <MetricsRow metrics={metrics} />
 
@@ -283,44 +318,58 @@ export default function AdminApp({ initialView }: { initialView: PanelView }) {
             }}
           />
 
-          <div className="grid gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-7">
-              <IncidentsTable
-                rows={incidentRows}
-                query={query}
-                status={statusFilter}
-                counts={{
-                  all: incidentRows.length,
-                  received: incidentRows.filter((row) => row.status === "received")
-                    .length,
-                  analyzing: incidentRows.filter((row) => row.status === "analyzing")
-                    .length,
-                  planned: incidentRows.filter((row) => row.status === "planned")
-                    .length,
-                  approved: incidentRows.filter((row) => row.status === "approved")
-                    .length,
+          <div className="grid gap-[22px] lg:grid-cols-2">
+            <TracesPanel stages={stages} traces={snapshot?.traces ?? []} />
+            <DuplicatesPanel
+              blocks={dupBlocks}
+              notices={snapshot?.outbox_notices ?? []}
+            />
+          </div>
+          <ConsoleWidget
+            title="Carga de reportes"
+            actions={[
+              {
+                label: "Recargar contexto",
+                onSelect: () => {
+                  void refresh()
+                    .then(() => showToast("Contexto actualizado."))
+                    .catch(() => undefined);
+                },
+              },
+              {
+                label: "Reiniciar sesión",
+                separated: true,
+                onSelect: () => {
+                  void reset()
+                    .then(() => showToast("Sesión reiniciada."))
+                    .catch(() => undefined);
+                },
+              },
+            ]}
+            footer={
+              <Button
+                type="button"
+                id="load-reports"
+                variant="primary"
+                isLoading={busy}
+                loadingText="Procesando…"
+                onClick={() => {
+                  const input =
+                    document.querySelector<HTMLTextAreaElement>("#reports-input");
+                  void handleLoadReports(input?.value ?? "");
                 }}
-                onQueryChange={setQuery}
-                onStatusChange={setStatusFilter}
-                districtFilter={districtFilter}
-                onDistrictFilter={setDistrictFilter}
-                onOpenDetail={(clusterId) => setSelectedClusterId(clusterId)}
-              />
-            </div>
-            <div className="lg:col-span-5">
-              <TracesPanel stages={stages} traces={snapshot?.traces ?? []} />
-            </div>
-            <div className="lg:col-span-7">
-              <DuplicatesPanel
-                blocks={dupBlocks}
-                notices={snapshot?.outbox_notices ?? []}
-              />
-            </div>
-            <div className="lg:col-span-5">
-              <Card>
-                <h2 className="font-display text-lg font-semibold text-ink">
-                  Carga de reportes
-                </h2>
+              >
+                Procesar lote
+              </Button>
+            }
+          >
+              <div>
+                <button id="preload-reports" type="button" className="sr-only" onClick={() => { void refresh().then(() => showToast("Contexto actualizado.")).catch(() => undefined); }}>
+                  Recargar contexto
+                </button>
+                <button id="reset-session" type="button" className="sr-only" onClick={() => { void reset().then(() => showToast("Sesión reiniciada.")).catch(() => undefined); }}>
+                  Reiniciar sesión
+                </button>
                 <label
                   htmlFor="reports-input"
                   className="mt-2 block text-sm text-muted"
@@ -333,51 +382,8 @@ export default function AdminApp({ initialView }: { initialView: PanelView }) {
                   placeholder="Llevamos 30 horas sin agua en Loma Cova, somos 8 personas…"
                   className="mt-1 w-full rounded-md border border-line bg-canvas px-3 py-2 text-sm text-ink"
                 />
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    id="load-reports"
-                    variant="primary"
-                    isLoading={busy}
-                    loadingText="Procesando…"
-                    onClick={() => {
-                      const input =
-                        document.querySelector<HTMLTextAreaElement>("#reports-input");
-                      void handleLoadReports(input?.value ?? "");
-                    }}
-                  >
-                    Procesar lote
-                  </Button>
-                  <Button
-                    type="button"
-                    id="preload-reports"
-                    variant="secondary"
-                    disabled={busy}
-                    onClick={() => {
-                      void refresh()
-                        .then(() => showToast("Contexto actualizado."))
-                        .catch(() => undefined);
-                    }}
-                  >
-                    Recargar contexto
-                  </Button>
-                  <Button
-                    type="button"
-                    id="reset-session"
-                    variant="light"
-                    disabled={busy}
-                    onClick={() => {
-                      void reset()
-                        .then(() => showToast("Sesión reiniciada."))
-                        .catch(() => undefined);
-                    }}
-                  >
-                    Reiniciar sesión
-                  </Button>
-                </div>
-              </Card>
-            </div>
-          </div>
+              </div>
+          </ConsoleWidget>
         </div>
       ) : null}
 

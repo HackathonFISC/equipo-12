@@ -46,7 +46,7 @@ function trackerData(state: PlanState): TrackerBlockProps[] {
     key: step.state,
     tooltip: step.label,
     color:
-      state === step.state ? "water" : (IDLE_COLOR[step.idle] ?? step.idle),
+      state === step.state ? "bg-[#312d2a]" : (IDLE_COLOR[step.idle] ?? step.idle),
   }));
 }
 
@@ -95,7 +95,7 @@ export function PlanGate({
   }
 
   return (
-    <Card className="ring-2 ring-water">
+    <Card className="ring-1 ring-[#e5e3e2]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-lg font-semibold text-ink">
           Plan de distribución

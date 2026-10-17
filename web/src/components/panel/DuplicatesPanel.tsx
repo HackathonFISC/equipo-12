@@ -1,6 +1,8 @@
 // Base del panel: portado de src/coordinator/web/panel.html (duplicateReviewContent y outbox-list, 711-712)
-import { Badge, Card } from "../tremor";
+import { useState } from "react";
+import { Badge, Button } from "../tremor";
 import type { DuplicatesPanelProps } from "./contracts";
+import { ConsoleWidget } from "./ConsoleWidget";
 
 const BADGE_VARIANT: Record<string, "default" | "warning" | "simulated"> = {
   "2 focos distintos": "warning",
@@ -13,13 +15,24 @@ function badgeVariant(badge: string): "default" | "warning" | "simulated" {
 }
 
 export function DuplicatesPanel({ blocks, notices }: DuplicatesPanelProps) {
+  const [focus, setFocus] = useState<"both" | "dupes" | "notices">("dupes");
   return (
-    <Card>
-      <h2 className="font-display text-lg font-semibold text-ink">
-        Duplicados y bandeja de avisos
-      </h2>
-
-      <h3 className="mt-4 text-sm font-semibold text-ink">Duplicados y revisión</h3>
+    <ConsoleWidget
+      title="Duplicados y bandeja de avisos"
+      actions={[
+        { label: "Solo duplicados", onSelect: () => setFocus("dupes") },
+        { label: "Solo bandeja", onSelect: () => setFocus("notices") },
+      ]}
+      footer={
+        <Button type="button" variant="secondary" onClick={() => setFocus("both")}>
+          Ver bandeja
+        </Button>
+      }
+    >
+    <div>
+      {focus !== "notices" ? (
+      <>
+      <h3 className="text-sm font-semibold text-ink">Duplicados y revisión</h3>
       <div id="duplicateReviewContent" className="mt-2 space-y-2">
         {blocks.length === 0 ? (
           <p className="text-sm text-muted">Sin duplicados que revisar.</p>
@@ -38,7 +51,15 @@ export function DuplicatesPanel({ blocks, notices }: DuplicatesPanelProps) {
           ))
         )}
       </div>
+      </>
+      ) : null}
 
+      {focus === "dupes" ? (
+        <p className="mt-4 text-sm text-[#585655]">
+          Bandeja SIMULATED: {notices.length} aviso(s).
+        </p>
+      ) : (
+      <>
       <h3 className="mt-5 text-sm font-semibold text-ink">Bandeja de avisos</h3>
       <p className="mt-1 text-xs text-muted">
         Avisos a residentes solo en la bandeja{" "}
@@ -70,6 +91,9 @@ export function DuplicatesPanel({ blocks, notices }: DuplicatesPanelProps) {
           ))
         )}
       </div>
-    </Card>
+      </>
+      )}
+    </div>
+    </ConsoleWidget>
   );
 }

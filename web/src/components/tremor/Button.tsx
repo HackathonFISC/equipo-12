@@ -14,7 +14,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "border-transparent bg-water text-white hover:bg-water-deep disabled:bg-water/40",
+          "min-h-8 border-transparent bg-[#312d2a] text-white hover:bg-[#1d1c1b] disabled:bg-[#312d2a]/40",
         secondary:
           "border-line bg-surface text-ink hover:bg-sunken disabled:text-muted",
         light:

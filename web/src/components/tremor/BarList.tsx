@@ -44,7 +44,7 @@ const BarList = forwardRef<HTMLUListElement, BarListProps>(
               )}
               <div className="h-2 min-w-0 flex-1 rounded-full bg-sunken">
                 <div
-                  className="h-full rounded-full bg-water"
+                  className="h-full rounded-full bg-[#312d2a]"
                   style={{ width: `${width}%` }}
                 />
               </div>

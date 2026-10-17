@@ -18,6 +18,7 @@ from src.contracts import (
     ExecutionResult,
     HumanDecision,
     NormalizedIncidentCluster,
+    PlanDraft,
     ProvenanceTag,
     ReportExtracted,
     ReportInput,
@@ -291,6 +292,8 @@ class CoordinatorService:
         output: EngineOutput,
         clusters: list[NormalizedIncidentCluster],
     ) -> None:
+        if not _reviewable_plan(output.plan):
+            raise ValueError("draft is not reviewable")
         plan_id, payload_json = self._payload_json_for(output, clusters)
         try:
             self._store.create_plan(plan_id, payload_json, state=PlanState.BORRADOR)
@@ -481,6 +484,8 @@ class CoordinatorService:
     def submit_for_review(self) -> None:
         if self._plan_id is None:
             raise ValueError("no draft prepared")
+        if self._draft is None or not _reviewable_plan(self._draft.plan):
+            raise ValueError("draft is not reviewable")
         self._store.submit_for_review(self._plan_id)
         self._submitted = True
         self._state = PlanState.PENDIENTE
@@ -555,6 +560,8 @@ class CoordinatorService:
 
         if self._plan_id is None or self._payload_json is None:
             raise ValueError("no draft prepared")
+        if self._draft is None or not _reviewable_plan(self._draft.plan):
+            raise ValueError("draft is not reviewable")
 
         if decision.plan_id != self._plan_id:
             raise ValueError("decision.plan_id must match prepared plan")
@@ -574,6 +581,12 @@ class CoordinatorService:
         else:
             self._state = transition(PlanState.PENDIENTE, decision.action)
         return result
+
+
+def _reviewable_plan(plan: PlanDraft) -> bool:
+    if plan.plan_id == "orchestrator-stopped" or plan.explanation.startswith("ERROR:"):
+        return False
+    return bool(plan.assignments or plan.unserved_demand)
 
 
 def _optional_coord(value: object) -> float | None:

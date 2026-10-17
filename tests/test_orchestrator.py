@@ -17,7 +17,7 @@ from src.coordinator.engine import priority_engine
 from src.coordinator.service import CoordinatorService
 from src.coordinator.state import PlanState
 from src.coordinator.store import ApprovalStore
-from src.orchestration.agent import orchestrate
+from src.orchestration.agent import _AGENT, orchestrate
 
 _TEXTS = [
     "48 horas sin agua y 15 personas por el chino de Vista Alegre",
@@ -64,6 +64,33 @@ def _only_planning(messages: list[ModelMessage], info: AgentInfo) -> ModelRespon
     )
 
 
+def _batched_steps(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
+    called = {
+        part.tool_name
+        for message in messages
+        if isinstance(message, ModelRequest)
+        for part in message.parts
+        if isinstance(part, ToolReturnPart)
+    }
+    if "run_planning" not in called:
+        return ModelResponse(
+            parts=[
+                ToolCallPart(tool_name="run_ingestion", args={}, tool_call_id="call-run_ingestion"),
+                ToolCallPart(tool_name="run_assessment", args={}, tool_call_id="call-run_assessment"),
+                ToolCallPart(tool_name="run_planning", args={}, tool_call_id="call-run_planning"),
+            ]
+        )
+    return ModelResponse(
+        parts=[
+            ToolCallPart(
+                tool_name=info.output_tools[0].name,
+                args={"summary": "draft ready for a human"},
+                tool_call_id="orchestrator-output",
+            )
+        ]
+    )
+
+
 class OrchestratorTests(unittest.TestCase):
     def test_pipeline_uses_solver_and_waits_for_a_human(self) -> None:
         result = orchestrate(_reports(_TEXTS))
@@ -76,6 +103,17 @@ class OrchestratorTests(unittest.TestCase):
         actions = [trace.action for trace in result.traces if trace.actor == "orchestrator"]
         self.assertEqual(actions, ["run_ingestion", "run_assessment", "run_planning"])
         self.assertIn("planning", {trace.actor for trace in result.traces})
+
+    def test_one_response_runs_the_three_steps_in_order(self) -> None:
+        self.assertEqual(_AGENT.model_settings, {"parallel_tool_calls": False})
+        result = orchestrate(
+            _reports(["48 horas sin agua y 15 personas por el chino de Vista Alegre"]),
+            model=FunctionModel(_batched_steps),
+        )
+        self.assertEqual(result.status, "ok")
+        self.assertTrue(result.plan.assignments)
+        actions = [trace.action for trace in result.traces if trace.actor == "orchestrator"]
+        self.assertEqual(actions, ["run_ingestion", "run_assessment", "run_planning"])
 
     def test_planning_before_assessment_stops_without_a_route(self) -> None:
         result = orchestrate(_reports(_TEXTS), model=FunctionModel(_only_planning))

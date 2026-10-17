@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import tempfile
 import unittest
 from datetime import UTC, datetime
 from pathlib import Path
+from unittest.mock import patch
 
-from src.contracts import DecisionAction, HumanDecision, SectorId
+from src.contracts import DecisionAction, HumanDecision, PlanDraft, SectorId
+from src.coordinator.engine import EngineOutput
 from src.coordinator.service import CoordinatorService
 from src.coordinator.state import PlanState
 from src.coordinator.store import ApprovalStore
+from src.orchestration.agent import OrchestrationResult
 
 _SAMPLE_TEXTS = [
     "48 horas sin agua y 15 personas por el chino de Vista Alegre",
@@ -228,6 +232,57 @@ class CoordinatorServiceTests(unittest.TestCase):
             svc.prepare_draft()
             with self.assertRaises(ValueError):
                 svc.prepare_draft()
+        finally:
+            db_path.unlink(missing_ok=True)
+
+    def test_stopped_orchestrator_is_not_stored_or_reviewed(self) -> None:
+        store, db_path = _temp_store()
+        stopped = OrchestrationResult(
+            plan=PlanDraft(
+                plan_id="orchestrator-stopped",
+                explanation="ERROR: UsageLimitExceeded",
+            ),
+            status="ERROR: UsageLimitExceeded",
+        )
+        try:
+            svc = CoordinatorService(store)
+            with patch("src.coordinator.service.orchestrate", return_value=stopped):
+                with self.assertRaisesRegex(ValueError, "not reviewable"):
+                    svc.run_reports(["48 horas sin agua en Burunga, 10 personas"])
+                with self.assertRaisesRegex(ValueError, "not reviewable"):
+                    svc.submit_citizen_report("48 horas sin agua en Burunga, 10 personas")
+            self.assertFalse(svc.has_plan)
+            self.assertEqual(self._outbox_count(db_path), 0)
+            with self.assertRaises(ValueError):
+                svc.submit_for_review()
+        finally:
+            db_path.unlink(missing_ok=True)
+
+    def test_stopped_draft_cannot_be_reviewed_or_approved(self) -> None:
+        store, db_path = _temp_store()
+        plan = PlanDraft(
+            plan_id="orchestrator-stopped",
+            explanation="ERROR: UsageLimitExceeded",
+        )
+        payload = json.dumps(
+            {
+                "plan": plan.model_dump(mode="json"),
+                "clusters": [],
+                "priorities": [],
+                "assignments": [],
+                "label": "SYNTHETIC_DEMO",
+            }
+        )
+        try:
+            store.create_plan(plan.plan_id, payload, state=PlanState.BORRADOR)
+            svc = CoordinatorService(store)
+            svc._remember_draft(plan.plan_id, payload, EngineOutput(priorities=[], plan=plan))
+            svc._submitted = True
+            with self.assertRaisesRegex(ValueError, "not reviewable"):
+                svc.submit_for_review()
+            with self.assertRaisesRegex(ValueError, "not reviewable"):
+                svc.decide(_decision(plan.plan_id, DecisionAction.APPROVE))
+            self.assertEqual(self._outbox_count(db_path), 0)
         finally:
             db_path.unlink(missing_ok=True)
 

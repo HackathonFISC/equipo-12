@@ -1,6 +1,7 @@
 // Base del panel: portado de src/coordinator/web/panel.html (agentTraceList, 704-710)
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Badge, Button, Card } from "../tremor";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Badge, Button } from "../tremor";
 import type { TracesPanelProps } from "./contracts";
+import { ConsoleWidget } from "./ConsoleWidget";
 
 const STATUS_VARIANT: Record<string, "success" | "error" | "warning"> = {
   ok: "success",
@@ -8,10 +9,34 @@ const STATUS_VARIANT: Record<string, "success" | "error" | "warning"> = {
 };
 
 export function TracesPanel({ stages }: TracesPanelProps) {
+  const openAll = (open: boolean) => {
+    for (const el of document.querySelectorAll<HTMLDetailsElement>("#agentTraceList details")) {
+      el.open = open;
+    }
+  };
+
   return (
-    <Card>
+    <ConsoleWidget
+      title="Trazabilidad"
+      actions={[
+        { label: "Contraer todas", onSelect: () => openAll(false) },
+        {
+          label: "Copiar identificadores",
+          onSelect: () => {
+            void navigator.clipboard?.writeText(stages.map((stage) => stage.traceId).join("\n"));
+          },
+        },
+      ]}
+      footer={
+        stages.length > 0 ? (
+          <Button type="button" variant="secondary" onClick={() => openAll(true)}>
+            Ver todas
+          </Button>
+        ) : null
+      }
+    >
+    <div>
       <div className="flex items-center justify-between gap-2">
-        <h2 className="font-display text-lg font-semibold text-ink">Trazabilidad</h2>
         <Badge variant="default">{stages.length} etapa(s)</Badge>
       </div>
       <p className="mt-1 text-xs text-muted">
@@ -59,20 +84,7 @@ export function TracesPanel({ stages }: TracesPanelProps) {
           </Accordion>
         )}
       </div>
-      {stages.length > 0 ? (
-        <Button
-          type="button"
-          variant="ghost"
-          className="mt-2"
-          onClick={() => {
-            for (const el of document.querySelectorAll<HTMLDetailsElement>("#agentTraceList details")) {
-              el.open = true;
-            }
-          }}
-        >
-          Ver todas
-        </Button>
-      ) : null}
-    </Card>
+    </div>
+    </ConsoleWidget>
   );
 }

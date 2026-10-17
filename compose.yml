@@ -1,0 +1,88 @@
+# AguaJusta Oeste. MODO=test, sin .env en la imagen.
+# El Caddy de gongcha publica el 80. Este servicio entra a su red y
+# un sidecar en el netns de gongcha-caddy-1 escucha 127.0.0.1:18081
+# (panel) y 127.0.0.1:18082 (webhook de WhatsApp).
+# ponytail: si recrean ese contenedor de Caddy, hay que volver a levantar
+# caddy-loopback (igual que shadowsync).
+name: equipo12
+
+services:
+  app:
+    build: .
+    image: equipo12-aguajusta:local
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8000"
+      MODO: test
+    ports:
+      - "127.0.0.1:18081:8000"
+    networks:
+      gongcha:
+        aliases:
+          - equipo12
+
+  caddy-loopback:
+    image: equipo12-aguajusta:local
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      - app
+    network_mode: "container:gongcha-caddy-1"
+    command:
+      - python
+      - -c
+      - |
+        import asyncio
+        async def pipe(r, w):
+            try:
+                while data := await r.read(65536):
+                    w.write(data)
+                    await w.drain()
+            except Exception:
+                pass
+            finally:
+                try:
+                    w.close()
+                except Exception:
+                    pass
+        async def handle(host, port, cr, cw):
+            try:
+                sr, sw = await asyncio.open_connection(host, port)
+            except Exception:
+                cw.close()
+                return
+            await asyncio.gather(pipe(cr, sw), pipe(sr, cw))
+        async def main():
+            panel = await asyncio.start_server(
+                lambda r, w: handle("equipo12", 8000, r, w), "127.0.0.1", 18081
+            )
+            bot = await asyncio.start_server(
+                lambda r, w: handle("equipo12-whatsapp", 3000, r, w), "127.0.0.1", 18082
+            )
+            async with panel, bot:
+                await asyncio.gather(panel.serve_forever(), bot.serve_forever())
+        asyncio.run(main())
+
+  whatsapp:
+    profiles: ["whatsapp"]
+    build: ./whatsapp-bot
+    image: equipo12-whatsapp:local
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      WHATSAPP_TOKEN: ${WHATSAPP_TOKEN:-}
+      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID:-}
+      WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID:-}
+      WHATSAPP_VERIFY_TOKEN: ${WHATSAPP_VERIFY_TOKEN:-}
+      WHATSAPP_APP_SECRET: ${WHATSAPP_APP_SECRET:-}
+      WHATSAPP_GRAPH_VERSION: ${WHATSAPP_GRAPH_VERSION:-v21.0}
+    networks:
+      gongcha:
+        aliases:
+          - equipo12-whatsapp
+
+networks:
+  gongcha:
+    external: true
+    name: gongcha_gongcha

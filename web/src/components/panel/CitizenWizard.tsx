@@ -113,13 +113,13 @@ export function CitizenWizard({
               onClick={() => setStep(index)}
               className={`inline-flex min-h-[36px] items-center gap-2 rounded-full border px-3 text-sm ${
                 step === index
-                  ? "border-water bg-water/10 font-semibold text-ink"
-                  : "border-line bg-surface text-muted"
+                  ? "border-[#312d2a] bg-[#f6f4f3] font-semibold text-[#1c1c1a]"
+                  : "border-[#d6d5d2] bg-white text-[#585655]"
               }`}
             >
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-xs ${
-                  step === index ? "bg-water text-white" : "bg-sunken text-muted"
+                  step === index ? "bg-[#312d2a] text-white" : "bg-[#e3e2df] text-[#585655]"
                 }`}
               >
                 {index + 1}

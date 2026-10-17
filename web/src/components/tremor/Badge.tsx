@@ -10,7 +10,7 @@ const badgeVariants = cva(
       variant: {
         default: "bg-info/10 text-info ring-info/30",
         neutral: "bg-draft/10 text-draft ring-draft/30",
-        success: "bg-approved/10 text-approved ring-approved/30",
+        success: "rounded-full bg-[#e5f3e8] text-[#3d6b4c] ring-0",
         error: "bg-rejected/10 text-rejected ring-rejected/30",
         warning: "bg-pending/10 text-pending ring-pending/30",
         simulated: "bg-simulated/10 text-simulated ring-simulated/30",

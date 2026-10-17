@@ -9,7 +9,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={forwardedRef}
       className={cx(
-        "relative w-full rounded-lg bg-surface p-5 text-left text-ink shadow-[0_8px_28px_rgba(22,52,75,0.045)] ring-1 ring-line",
+        "relative w-full rounded-lg border border-[#e3e2df] bg-[#fafaf9] p-6 text-left text-ink shadow-none",
         className,
       )}
       {...props}
