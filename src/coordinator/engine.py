@@ -1,5 +1,4 @@
-# ponytail: ceiling = one truck (cisterna-1), priority sort by max_duration_hours only, no VRP;
-# upgrade = swap demo_engine for Edward's deterministic solver behind the same PlanEngine callable.
+# ponytail: demo_engine stays STUB-v0 for its tests; priority_engine calls the OR-Tools solver.
 
 """Deterministic stub engine seam for coordinator planning."""
 
@@ -18,6 +17,7 @@ from src.contracts import (
     SectorId,
     TraceEntry,
 )
+from src.planner.solver import solve
 from src.prioritization.agent import prioritize_clusters
 
 _STUB_VEHICLE = "cisterna-1"
@@ -130,43 +130,29 @@ def demo_engine(clusters: list[NormalizedIncidentCluster]) -> EngineOutput:
 
 
 def priority_engine(clusters: list[NormalizedIncidentCluster]) -> EngineOutput:
-    """Single-vehicle plan ordered by Edward's priority-v1 score.
+    """Route known sectors with OR-Tools using Edward's priority-v1 score.
 
     The numeric score comes from score_cluster. The prioritization agent may
-    only add qualitative factors. UNKNOWN sectors stay unserved. This is still
-    one truck, not a route solver, and it is not IDAAN policy.
+    only add qualitative factors. UNKNOWN sectors stay unserved. Liters, speed
+    and the depot are ASSUMPTION demo values, not IDAAN policy.
     """
     unserved = [c.sector_id.value for c in clusters if c.sector_id == SectorId.UNKNOWN]
     known = [c for c in clusters if c.sector_id != SectorId.UNKNOWN]
     assessed = prioritize_clusters(known)
     by_id = {cluster.cluster_id: cluster for cluster in known}
     ordered = [by_id[item.cluster_id] for item in assessed.priorities]
-    assignments: list[Assignment] = []
-    route_order: list[str] = []
-    for idx, cluster in enumerate(ordered, start=1):
-        volume = (
-            cluster.estimated_affected_count
-            if cluster.estimated_affected_count is not None
-            else 0
-        )
-        assignments.append(
-            Assignment(
-                vehicle_id=_STUB_VEHICLE,
-                sector_id=cluster.sector_id,
-                order=idx,
-                volume_liters=volume,
-            )
-        )
-        route_order.append(cluster.sector_id.value)
+    routed = solve(ordered, assessed.priorities)
+    unserved.extend(routed.unserved)
     plan = PlanDraft(
-        plan_id=_stable_plan_id(route_order),
-        assignments=assignments,
-        route_order=route_order,
-        constraints_satisfied=["priority-v1", "single-vehicle"],
+        plan_id=_stable_plan_id(routed.route_order),
+        assignments=routed.assignments,
+        route_order=routed.route_order,
+        constraints_satisfied=["priority-v1", *routed.constraints],
         unserved_demand=unserved,
         explanation=(
-            "priority-v1 plan (SYNTHETIC_DEMO): single-vehicle route by "
-            "deterministic score; not official IDAAN dispatch."
+            "priority-v1 plan (SYNTHETIC_DEMO): OR-Tools assigns cisterns with "
+            "capacity and shift windows. Liters per person, speed and the depot "
+            "are ASSUMPTION demo values, not official IDAAN dispatch."
         ),
     )
     return EngineOutput(priorities=assessed.priorities, plan=plan, traces=tuple(assessed.traces))
