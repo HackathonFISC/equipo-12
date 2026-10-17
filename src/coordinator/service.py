@@ -24,6 +24,7 @@ from src.coordinator.state import PlanState, transition
 from src.coordinator.store import ApprovalStore
 from src.ingestion.agent import IngestionResult, ingest_report
 from src.ingestion.deduplicator import deduplicate_reports
+from src.orchestration.agent import orchestrate
 
 _FIXED_REPORT_TS = datetime(2026, 10, 16, 12, 0, tzinfo=UTC)
 _SOURCE_CHANNEL = "panel"
@@ -78,6 +79,34 @@ class CoordinatorService:
             results.append(result)
         return results
 
+    def run_reports(self, texts: list[str]) -> EngineOutput:
+        """Run the orchestrator for one batch and store the draft. Does not approve it."""
+        if self._plan_id is not None:
+            raise ValueError(f"plan already exists: {self._plan_id}")
+        reports: list[ReportInput] = []
+        for text in texts:
+            report_id = f"svc-{self._next_report_num}"
+            self._next_report_num += 1
+            reports.append(
+                ReportInput(
+                    report_id=report_id,
+                    raw_text=text,
+                    source_channel=_SOURCE_CHANNEL,
+                    provenance=_PROVENANCE,
+                    timestamp=_FIXED_REPORT_TS,
+                )
+            )
+        result = orchestrate(reports)
+        self._extracted = list(result.extracted)
+        self._traces.extend(result.traces)
+        output = EngineOutput(
+            priorities=list(result.priorities),
+            plan=result.plan,
+            traces=tuple(result.traces),
+        )
+        self._persist(output, list(result.clusters))
+        return output
+
     def consolidate(self) -> list[NormalizedIncidentCluster]:
         return deduplicate_reports(self._extracted)
 
@@ -88,6 +117,10 @@ class CoordinatorService:
         clusters = self.consolidate()
         output = self._engine(clusters)
         self._traces.extend(output.traces)
+        self._persist(output, clusters)
+        return output
+
+    def _persist(self, output: EngineOutput, clusters: list[NormalizedIncidentCluster]) -> None:
         plan_id = output.plan.plan_id
         payload = {
             "clusters": [c.model_dump(mode="json") for c in clusters],
@@ -104,7 +137,6 @@ class CoordinatorService:
         self._state = PlanState.BORRADOR
         self._draft = output
         self._execution = None
-        return output
 
     def submit_for_review(self) -> None:
         if self._plan_id is None:

@@ -17,7 +17,7 @@ from src.contracts import (
     SectorId,
     TraceEntry,
 )
-from src.planner.solver import solve
+from src.planner.draft import build_plan
 from src.prioritization.agent import prioritize_clusters
 
 _STUB_VEHICLE = "cisterna-1"
@@ -136,25 +136,9 @@ def priority_engine(clusters: list[NormalizedIncidentCluster]) -> EngineOutput:
     only add qualitative factors. UNKNOWN sectors stay unserved. Liters, speed
     and the depot are ASSUMPTION demo values, not IDAAN policy.
     """
-    unserved = [c.sector_id.value for c in clusters if c.sector_id == SectorId.UNKNOWN]
     known = [c for c in clusters if c.sector_id != SectorId.UNKNOWN]
     assessed = prioritize_clusters(known)
-    by_id = {cluster.cluster_id: cluster for cluster in known}
-    ordered = [by_id[item.cluster_id] for item in assessed.priorities]
-    routed = solve(ordered, assessed.priorities)
-    unserved.extend(routed.unserved)
-    plan = PlanDraft(
-        plan_id=_stable_plan_id(routed.route_order),
-        assignments=routed.assignments,
-        route_order=routed.route_order,
-        constraints_satisfied=["priority-v1", *routed.constraints],
-        unserved_demand=unserved,
-        explanation=(
-            "priority-v1 plan (SYNTHETIC_DEMO): OR-Tools assigns cisterns with "
-            "capacity and shift windows. Liters per person, speed and the depot "
-            "are ASSUMPTION demo values, not official IDAAN dispatch."
-        ),
-    )
+    plan = build_plan(clusters, assessed.priorities)
     return EngineOutput(priorities=assessed.priorities, plan=plan, traces=tuple(assessed.traces))
 
 

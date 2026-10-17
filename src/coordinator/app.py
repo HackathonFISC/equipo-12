@@ -109,8 +109,7 @@ def serve(
                     _json_response(self, 400, {"error": "texts must be a list of strings"})
                     return
                 try:
-                    service.ingest_texts(texts)
-                    service.prepare_draft()
+                    service.run_reports(texts)
                 except ValueError as exc:
                     _json_response(self, 400, {"error": str(exc)})
                     return
