@@ -184,7 +184,7 @@ export function computeMetrics(snapshot: CoordinatorSnapshot): MetricsRow {
 export function buildIncidentRows(
   snapshot: CoordinatorSnapshot,
 ): IncidentTableRow[] {
-  return snapshot.clusters.map((cluster) => {
+  const rows = snapshot.clusters.map((cluster) => {
     const priority = priorityForCluster(snapshot, cluster.cluster_id);
     const score = priority ? priority.score : "—";
     const level = priority ? priorityLevel(priority.score) : "low";
@@ -200,16 +200,29 @@ export function buildIncidentRows(
     const placeLabel = cluster.place_id
       ? `${placeLabelFor(snapshot, cluster.place_id)} · ${cluster.report_count} rep.`
       : `${cluster.report_count} reporte(s)`;
+    const sectorEntry = findSector(snapshot, cluster.sector_id);
+    const district =
+      sectorEntry && typeof sectorEntry.district === "string"
+        ? prettyDistrict(sectorEntry.district)
+        : undefined;
     return {
       clusterId: cluster.cluster_id,
       code: codeLabel,
       place: placeLabel,
       sector: sectorName(snapshot, cluster.sector_id),
+      district,
       people,
       score,
       level,
       status,
     };
+  });
+  return rows.sort((a, b) => {
+    const na = typeof a.score === "number" ? a.score : Number(a.score);
+    const nb = typeof b.score === "number" ? b.score : Number(b.score);
+    const va = Number.isFinite(na) ? na : Number.NEGATIVE_INFINITY;
+    const vb = Number.isFinite(nb) ? nb : Number.NEGATIVE_INFINITY;
+    return vb - va;
   });
 }
 

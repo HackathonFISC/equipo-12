@@ -114,7 +114,9 @@ export function TrackingView({
 
           {result.vehicle ? (
             <p className="mt-4 text-sm font-medium text-ink">
-              Cisterna asignada: {result.vehicle}
+              {result.planStateLabel === "Aprobado"
+                ? `Cisterna asignada: ${result.vehicle}`
+                : `Propuesta de cisterna (aún sin aprobación humana): ${result.vehicle}`}
             </p>
           ) : (
             <p className="mt-4 text-sm text-muted">

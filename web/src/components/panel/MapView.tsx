@@ -4,6 +4,7 @@ import { Badge, BarList, Callout, Card } from "../tremor";
 import { leafletReady } from "../../lib/leafletReady";
 import { PANAMA_OESTE_BORDER } from "../../lib/border";
 import { districtLabel } from "../../lib/panelDerive";
+import { fold, prettyDistrict } from "../../lib/text";
 import type { MapViewProps } from "./contracts";
 
 const LEVEL_TEXT: Record<string, string> = {
@@ -67,17 +68,20 @@ export function MapView({
   sectors,
   onDistrictFilter,
   onSelectSector,
+  sectorQuery = "",
 }: MapViewProps) {
   const mapDivRef = useRef<HTMLDivElement>(null);
   const citizen = role === "citizen";
 
-  const visible = useMemo(
-    () =>
-      sectors.filter(
-        (sector) => districtFilter === "all" || sector.district === districtFilter,
-      ),
-    [districtFilter, sectors],
-  );
+  const visible = useMemo(() => {
+    const needle = fold(sectorQuery);
+    return sectors.filter((sector) => {
+      const district = prettyDistrict(sector.district);
+      if (districtFilter !== "all" && district !== districtFilter) return false;
+      if (!needle) return true;
+      return fold(sector.name).includes(needle);
+    });
+  }, [districtFilter, sectorQuery, sectors]);
 
   const highCount = sectors.filter((sector) => sector.level === "high").length;
   const reportsCount = snapshot.clusters.reduce(
@@ -114,7 +118,7 @@ export function MapView({
         center: [9.0, -79.9],
         zoom: 10,
         scrollWheelZoom: false,
-        minZoom: 9,
+        minZoom: 8,
       });
       map = instance;
       leaflet
@@ -135,7 +139,8 @@ export function MapView({
         padding: [18, 18],
         maxZoom: 11,
       });
-      window.setTimeout(() => map?.invalidateSize(), 80);
+      map?.invalidateSize();
+      window.setTimeout(() => map?.invalidateSize(), 300);
       // El portal ciudadano mantiene el mapa montado aunque su vista esté
       // oculta: al recuperar tamaño (hidden -> visible) hay que reajustarlo.
       resizeObserver = new ResizeObserver(() => {

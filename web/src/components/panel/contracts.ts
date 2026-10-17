@@ -90,6 +90,8 @@ export interface PlanRouteRow {
 
 export interface MetricsRowProps {
   metrics: MetricsRow;
+  planStateLabel: PlanStateLabel;
+  hasPlan: boolean;
 }
 
 export interface IncidentsTableProps {
@@ -163,6 +165,8 @@ export interface MapViewProps {
   sectors: SectorRow[];
   onDistrictFilter: (value: MapViewProps["districtFilter"]) => void;
   onSelectSector: (sectorId: string) => void;
+  /** Filtra la lista lateral por nombre (portal ciudadano / cabecera). */
+  sectorQuery?: string;
 }
 
 export interface CitizenWizardProps {

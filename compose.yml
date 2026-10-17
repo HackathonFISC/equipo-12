@@ -14,7 +14,9 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: "8000"
-      MODO: test
+      MODO: ${MODO:-test}
+      MODEL_NAME: ${MODEL_NAME:-test}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     ports:
       - "127.0.0.1:18081:8000"
     networks:

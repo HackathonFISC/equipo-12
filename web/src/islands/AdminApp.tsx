@@ -28,6 +28,7 @@ import {
   sectorName,
   sectorVisual,
 } from "../lib/panelDerive";
+import { prettyDistrict } from "../lib/text";
 import type {
   PanelView,
   PlanStateLabel,
@@ -118,7 +119,7 @@ export default function AdminApp({ initialView }: { initialView: PanelView }) {
       const visual = sectorVisual(snapshot, sector.sector_id);
       const district =
         typeof sector.district === "string" && sector.district
-          ? sector.district
+          ? prettyDistrict(sector.district)
           : "Panamá Oeste";
       return {
         sectorId: sector.sector_id,
@@ -280,7 +281,11 @@ export default function AdminApp({ initialView }: { initialView: PanelView }) {
             />
           </section>
 
-          <MetricsRow metrics={metrics} />
+          <MetricsRow
+            metrics={metrics}
+            planStateLabel={stateLabel}
+            hasPlan={Boolean(snapshot?.plan)}
+          />
 
           <PlanGate
             state={snapshot?.state ?? null}

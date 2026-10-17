@@ -180,8 +180,17 @@ export function PlanGate({
       <div className="mt-5 rounded-md border border-line bg-water-soft/40 p-4">
         <p className="text-sm font-semibold text-ink">Compuerta humana</p>
         <p className="mt-1 text-xs text-muted">
-          La propuesta no encola avisos <Badge variant="simulated">SIMULATED</Badge>{" "}
-          hasta revisión humana.
+          {state === "aprobado" ? (
+            <>
+              Los avisos <Badge variant="simulated">SIMULATED</Badge> ya están
+              encolados. No se envió WhatsApp a residentes.
+            </>
+          ) : (
+            <>
+              La propuesta no encola avisos{" "}
+              <Badge variant="simulated">SIMULATED</Badge> hasta revisión humana.
+            </>
+          )}
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <label className="block text-sm text-muted" htmlFor="actor-input">

@@ -18,6 +18,7 @@ import {
   sectorName,
   sectorVisual,
 } from "../lib/panelDerive";
+import { prettyDistrict } from "../lib/text";
 import type {
   PanelView,
   PlaceAnchor,
@@ -35,6 +36,7 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
   const { view, setView } = usePanelNav("citizen", initialView);
   const { snapshot, busy, error, submitCitizen } = useSnapshot();
 
+  const [query, setQuery] = useState("");
   const [districtFilter, setDistrictFilter] = useState<
     "all" | "Arraiján" | "La Chorrera"
   >("all");
@@ -95,7 +97,7 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
       const visual = sectorVisual(snapshot, sector.sector_id);
       const district =
         typeof sector.district === "string" && sector.district
-          ? sector.district
+          ? prettyDistrict(sector.district)
           : "Panamá Oeste";
       return {
         sectorId: sector.sector_id,
@@ -212,7 +214,11 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
       role="citizen"
       view={view}
       title={VIEW_TITLES[view] ?? "Portal ciudadano"}
+      scope={districtFilter}
+      query={query}
       onNavigate={setView}
+      onScopeChange={setDistrictFilter}
+      onQueryChange={setQuery}
     >
       {busyText ? (
         <p className="mb-3 text-sm text-muted" role="status" aria-live="polite">
@@ -260,6 +266,7 @@ export default function CitizenApp({ initialView }: { initialView: PanelView }) 
           districtFilter={districtFilter}
           selectedSectorId={selectedSectorId}
           sectors={sectorRows}
+          sectorQuery={query}
           onDistrictFilter={setDistrictFilter}
           onSelectSector={(sectorId) => setSelectedSectorId(sectorId)}
         />

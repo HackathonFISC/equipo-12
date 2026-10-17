@@ -1,7 +1,7 @@
 // Base del panel: portado de src/coordinator/web/panel.html (#view-citizen 723-860, parseFreeText 1273-1348)
 import { useMemo, useState, type FormEvent } from "react";
 import { Badge, Button, Callout, Card } from "../tremor";
-import { parseFreeText, snapHours, type ParseSectorHint } from "../../lib/parseReport";
+import { parseFreeText, type ParseSectorHint } from "../../lib/parseReport";
 import { sectorName } from "../../lib/panelDerive";
 import type { CitizenWizardProps, PlaceAnchor } from "./contracts";
 
@@ -146,15 +146,26 @@ export function CitizenWizard({
           {parsed ? (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-md border border-line bg-sunken p-3 text-sm">
               <span className="font-semibold text-ink">Asistente rápido:</span>
-              {parsed.hours != null ? <Badge variant="default">{snapHours(parsed.hours)} h</Badge> : null}
-              {parsed.people != null ? <Badge variant="default">{parsed.people} personas</Badge> : null}
+              {parsed.hours != null ? (
+                <Badge variant="default">{parsed.hours} h</Badge>
+              ) : null}
+              {parsed.families != null ? (
+                <Badge variant="default">{parsed.families} familias</Badge>
+              ) : null}
+              {parsed.people != null ? (
+                <Badge variant="default">{parsed.people} personas</Badge>
+              ) : null}
               {parsed.matchedSector ? (
                 <Badge variant="default">{parsed.matchedSector.name}</Badge>
               ) : null}
               {parsed.matchedAnchor ? (
                 <Badge variant="default">{parsed.matchedAnchor.name}</Badge>
               ) : null}
-              {!parsed.hours && !parsed.people && !parsed.matchedSector && !parsed.matchedAnchor ? (
+              {!parsed.hours &&
+              !parsed.people &&
+              !parsed.families &&
+              !parsed.matchedSector &&
+              !parsed.matchedAnchor ? (
                 <span className="text-muted">Sin campos detectados todavía.</span>
               ) : null}
             </div>

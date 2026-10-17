@@ -12,6 +12,7 @@ export interface ParseSectorHint {
 export interface ParseFreeTextResult {
   hours: number | null;
   people: number | null;
+  families: number | null;
   matchedAnchor: PlaceAnchor | null;
   matchedSector: ParseSectorHint | null;
   confidence: number;
@@ -67,12 +68,11 @@ export function parseFreeText(
   else if (/un\s+dia|1\s+dia/.test(folded)) hours = 24;
 
   let people: number | null = null;
+  let families: number | null = null;
   const peopleMatch = text.match(/(\d+)\s*personas?/i);
   if (peopleMatch) people = Number(peopleMatch[1]);
-  else {
-    const familyMatch = text.match(/(\d+)\s*familias?/i);
-    if (familyMatch) people = Number(familyMatch[1]);
-  }
+  const familyMatch = text.match(/(\d+)\s*familias?/i);
+  if (familyMatch) families = Number(familyMatch[1]);
 
   let matchedAnchor: PlaceAnchor | null = null;
   let bestLen = 0;
@@ -119,11 +119,13 @@ export function parseFreeText(
   else if (matchedSector) confidence = 0.55;
   if (hours != null) confidence += 0.05;
   if (people != null) confidence += 0.05;
+  if (families != null) confidence += 0.05;
   confidence = Math.min(1, confidence);
 
   return {
     hours,
     people,
+    families,
     matchedAnchor,
     matchedSector,
     confidence,
