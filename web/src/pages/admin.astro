@@ -1,8 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
-import AdminIsland from "../islands/AdminIsland.tsx";
+import PanelApp from "../islands/PanelApp.tsx";
 ---
 
 <Base title="Centro de coordinación · AguaJusta">
-  <AdminIsland client:load />
+  <PanelApp client:load initialRole="admin" initialView="admin" />
 </Base>

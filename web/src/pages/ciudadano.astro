@@ -1,13 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
-import CitizenIsland from "../islands/CitizenIsland.tsx";
-import TrackingIsland from "../islands/TrackingIsland.tsx";
-import MapIsland from "../islands/MapIsland.tsx";
+import PanelApp from "../islands/PanelApp.tsx";
 ---
+
 <Base title="Portal ciudadano · AguaJusta">
-  <main class="mx-auto grid max-w-5xl gap-6 p-4">
-    <CitizenIsland client:load />
-    <TrackingIsland client:load />
-    <MapIsland client:load />
-  </main>
+  <PanelApp client:load initialRole="citizen" initialView="citizen" />
 </Base>

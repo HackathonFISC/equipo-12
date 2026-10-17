@@ -18,6 +18,7 @@ function planLabel(state: PlanState): string {
 
 export default function TrackingIsland() {
   const [code, setCode] = useState("");
+  const [queried, setQueried] = useState(false);
   const [snapshot, setSnapshot] = useState<CoordinatorSnapshot | null>(null);
   const [match, setMatch] = useState<ExtractedReport | null>(null);
 
@@ -46,6 +47,7 @@ export default function TrackingIsland() {
       snapshot.extracted_reports.find((row) => row.report_id === needle) ??
       null;
     setMatch(found);
+    setQueried(true);
   };
 
   const planState = snapshot?.state ?? null;

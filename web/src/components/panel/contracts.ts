@@ -168,6 +168,8 @@ export interface CitizenWizardProps {
   snapshot: CoordinatorSnapshot;
   synthesized: string;
   busy: boolean;
+  locationFix: { latitude: number; longitude: number } | null;
+  onOpenLocation: () => void;
   onSubmit: (body: {
     text: string;
     source_channel?: string;

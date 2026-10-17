@@ -1,4 +1,4 @@
-import { Button, Dialog } from "../tremor";
+import { Badge, Button, CategoryBar, Dialog } from "../tremor";
 import type { DetailDialogProps } from "./contracts";
 
 export function DetailDialog({
@@ -52,6 +52,13 @@ export function DetailDialog({
               Prioridad · {priority.formula_version}
             </p>
             <p className="mt-1 text-2xl font-semibold tabular-nums">{priority.score}</p>
+            {priority.breakdown.length > 0 ? (
+              <CategoryBar
+                className="mt-2"
+                values={priority.breakdown.map((item) => Math.abs(item.points))}
+                marker={priority.score}
+              />
+            ) : null}
             <p className="mt-2 text-sm text-muted">{priority.explanation}</p>
             {priority.breakdown.length > 0 ? (
               <ul className="mt-3 space-y-1 text-sm">

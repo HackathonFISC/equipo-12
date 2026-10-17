@@ -573,6 +573,40 @@ class DistFrontendTests(unittest.TestCase):
         self.assertIn('id="btn-aprobar"', admin)
         self.assertIn("SIMULATED", admin)
         self.assertNotIn('id="btn-camara"', admin)
+        admin_path = dist / "admin.html"
+        if admin_path.is_file():
+            admin_built = admin_path.read_text(encoding="utf-8")
+            for element_id in (
+                "btn-aprobar",
+                "btn-rechazar",
+                "btn-corregir",
+                "btn-revisar",
+                "reset-session",
+                "actor-input",
+                "comment-input",
+                "switchRoleCitizenBtn",
+                "switchRoleAdminBtn",
+            ):
+                self.assertIn(f'id="{element_id}"', admin_built, msg=f"admin missing {element_id}")
+            self.assertNotIn('id="btn-camara"', admin_built)
+        citizen_path = dist / "ciudadano.html"
+        if citizen_path.is_file():
+            citizen = citizen_path.read_text(encoding="utf-8")
+            for element_id in (
+                "switchRoleCitizenBtn",
+                "switchRoleAdminBtn",
+                "autoLocationDialog",
+                "aiExtractionDialog",
+            ):
+                self.assertIn(f'id="{element_id}"', citizen, msg=f"ciudadano missing {element_id}")
+            for forbidden in (
+                'id="btn-aprobar"',
+                'id="btn-rechazar"',
+                'id="btn-corregir"',
+                'id="btn-revisar"',
+                'id="reset-session"',
+            ):
+                self.assertNotIn(forbidden, citizen, msg=f"ciudadano has {forbidden}")
 
 
 if __name__ == "__main__":

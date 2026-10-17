@@ -14,7 +14,13 @@ const VULNERABILITIES = [
 
 const STEPS = ["¿Qué pasó?", "¿Dónde?", "¿Cuánto y quiénes?", "Confirmar"];
 
-export function CitizenWizard({ snapshot, busy, onSubmit }: CitizenWizardProps) {
+export function CitizenWizard({
+  snapshot,
+  busy,
+  locationFix,
+  onOpenLocation,
+  onSubmit,
+}: CitizenWizardProps) {
   const [step, setStep] = useState(0);
   const [text, setText] = useState("");
   const [district, setDistrict] = useState("");
@@ -22,7 +28,7 @@ export function CitizenWizard({ snapshot, busy, onSubmit }: CitizenWizardProps) 
   const [hours, setHours] = useState<number | null>(null);
   const [people, setPeople] = useState<number | null>(null);
   const [vulns, setVulns] = useState<string[]>([]);
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const coords = locationFix;
 
   const parsed = useMemo(() => {
     if (!text.trim()) return null;
@@ -83,8 +89,8 @@ export function CitizenWizard({ snapshot, busy, onSubmit }: CitizenWizardProps) 
       text: text.trim() ? text.trim() : summary,
       source_channel: "panel_web",
       sector: sectorId || undefined,
-      latitude: coords?.lat,
-      longitude: coords?.lng,
+      latitude: coords?.latitude,
+      longitude: coords?.longitude,
     });
   }
 
@@ -201,9 +207,14 @@ export function CitizenWizard({ snapshot, busy, onSubmit }: CitizenWizardProps) 
           </fieldset>
           {coords ? (
             <p className="mt-3 text-sm text-muted">
-              Ubicación: {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
+              Ubicación: {coords.latitude.toFixed(5)}, {coords.longitude.toFixed(5)}
             </p>
           ) : null}
+          <div className="mt-3">
+            <Button type="button" variant="secondary" onClick={onOpenLocation}>
+              Elegir con GPS o en el mapa
+            </Button>
+          </div>
           <div className="mt-3 flex justify-between">
             <Button type="button" variant="secondary" onClick={() => setStep(0)}>
               Atrás
