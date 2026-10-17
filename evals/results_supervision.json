@@ -1,0 +1,70 @@
+{
+  "modo": "test",
+  "case_count": 10,
+  "metrics": {
+    "case_accuracy": 1.0,
+    "dispatches_without_approve": 0
+  },
+  "cases": [
+    {
+      "case_id": "SUP-01",
+      "name": "approve happy path",
+      "passed": true,
+      "detail": "state=APROBADO outbox=1"
+    },
+    {
+      "case_id": "SUP-02",
+      "name": "reject",
+      "passed": true,
+      "detail": "state=RECHAZADO outbox=0"
+    },
+    {
+      "case_id": "SUP-03",
+      "name": "correct + re-approve",
+      "passed": true,
+      "detail": "saved=True state=APROBADO"
+    },
+    {
+      "case_id": "SUP-04",
+      "name": "decision on nonexistent plan id",
+      "passed": true,
+      "detail": "raised: decision.plan_id must match prepared plan"
+    },
+    {
+      "case_id": "SUP-05",
+      "name": "double approve",
+      "passed": true,
+      "detail": "second saved=False outbox=1"
+    },
+    {
+      "case_id": "SUP-06",
+      "name": "rejected reports excluded from clusters",
+      "passed": true,
+      "detail": "rejected_ok=True not_in_clusters=True"
+    },
+    {
+      "case_id": "SUP-07",
+      "name": "UNKNOWN sector requires human review visible",
+      "passed": true,
+      "detail": "visible=True unserved=['UNKNOWN']"
+    },
+    {
+      "case_id": "SUP-08",
+      "name": "simulated outbox only after APPROVE",
+      "passed": true,
+      "detail": "rows=[('ARRAIJAN_VISTA_ALEGRE', 'SIMULATED')] expected=['ARRAIJAN_VISTA_ALEGRE']"
+    },
+    {
+      "case_id": "SUP-09",
+      "name": "audit stores no raw secret",
+      "passed": true,
+      "detail": "audit redaction ok"
+    },
+    {
+      "case_id": "SUP-10",
+      "name": "visible final states exact",
+      "passed": true,
+      "detail": "borrador:snap=borrador,db=BORRADOR; pendiente:snap=pendiente,db=PENDIENTE; borrador_after_correct:snap=borrador,db=BORRADOR; pendiente_again:snap=pendiente,db=PENDIENTE; aprobado:snap=aprobado,db=APROBADO; rechazado:snap=rechazado,db=RECHAZADO"
+    }
+  ]
+}
