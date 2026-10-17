@@ -506,5 +506,74 @@ class CoordinatorAppTests(unittest.TestCase):
         self.assertIn("error", body)
 
 
+class DistFrontendTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.db_path = _temp_db()
+        self.dist = Path(tempfile.mkdtemp())
+        (self.dist / "index.html").write_text(
+            "<!doctype html><button id=\"btn-camara\">foto</button>",
+            encoding="utf-8",
+        )
+        assets = self.dist / "_astro"
+        assets.mkdir()
+        (assets / "app.js").write_text("console.log(1)\n", encoding="utf-8")
+        self.server = serve(self.db_path, port=0, web_dist=self.dist)
+        host, port = self.server.server_address
+        self.base = f"http://{host}:{port}"
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+
+    def tearDown(self) -> None:
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(timeout=5)
+        self.db_path.unlink(missing_ok=True)
+
+    def _get_text(self, path: str) -> tuple[int, str]:
+        req = urllib.request.Request(_url(self.base, path), method="GET")
+        try:
+            with urllib.request.urlopen(req) as resp:
+                return resp.status, resp.read().decode("utf-8")
+        except urllib.error.HTTPError as exc:
+            raw = exc.read().decode("utf-8")
+            exc.close()
+            return exc.code, raw
+
+    def test_built_page_replaces_only_that_route(self) -> None:
+        status, html = self._get_text("/")
+        self.assertEqual(status, 200)
+        self.assertIn('id="btn-camara"', html)
+        self.assertNotIn("btn-camara-frontal", html)
+        status, panel = self._get_text("/coordinacion")
+        self.assertEqual(status, 200)
+        self.assertIn("btn-aprobar", panel)
+
+    def test_astro_asset_and_traversal(self) -> None:
+        status, body = self._get_text("/_astro/app.js")
+        self.assertEqual(status, 200)
+        self.assertIn("console.log(1)", body)
+        status, blocked = self._get_text("/_astro/../index.html")
+        self.assertEqual(status, 404)
+        self.assertNotIn("btn-camara", blocked)
+        status, encoded = self._get_text("/_astro/%2e%2e/index.html")
+        self.assertEqual(status, 404)
+
+    def test_real_dist_keeps_required_ids(self) -> None:
+        dist = Path(__file__).resolve().parents[1] / "web" / "dist"
+        index = dist / "index.html"
+        board = dist / "coordinacion.html"
+        if not index.is_file() or not board.is_file():
+            self.skipTest("web/dist ausente")
+        root = index.read_text(encoding="utf-8")
+        admin = board.read_text(encoding="utf-8")
+        for element_id in ("btn-camara", "btn-microfono", "btn-camara-frontal", "btn-camara-trasera"):
+            self.assertIn(f'id="{element_id}"', root)
+        for forbidden in ("btn-aprobar", "btn-rechazar", "btn-corregir", "btn-revisar", "SIMULATED"):
+            self.assertNotIn(forbidden, root)
+        self.assertIn('id="btn-aprobar"', admin)
+        self.assertIn("SIMULATED", admin)
+        self.assertNotIn('id="btn-camara"', admin)
+
+
 if __name__ == "__main__":
     unittest.main()

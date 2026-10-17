@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import mimetypes
 import threading
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote
 
 from pydantic import ValidationError
 
@@ -19,12 +21,44 @@ from src.coordinator.store import ApprovalStore
 _USER_HTML = Path(__file__).resolve().parent / "web" / "usuario.html"
 _PANEL_HTML = Path(__file__).resolve().parent / "web" / "panel.html"
 _MAX_JSON_BODY = 8 * 1024 * 1024
+_PAGES = {
+    "/": "index.html",
+    "/coordinacion": "coordinacion.html",
+    "/admin": "admin.html",
+    "/ciudadano": "ciudadano.html",
+}
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
+mimetypes.add_type("font/woff2", ".woff2")
 
 
 def _json_response(handler: BaseHTTPRequestHandler, status: int, payload: dict[str, Any]) -> None:
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     handler.send_response(status)
     handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+def _safe_file(root: Path, rel: str) -> Path | None:
+    rel = unquote(rel).lstrip("/")
+    if not rel or rel.startswith(("/", "\\")) or "\\" in rel or ".." in rel.split("/"):
+        return None
+    root_resolved = root.resolve()
+    candidate = (root_resolved / rel).resolve()
+    if candidate != root_resolved and root_resolved not in candidate.parents:
+        return None
+    return candidate if candidate.is_file() else None
+
+
+def _bytes_file(handler: BaseHTTPRequestHandler, path: Path) -> None:
+    mime, _enc = mimetypes.guess_type(path.name)
+    if path.suffix == ".html":
+        mime = "text/html; charset=utf-8"
+    body = path.read_bytes()
+    handler.send_response(200)
+    handler.send_header("Content-Type", mime or "application/octet-stream")
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
@@ -75,6 +109,7 @@ def serve(
     db_path: Path,
     host: str = "127.0.0.1",
     port: int = 0,
+    web_dist: Path | None = None,
 ) -> ThreadingHTTPServer:
     store = ApprovalStore(db_path)
     service = CoordinatorService(store)
@@ -86,12 +121,26 @@ def serve(
 
         def do_GET(self) -> None:
             path_only = self.path.split("?", 1)[0]
+            if web_dist is not None and path_only in _PAGES:
+                built = _safe_file(web_dist, _PAGES[path_only])
+                if built is not None:
+                    _bytes_file(self, built)
+                    return
+
             if path_only == "/":
                 _html_file(self, _USER_HTML)
                 return
 
             if path_only in ("/coordinacion", "/admin", "/ciudadano"):
                 _html_file(self, _PANEL_HTML)
+                return
+
+            if web_dist is not None and path_only.startswith("/_astro/"):
+                asset = _safe_file(web_dist, path_only)
+                if asset is None:
+                    _json_response(self, 404, {"error": "not found"})
+                    return
+                _bytes_file(self, asset)
                 return
 
             if path_only == "/api/context":
@@ -245,6 +294,11 @@ def serve(
 
 
 if __name__ == "__main__":
-    server = serve(PROJECT_ROOT / "data" / "agua_justa.db", port=8000)
-    print("Coordinator panel at http://127.0.0.1:8000/")
+    import os
+
+    _host = os.environ.get("HOST", "127.0.0.1")
+    _port = int(os.environ.get("PORT", "8000"))
+    _dist = PROJECT_ROOT / "web" / "dist" if os.environ.get("UI") == "v2" else None
+    server = serve(PROJECT_ROOT / "data" / "agua_justa.db", host=_host, port=_port, web_dist=_dist)
+    print(f"Coordinator panel at http://{_host}:{_port}/")
     server.serve_forever()
