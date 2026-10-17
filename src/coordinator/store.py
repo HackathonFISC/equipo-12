@@ -9,6 +9,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from src.communication.outbox import notices_for_panel
+from src.communication.whatsapp import WhatsAppConfig, WhatsAppDispatch, dispatch_team_whatsapp
+from src.communication.whatsapp import Transport as WhatsAppTransport
 from src.config import PROJECT_ROOT, redact_secrets
 from src.contracts import DecisionAction, ExecutionResult, HumanDecision, PlanDraft
 from src.coordinator.state import PlanState, transition
@@ -78,6 +80,45 @@ def _notice_rows(plan_payload: str) -> list[tuple[str, str]]:
     return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
 
 
+def _plan_from_payload(plan_payload: str) -> PlanDraft | None:
+    try:
+        data = json.loads(plan_payload)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    candidate = data.get("plan") if isinstance(data.get("plan"), dict) else data
+    try:
+        return PlanDraft.model_validate(candidate)
+    except ValueError:
+        return None
+
+
+def _with_team_whatsapp(
+    detail: str,
+    *,
+    saved: bool,
+    decision: HumanDecision,
+    plan_payload: str,
+    config: WhatsAppConfig | None,
+    transport: WhatsAppTransport | None,
+) -> str:
+    if not saved or decision.action is not DecisionAction.APPROVE:
+        return detail
+    plan = _plan_from_payload(plan_payload)
+    if plan is None:
+        return detail
+    outcome: WhatsAppDispatch = dispatch_team_whatsapp(
+        plan,
+        decision,
+        config=config,
+        transport=transport,
+    )
+    if outcome.sent or outcome.detail == "whatsapp send failed":
+        return f"{detail}; {outcome.detail}"
+    return detail
+
+
 class ApprovalStore:
     def __init__(
         self,
@@ -85,11 +126,15 @@ class ApprovalStore:
         *,
         fail_after: str | None = None,
         fail_recovery: bool = False,
+        whatsapp_config: WhatsAppConfig | None = None,
+        whatsapp_transport: WhatsAppTransport | None = None,
     ) -> None:
         self.db_path = db_path if db_path is not None else _DEFAULT_DB
         self.fail_after = fail_after
         # ponytail: test-only seam to assert recovery failures surface on __notes__
         self.fail_recovery = fail_recovery
+        self._whatsapp_config = whatsapp_config
+        self._whatsapp_transport = whatsapp_transport
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_schema()
 
@@ -436,5 +481,12 @@ class ApprovalStore:
             plan_id=plan_id,
             audit_id=audit_id,
             outbox_id=first_outbox_id,
-            detail=detail,
+            detail=_with_team_whatsapp(
+                detail,
+                saved=saved,
+                decision=decision,
+                plan_payload=plan_payload,
+                config=self._whatsapp_config,
+                transport=self._whatsapp_transport,
+            ),
         )

@@ -42,6 +42,9 @@ _ENV_EXAMPLE = (
     "GOOGLE_API_KEY=your-google-api-key\n"
     "OPENAI_API_KEY=your-openai-api-key\n"
     "ANTHROPIC_API_KEY=your-anthropic-api-key\n"
+    "WHATSAPP_TOKEN=your-whatsapp-token\n"
+    "WHATSAPP_PHONE_NUMBER_ID=your-phone-number-id\n"
+    "WHATSAPP_TO=your-team-number\n"
 )
 
 
