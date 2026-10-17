@@ -23,12 +23,12 @@ from src.prioritization.agent import prioritize_clusters
 _STUB_VEHICLE = "cisterna-1"
 _FORMULA_VERSION = "STUB-v0"
 _PRIORITY_EXPLANATION = (
-    "STUB priority (SYNTHETIC_DEMO): prototype weights from hours without water and "
-    "affected count; not official IDAAN policy."
+    "Prioridad STUB (SYNTHETIC_DEMO): pesos prototype a partir de horas sin agua "
+    "y personas afectadas; no es política del IDAAN."
 )
 _PLAN_EXPLANATION = (
-    "STUB plan (SYNTHETIC_DEMO): single-vehicle route by sorted priority; "
-    "not official IDAAN dispatch."
+    "Plan STUB (SYNTHETIC_DEMO): una sola cisterna ordenada por prioridad; "
+    "no es un despacho oficial del IDAAN."
 )
 
 
@@ -82,7 +82,7 @@ def _priority_for(cluster: NormalizedIncidentCluster) -> PriorityResult:
             FactorBreakdown(
                 factor="baseline",
                 points=0.0,
-                reason="no duration or affected count",
+                reason="sin horas ni personas afectadas",
             )
         )
     return PriorityResult(

@@ -9,9 +9,9 @@ from src.ingestion.catalog import sector_map
 from src.planner.solver import solve
 
 _EXPLANATION = (
-    "priority-v1 plan (SYNTHETIC_DEMO): OR-Tools assigns cisterns with "
-    "capacity and shift windows. Liters per person, speed and the depot "
-    "are ASSUMPTION demo values, not official IDAAN dispatch."
+    "Plan priority-v1 (SYNTHETIC_DEMO): OR-Tools asigna las cisternas "
+    "con capacidad y ventana de turno. Los litros por persona, la velocidad "
+    "y el depósito son ASSUMPTION de la demostración, no un despacho oficial del IDAAN."
 )
 
 

@@ -198,7 +198,7 @@ class ApprovalStoreTests(unittest.TestCase):
         )
         self.assertFalse(second.saved)
         self.assertIsNone(second.outbox_id)
-        self.assertIn("approved", second.detail.lower())
+        self.assertIn("aprobado", second.detail.lower())
 
         with self._conn() as conn:
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0], 1)

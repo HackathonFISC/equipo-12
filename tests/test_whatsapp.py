@@ -60,7 +60,7 @@ class WhatsAppTests(unittest.TestCase):
         )
         self.assertFalse(result.sent)
         self.assertFalse(called)
-        self.assertEqual(result.detail, "whatsapp not configured")
+        self.assertEqual(result.detail, "WhatsApp de prueba no configurado")
 
     def test_reject_does_not_send(self) -> None:
         called = False
@@ -110,7 +110,7 @@ class WhatsAppTests(unittest.TestCase):
             transport=transport,
         )
         self.assertFalse(result.sent)
-        self.assertEqual(result.detail, "whatsapp send failed")
+        self.assertEqual(result.detail, "falló el envío de WhatsApp de prueba")
         self.assertNotIn("test-token", result.detail)
 
     def test_store_approve_sends_once_and_keeps_resident_rows_simulated(self) -> None:
@@ -152,7 +152,7 @@ class WhatsAppTests(unittest.TestCase):
             result = store.apply_decision("plan-wa", _decision(DecisionAction.APPROVE), payload)
             self.assertTrue(result.saved)
             self.assertEqual(sent, ["50769990000"])
-            self.assertIn("whatsapp sent to team number", result.detail)
+            self.assertIn("WhatsApp de prueba enviado al número del equipo", result.detail)
             import sqlite3
 
             conn = sqlite3.connect(path)

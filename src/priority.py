@@ -36,6 +36,14 @@ _VULNERABILITY_POINTS = {
     VulnerabilityFlag.ALBERGUE: 8.0,
     VulnerabilityFlag.NINGUNA: 0.0,
 }
+_VULNERABILITY_LABEL = {
+    VulnerabilityFlag.HOSPITAL_SALUD: "hospital o centro de salud",
+    VulnerabilityFlag.ESCUELA: "escuela",
+    VulnerabilityFlag.ADULTOS_MAYORES: "adultos mayores",
+    VulnerabilityFlag.INFANTES: "infantes",
+    VulnerabilityFlag.ALBERGUE: "albergue",
+    VulnerabilityFlag.NINGUNA: "ninguna",
+}
 
 
 def _duration_points(hours: int | None) -> tuple[float, str]:
@@ -64,7 +72,7 @@ def _vulnerability_points(
     total = round(min(sum(_VULNERABILITY_POINTS[f] for f in flags), MAX_VULNERABILITY), 2)
     if not flags or flags == [VulnerabilityFlag.NINGUNA]:
         return total, "sin vulnerabilidad marcada"
-    names = ",".join(f.value for f in flags)
+    names = ", ".join(_VULNERABILITY_LABEL[flag] for flag in flags)
     return total, f"vulnerabilidad: {names} (tope {int(MAX_VULNERABILITY)})"
 
 
@@ -90,9 +98,9 @@ def score_cluster(cluster: NormalizedIncidentCluster) -> PriorityResult:
         ],
         formula_version=FORMULA_VERSION,
         explanation=(
-            f"{FORMULA_VERSION}: duration {duration_pts} + affected {affected_pts} "
-            f"+ vulnerability {vulnerability_pts} = {score} "
-            f"(sector {cluster.sector_id.value}, prototype policy)"
+            f"{FORMULA_VERSION}: horas {duration_pts} + afectados {affected_pts} "
+            f"+ vulnerabilidad {vulnerability_pts} = {score}. "
+            "Pesos de prototipo, no política del IDAAN."
         ),
     )
 
