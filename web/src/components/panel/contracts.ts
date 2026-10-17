@@ -235,13 +235,32 @@ export interface TrackingViewProps {
   onPickCode: (code: string) => void;
 }
 
+export type DistrictScope = "all" | "Arraiján" | "La Chorrera";
+
+export interface ShellHeaderProps {
+  title?: string;
+  stateLabel?: PlanStateLabel;
+  scope?: DistrictScope;
+  onScopeChange?: (value: DistrictScope) => void;
+  onOpenMenu?: () => void;
+  onHelp?: () => void;
+}
+
+export interface SidebarNavProps {
+  role: Role;
+  view: PanelView;
+  onNavigate: (view: PanelView) => void;
+}
+
 export interface ShellProps {
   role: Role;
   view: PanelView;
   title: string;
   stateLabel?: PlanStateLabel;
+  scope?: DistrictScope;
   children: ReactNode;
   onNavigate: (view: PanelView) => void;
+  onScopeChange?: (value: DistrictScope) => void;
 }
 
 export interface ToastProps {

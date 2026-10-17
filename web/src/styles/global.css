@@ -25,6 +25,16 @@
   --color-navy-raised: #153a53;
   --color-navy-active: #1a4763;
   --color-sidebar: #a9c0d0;
+  --color-header-bg: #0b2438;
+  --color-header-border: #153a53;
+  --color-header-text: #f4f7f8;
+  --color-header-muted: #a9c0d0;
+  --color-header-hover: #153a53;
+  --color-header-search-bg: #0f344d;
+  --color-header-search-border: #1f4e6b;
+  --color-header-search-text: #f4f7f8;
+  --color-header-search-muted: #a9c0d0;
+  --color-header-search-focus: #29c1b4;
   --color-sidebar-dim: #6f8da4;
   --color-water-bright: #29c1b4;
   --color-heat-low: #13b889;
