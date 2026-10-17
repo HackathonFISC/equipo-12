@@ -156,6 +156,7 @@ export interface DuplicatesPanelProps {
 }
 
 export interface MapViewProps {
+  role: Role;
   snapshot: CoordinatorSnapshot;
   districtFilter: "all" | "Arraiján" | "La Chorrera";
   selectedSectorId: string | null;
@@ -238,9 +239,8 @@ export interface ShellProps {
   role: Role;
   view: PanelView;
   title: string;
-  stateLabel: PlanStateLabel;
+  stateLabel?: PlanStateLabel;
   children: ReactNode;
-  onSwitchRole: (role: Role) => void;
   onNavigate: (view: PanelView) => void;
 }
 
@@ -259,8 +259,24 @@ export interface DetailDialogProps {
 }
 
 export interface HelpDialogProps {
+  role: Role;
   open: boolean;
   onClose: () => void;
 }
 
 export const PANEL_VIEWS: PanelView[] = ["map", "admin", "citizen", "tracking"];
+
+export const EMPTY_SNAPSHOT: CoordinatorSnapshot = {
+  clusters: [],
+  priorities: [],
+  plan: null,
+  state: null,
+  traces: [],
+  execution: null,
+  provenance_tags: [],
+  sectors: [],
+  extracted_reports: [],
+  places: [],
+  sample_reports: [],
+  outbox_notices: [],
+};
