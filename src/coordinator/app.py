@@ -298,7 +298,8 @@ if __name__ == "__main__":
 
     _host = os.environ.get("HOST", "127.0.0.1")
     _port = int(os.environ.get("PORT", "8000"))
-    _dist = PROJECT_ROOT / "web" / "dist" if os.environ.get("UI") == "v2" else None
+    # UI=legacy sirve panel.html y usuario.html. El default es web/dist.
+    _dist = None if os.environ.get("UI") == "legacy" else PROJECT_ROOT / "web" / "dist"
     server = serve(PROJECT_ROOT / "data" / "agua_justa.db", host=_host, port=_port, web_dist=_dist)
     print(f"Coordinator panel at http://{_host}:{_port}/")
     server.serve_forever()
