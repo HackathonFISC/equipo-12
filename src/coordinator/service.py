@@ -52,6 +52,14 @@ class CoordinatorService:
     def traces(self) -> list[TraceEntry]:
         return list(self._traces)
 
+    @property
+    def has_plan(self) -> bool:
+        return self._plan_id is not None
+
+    @property
+    def plan_id(self) -> str | None:
+        return self._plan_id
+
     def ingest_texts(self, texts: list[str]) -> list[IngestionResult]:
         results: list[IngestionResult] = []
         for text in texts:

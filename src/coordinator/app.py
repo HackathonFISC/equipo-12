@@ -16,6 +16,7 @@ from src.coordinator.service import CoordinatorService
 from src.coordinator.store import ApprovalStore
 
 _PANEL_HTML = Path(__file__).resolve().parent / "web" / "panel.html"
+_MAX_JSON_BODY = 256 * 1024
 
 
 def _json_response(handler: BaseHTTPRequestHandler, status: int, payload: dict[str, Any]) -> None:
@@ -27,18 +28,31 @@ def _json_response(handler: BaseHTTPRequestHandler, status: int, payload: dict[s
     handler.wfile.write(body)
 
 
-def _read_json_body(handler: BaseHTTPRequestHandler) -> dict[str, Any] | None:
-    length = int(handler.headers.get("Content-Length", "0") or "0")
-    if length <= 0:
-        return {}
+def _read_json_body(
+    handler: BaseHTTPRequestHandler,
+) -> tuple[dict[str, Any] | None, int | None, str | None]:
+    """Return (data, error_status, error_message). error_status set => reject with JSON error."""
+    header = handler.headers.get("Content-Length")
+    if header is None or not str(header).strip():
+        return None, 400, "missing or invalid Content-Length"
+    try:
+        length = int(header)
+    except ValueError:
+        return None, 400, "missing or invalid Content-Length"
+    if length < 0:
+        return None, 400, "missing or invalid Content-Length"
+    if length > _MAX_JSON_BODY:
+        return None, 413, "request body too large"
+    if length == 0:
+        return {}, None, None
     raw = handler.rfile.read(length)
     try:
         data = json.loads(raw.decode("utf-8"))
     except json.JSONDecodeError:
-        return None
+        return None, 400, "invalid JSON body"
     if not isinstance(data, dict):
-        return None
-    return data
+        return None, 400, "invalid JSON body"
+    return data, None, None
 
 
 def serve(
@@ -76,9 +90,17 @@ def serve(
 
         def do_POST(self) -> None:
             if self.path == "/api/reports":
-                body = _read_json_body(self)
-                if body is None:
-                    _json_response(self, 400, {"error": "invalid JSON body"})
+                body, err_status, err_msg = _read_json_body(self)
+                if err_status is not None:
+                    _json_response(self, err_status, {"error": err_msg or "bad request"})
+                    return
+                assert body is not None
+                if service.has_plan:
+                    _json_response(
+                        self,
+                        400,
+                        {"error": f"plan already exists: {service.plan_id}"},
+                    )
                     return
                 texts = body.get("texts")
                 if texts is None or not isinstance(texts, list) or not all(
@@ -105,10 +127,11 @@ def serve(
                 return
 
             if self.path == "/api/decision":
-                body = _read_json_body(self)
-                if body is None:
-                    _json_response(self, 400, {"error": "invalid JSON body"})
+                body, err_status, err_msg = _read_json_body(self)
+                if err_status is not None:
+                    _json_response(self, err_status, {"error": err_msg or "bad request"})
                     return
+                assert body is not None
                 try:
                     action_raw = body.get("action")
                     if not isinstance(action_raw, str):

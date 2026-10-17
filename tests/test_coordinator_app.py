@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import http.client
 import json
 import re
 import sqlite3
@@ -53,6 +54,14 @@ def _post_json(base: str, path: str, payload: dict | None = None) -> tuple[int, 
     except urllib.error.HTTPError as exc:
         raw = exc.read().decode("utf-8")
         return exc.code, json.loads(raw)
+
+
+def _cluster_report_counts(clusters: list[dict]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for cluster in clusters:
+        sector = str(cluster.get("sector_id", ""))
+        counts[sector] = int(cluster.get("report_count", 0))
+    return counts
 
 
 def _outbox_count(db_path: Path) -> int:
@@ -170,6 +179,41 @@ class CoordinatorAppTests(unittest.TestCase):
             server.server_close()
             thread.join(timeout=5)
             db_path.unlink(missing_ok=True)
+
+    def test_second_reports_post_rejected_without_mutating_queue(self) -> None:
+        status, first_ctx = _post_json(
+            self.base,
+            "/api/reports",
+            {"texts": _VISTA_LINES + [_UNKNOWN_LINE]},
+        )
+        self.assertEqual(status, 200)
+        expected_counts = _cluster_report_counts(first_ctx["clusters"])
+
+        status, body = _post_json(
+            self.base,
+            "/api/reports",
+            {"texts": ["reporte nuevo en otro sector totalmente distinto"]},
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("error", body)
+
+        _, ctx = _get_json(self.base, "/api/context")
+        self.assertEqual(_cluster_report_counts(ctx["clusters"]), expected_counts)
+
+    def test_oversized_content_length_returns_413(self) -> None:
+        host, port = self.server.server_address
+        conn = http.client.HTTPConnection(host, port, timeout=5)
+        try:
+            conn.putrequest("POST", "/api/reports")
+            conn.putheader("Content-Type", "application/json")
+            conn.putheader("Content-Length", str(256 * 1024 + 1))
+            conn.endheaders()
+            resp = conn.getresponse()
+            self.assertEqual(resp.status, 413)
+            payload = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("error", payload)
+        finally:
+            conn.close()
 
     def test_correct_empty_comment_returns_400(self) -> None:
         _post_json(self.base, "/api/reports", {"texts": _VISTA_LINES})
