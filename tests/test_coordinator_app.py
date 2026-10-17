@@ -240,6 +240,132 @@ class CoordinatorAppTests(unittest.TestCase):
         self.assertIn("error", body)
         self.assertEqual(_outbox_count(self.db_path), 0)
 
+    def test_ciudadano_and_admin_routes_return_v10_html(self) -> None:
+        markers = (
+            "autoLocationDialog",
+            "aiExtractionDialog",
+            "switchRoleCitizenBtn",
+            "switchRoleAdminBtn",
+            "btn-aprobar",
+            "SIMULATED",
+        )
+        for path in ("/ciudadano", "/admin"):
+            req = urllib.request.Request(_url(self.base, path), method="GET")
+            with urllib.request.urlopen(req) as resp:
+                status = resp.status
+                html = resp.read().decode("utf-8")
+            self.assertEqual(status, 200)
+            for marker in markers:
+                self.assertIn(marker, html, msg=f"{path} missing {marker}")
+
+    def test_context_includes_places_samples_and_extracted_fields(self) -> None:
+        status, ctx = _get_json(self.base, "/api/context")
+        self.assertEqual(status, 200)
+        places = ctx["places"]
+        self.assertIsInstance(places, list)
+        self.assertGreater(len(places), 0)
+        self.assertTrue(
+            any(
+                isinstance(place, dict) and place.get("place_id") == "VISTA_ALEGRE_CHINO"
+                for place in places
+            )
+        )
+        samples = ctx["sample_reports"]
+        self.assertIsInstance(samples, list)
+        self.assertGreater(len(samples), 0)
+        self.assertTrue(
+            any(
+                isinstance(sample, dict) and sample.get("report_id") == "SYN-001"
+                for sample in samples
+            )
+        )
+        self.assertEqual(ctx["extracted_reports"], [])
+        self.assertEqual(ctx["outbox_notices"], [])
+
+    def test_citizen_report_and_preload_endpoints(self) -> None:
+        status, ctx = _post_json(
+            self.base,
+            "/api/citizen-report",
+            {
+                "text": (
+                    "48 horas sin agua cerca del Hospital Nicolas Solano, 25 personas"
+                )
+            },
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(ctx["state"], "borrador")
+        self.assertEqual(
+            ctx["latest_report"]["candidate_sector_id"],
+            "CHORRERA_BARRIO_COLON",
+        )
+        self.assertGreater(len(ctx["extracted_reports"]), 0)
+        self.assertGreater(len(ctx["clusters"]), 0)
+        self.assertGreater(len(ctx["priorities"]), 0)
+        self.assertIsNotNone(ctx["plan"])
+        notices = ctx["outbox_notices"]
+        self.assertGreater(len(notices), 0)
+        self.assertTrue(all(notice["status"] == "PREVIEW" for notice in notices))
+        self.assertTrue(all(notice["channel"] == "SIMULATED" for notice in notices))
+        self.assertEqual(_outbox_count(self.db_path), 0)
+
+        first_ids = [item["report_id"] for item in ctx["extracted_reports"]]
+        status, ctx = _post_json(
+            self.base,
+            "/api/citizen-report",
+            {"text": "36 horas sin agua en Vista Alegre, 10 personas"},
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(ctx["state"], "borrador")
+        second_ids = [item["report_id"] for item in ctx["extracted_reports"]]
+        self.assertEqual(len(second_ids), len(first_ids) + 1)
+        self.assertTrue(all(report_id in second_ids for report_id in first_ids))
+        self.assertIsNotNone(ctx["plan"])
+
+        status, ctx = _post_json(self.base, "/api/preload", {})
+        self.assertEqual(status, 200)
+        self.assertGreaterEqual(len(ctx["extracted_reports"]), 7)
+        self.assertEqual(ctx["state"], "borrador")
+
+        status, ctx = _post_json(self.base, "/api/review", {})
+        self.assertEqual(status, 200)
+        self.assertEqual(ctx["state"], "pendiente")
+        plan_id = ctx["plan"]["plan_id"]
+        status, body = _post_json(
+            self.base,
+            "/api/citizen-report",
+            {"text": "12 horas sin agua en Burunga, 8 personas"},
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("error", body)
+
+        status, ctx = _post_json(
+            self.base,
+            "/api/decision",
+            {
+                "plan_id": plan_id,
+                "action": "CORRECT",
+                "actor": "coordinador",
+                "comment": "volver a borrador para agregar un reporte",
+            },
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(ctx["state"], "borrador")
+        status, ctx = _post_json(
+            self.base,
+            "/api/citizen-report",
+            {"text": "12 horas sin agua en Burunga, 8 personas"},
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(ctx["state"], "borrador")
+
+        status, body = _post_json(
+            self.base,
+            "/api/citizen-report",
+            {"text": "   "},
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("error", body)
+
 
 if __name__ == "__main__":
     unittest.main()

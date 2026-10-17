@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -62,13 +63,15 @@ def serve(
 ) -> ThreadingHTTPServer:
     store = ApprovalStore(db_path)
     service = CoordinatorService(store)
+    lock = threading.Lock()
 
     class CoordinatorHandler(BaseHTTPRequestHandler):
         def log_message(self, format: str, *args: object) -> None:
             return
 
         def do_GET(self) -> None:
-            if self.path == "/" or self.path.startswith("/?"):
+            path_only = self.path.split("?", 1)[0]
+            if path_only in ("/", "/ciudadano", "/admin"):
                 try:
                     html = _PANEL_HTML.read_text(encoding="utf-8")
                 except OSError:
@@ -82,50 +85,57 @@ def serve(
                 self.wfile.write(body)
                 return
 
-            if self.path == "/api/context":
-                _json_response(self, 200, service.snapshot())
+            if path_only == "/api/context":
+                with lock:
+                    payload = service.snapshot()
+                _json_response(self, 200, payload)
                 return
 
             _json_response(self, 404, {"error": "not found"})
 
         def do_POST(self) -> None:
-            if self.path == "/api/reports":
+            path_only = self.path.split("?", 1)[0]
+            if path_only == "/api/reports":
                 body, err_status, err_msg = _read_json_body(self)
                 if err_status is not None:
                     _json_response(self, err_status, {"error": err_msg or "bad request"})
                     return
                 assert body is not None
-                if service.has_plan:
-                    _json_response(
-                        self,
-                        400,
-                        {"error": f"plan already exists: {service.plan_id}"},
-                    )
-                    return
                 texts = body.get("texts")
                 if texts is None or not isinstance(texts, list) or not all(
                     isinstance(t, str) for t in texts
                 ):
                     _json_response(self, 400, {"error": "texts must be a list of strings"})
                     return
-                try:
-                    service.run_reports(texts)
-                except ValueError as exc:
-                    _json_response(self, 400, {"error": str(exc)})
-                    return
-                _json_response(self, 200, service.snapshot())
+                with lock:
+                    if service.has_plan:
+                        _json_response(
+                            self,
+                            400,
+                            {"error": f"plan already exists: {service.plan_id}"},
+                        )
+                        return
+                    try:
+                        service.run_reports(texts)
+                    except ValueError as exc:
+                        _json_response(self, 400, {"error": str(exc)})
+                        return
+                    payload = service.snapshot()
+                _json_response(self, 200, payload)
                 return
 
-            if self.path == "/api/review":
-                try:
-                    service.submit_for_review()
-                except ValueError as exc:
-                    _json_response(self, 400, {"error": str(exc)})
-                    return
-                _json_response(self, 200, service.snapshot())
+            if path_only == "/api/review":
+                with lock:
+                    try:
+                        service.submit_for_review()
+                    except ValueError as exc:
+                        _json_response(self, 400, {"error": str(exc)})
+                        return
+                    payload = service.snapshot()
+                _json_response(self, 200, payload)
                 return
 
-            if self.path == "/api/decision":
+            if path_only == "/api/decision":
                 body, err_status, err_msg = _read_json_body(self)
                 if err_status is not None:
                     _json_response(self, err_status, {"error": err_msg or "bad request"})
@@ -149,12 +159,55 @@ def serve(
                         message = exc.errors()[0]["msg"]
                     _json_response(self, 400, {"error": message})
                     return
-                try:
-                    service.decide(decision)
-                except ValueError as exc:
-                    _json_response(self, 400, {"error": str(exc)})
+                with lock:
+                    try:
+                        service.decide(decision)
+                    except ValueError as exc:
+                        _json_response(self, 400, {"error": str(exc)})
+                        return
+                    payload = service.snapshot()
+                _json_response(self, 200, payload)
+                return
+
+            if path_only == "/api/citizen-report":
+                body, err_status, err_msg = _read_json_body(self)
+                if err_status is not None:
+                    _json_response(self, err_status, {"error": err_msg or "bad request"})
                     return
-                _json_response(self, 200, service.snapshot())
+                assert body is not None
+                text = body.get("text")
+                if not isinstance(text, str) or not text.strip():
+                    _json_response(self, 400, {"error": "text must be a non-empty string"})
+                    return
+                source_channel = body.get("source_channel", "citizen_portal")
+                if not isinstance(source_channel, str) or not source_channel.strip():
+                    source_channel = "citizen_portal"
+                else:
+                    source_channel = source_channel.strip()
+                with lock:
+                    try:
+                        payload = service.submit_citizen_report(
+                            text,
+                            source_channel=source_channel,
+                        )
+                    except ValueError as exc:
+                        _json_response(self, 400, {"error": str(exc)})
+                        return
+                _json_response(self, 200, payload)
+                return
+
+            if path_only == "/api/preload":
+                _body, err_status, err_msg = _read_json_body(self)
+                if err_status is not None:
+                    _json_response(self, err_status, {"error": err_msg or "bad request"})
+                    return
+                with lock:
+                    try:
+                        payload = service.preload_fixtures()
+                    except ValueError as exc:
+                        _json_response(self, 400, {"error": str(exc)})
+                        return
+                _json_response(self, 200, payload)
                 return
 
             _json_response(self, 404, {"error": "not found"})
