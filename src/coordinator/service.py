@@ -19,7 +19,7 @@ from src.contracts import (
     ReportInput,
     TraceEntry,
 )
-from src.coordinator.engine import EngineOutput, PlanEngine, demo_engine
+from src.coordinator.engine import EngineOutput, PlanEngine, priority_engine
 from src.coordinator.state import PlanState, transition
 from src.coordinator.store import ApprovalStore
 from src.ingestion.agent import IngestionResult, ingest_report
@@ -34,7 +34,7 @@ class CoordinatorService:
     def __init__(
         self,
         store: ApprovalStore,
-        engine: PlanEngine = demo_engine,
+        engine: PlanEngine = priority_engine,
     ) -> None:
         self._store = store
         self._engine = engine
@@ -87,6 +87,7 @@ class CoordinatorService:
 
         clusters = self.consolidate()
         output = self._engine(clusters)
+        self._traces.extend(output.traces)
         plan_id = output.plan.plan_id
         payload = {
             "clusters": [c.model_dump(mode="json") for c in clusters],

@@ -5,7 +5,7 @@ El coordinador revisa el borrador del plan (prioridades y rutas con motor de dem
 ```mermaid
 flowchart TD
     A[ingest_report] --> B[deduplicate_reports]
-    B --> C["PlanEngine<br/>(demo_engine STUB-v0, SYNTHETIC_DEMO)"]
+    B --> C["PlanEngine<br/>(priority_engine priority-v1, SYNTHETIC_DEMO)"]
     C --> D[plan en estado BORRADOR]
     D --> E[submit_for_review → PENDIENTE]
     E --> F["Paso humano: coordinador revisa el plan"]

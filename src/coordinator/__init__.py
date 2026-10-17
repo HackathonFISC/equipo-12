@@ -1,6 +1,6 @@
 """Coordinator panel: plan state and engine seam."""
 
-from src.coordinator.engine import EngineOutput, PlanEngine, demo_engine
+from src.coordinator.engine import EngineOutput, PlanEngine, demo_engine, priority_engine
 from src.coordinator.state import PlanState, transition
 from src.coordinator.service import CoordinatorService
 from src.coordinator.store import ApprovalStore
@@ -12,5 +12,6 @@ __all__ = [
     "PlanEngine",
     "PlanState",
     "demo_engine",
+    "priority_engine",
     "transition",
 ]

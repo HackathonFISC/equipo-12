@@ -16,7 +16,9 @@ from src.contracts import (
     PlanDraft,
     PriorityResult,
     SectorId,
+    TraceEntry,
 )
+from src.prioritization.agent import prioritize_clusters
 
 _STUB_VEHICLE = "cisterna-1"
 _FORMULA_VERSION = "STUB-v0"
@@ -34,6 +36,7 @@ _PLAN_EXPLANATION = (
 class EngineOutput:
     priorities: list[PriorityResult]
     plan: PlanDraft
+    traces: tuple[TraceEntry, ...] = ()
 
 
 PlanEngine = Callable[[list[NormalizedIncidentCluster]], EngineOutput]
@@ -126,4 +129,47 @@ def demo_engine(clusters: list[NormalizedIncidentCluster]) -> EngineOutput:
     return EngineOutput(priorities=priorities, plan=plan)
 
 
-__all__ = ["EngineOutput", "PlanEngine", "demo_engine"]
+def priority_engine(clusters: list[NormalizedIncidentCluster]) -> EngineOutput:
+    """Single-vehicle plan ordered by Edward's priority-v1 score.
+
+    The numeric score comes from score_cluster. The prioritization agent may
+    only add qualitative factors. UNKNOWN sectors stay unserved. This is still
+    one truck, not a route solver, and it is not IDAAN policy.
+    """
+    unserved = [c.sector_id.value for c in clusters if c.sector_id == SectorId.UNKNOWN]
+    known = [c for c in clusters if c.sector_id != SectorId.UNKNOWN]
+    assessed = prioritize_clusters(known)
+    by_id = {cluster.cluster_id: cluster for cluster in known}
+    ordered = [by_id[item.cluster_id] for item in assessed.priorities]
+    assignments: list[Assignment] = []
+    route_order: list[str] = []
+    for idx, cluster in enumerate(ordered, start=1):
+        volume = (
+            cluster.estimated_affected_count
+            if cluster.estimated_affected_count is not None
+            else 0
+        )
+        assignments.append(
+            Assignment(
+                vehicle_id=_STUB_VEHICLE,
+                sector_id=cluster.sector_id,
+                order=idx,
+                volume_liters=volume,
+            )
+        )
+        route_order.append(cluster.sector_id.value)
+    plan = PlanDraft(
+        plan_id=_stable_plan_id(route_order),
+        assignments=assignments,
+        route_order=route_order,
+        constraints_satisfied=["priority-v1", "single-vehicle"],
+        unserved_demand=unserved,
+        explanation=(
+            "priority-v1 plan (SYNTHETIC_DEMO): single-vehicle route by "
+            "deterministic score; not official IDAAN dispatch."
+        ),
+    )
+    return EngineOutput(priorities=assessed.priorities, plan=plan, traces=tuple(assessed.traces))
+
+
+__all__ = ["EngineOutput", "PlanEngine", "demo_engine", "priority_engine"]
