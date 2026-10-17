@@ -62,22 +62,22 @@ def _notice_rows(plan_payload: str) -> list[tuple[str, str]]:
     try:
         data = json.loads(plan_payload)
     except json.JSONDecodeError:
-        return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
+        return [("UNKNOWN", "Aviso simulado para el sector desconocido. No se envió por WhatsApp.")]
     if not isinstance(data, dict):
-        return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
+        return [("UNKNOWN", "Aviso simulado para el sector desconocido. No se envió por WhatsApp.")]
     candidate = data.get("plan") if isinstance(data.get("plan"), dict) else data
     try:
         plan = PlanDraft.model_validate(candidate)
     except ValueError:
         sectors = _sector_ids_from_payload(plan_payload)
         return [
-            (sector_id, f"Simulated dispatch notification for sector {sector_id}")
+            (sector_id, f"Aviso simulado para {sector_id}. No se envió por WhatsApp.")
             for sector_id in sectors
         ]
     rows = notices_for_panel(plan)
     if rows:
         return rows
-    return [("UNKNOWN", "Simulated dispatch notification for sector UNKNOWN")]
+    return [("UNKNOWN", "Aviso simulado para el sector desconocido. No se envió por WhatsApp.")]
 
 
 def _plan_from_payload(plan_payload: str) -> PlanDraft | None:
@@ -114,7 +114,7 @@ def _with_team_whatsapp(
         config=config,
         transport=transport,
     )
-    if outcome.sent or outcome.detail == "whatsapp send failed":
+    if outcome.sent or outcome.detail == "falló el envío de WhatsApp de prueba":
         return f"{detail}; {outcome.detail}"
     return detail
 
@@ -395,7 +395,7 @@ class ApprovalStore:
                     plan_id=plan_id,
                     audit_id=audit_id,
                     outbox_id=None,
-                    detail="plan is already approved",
+                    detail="el plan ya estaba aprobado",
                 )
 
             try:
@@ -413,13 +413,13 @@ class ApprovalStore:
             if decision.action == DecisionAction.APPROVE:
                 payload_to_store = plan_payload
                 saved = True
-                detail = "plan approved and dispatch queued"
+                detail = "plan aprobado y avisos encolados"
             elif decision.action == DecisionAction.REJECT:
-                detail = "plan rejected"
+                detail = "plan rechazado"
             elif decision.action == DecisionAction.CORRECT:
                 new_revision = revision + 1
                 payload_to_store = plan_payload
-                detail = "plan returned to borrador"
+                detail = "plan devuelto a borrador"
 
             updated = conn.execute(
                 """

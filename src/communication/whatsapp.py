@@ -100,13 +100,13 @@ def dispatch_team_whatsapp(
 ) -> WhatsAppDispatch:
     """Send only after APPROVE, and only to the configured team number."""
     if decision.action is not DecisionAction.APPROVE or decision.plan_id != plan.plan_id:
-        return WhatsAppDispatch(sent=False, detail="not approved")
+        return WhatsAppDispatch(sent=False, detail="no aprobado")
     selected = config if config is not None else (load_config or load_whatsapp_config)()
     if selected is None:
-        return WhatsAppDispatch(sent=False, detail="whatsapp not configured")
+        return WhatsAppDispatch(sent=False, detail="WhatsApp de prueba no configurado")
     sender = transport or post_cloud_api
     try:
         sender(selected, team_message(plan))
     except Exception:
-        return WhatsAppDispatch(sent=False, detail="whatsapp send failed")
-    return WhatsAppDispatch(sent=True, detail="whatsapp sent to team number")
+        return WhatsAppDispatch(sent=False, detail="falló el envío de WhatsApp de prueba")
+    return WhatsAppDispatch(sent=True, detail="WhatsApp de prueba enviado al número del equipo")

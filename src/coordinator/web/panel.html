@@ -172,6 +172,57 @@
         });
       }
 
+      var SECTOR_NAME = {
+        ARRAIJAN_VISTA_ALEGRE: "Vista Alegre",
+        ARRAIJAN_BURUNGA: "Burunga",
+        ARRAIJAN_NUEVO_CHORRILLO: "Nuevo Chorrillo",
+        ARRAIJAN_VACAMONTE: "Vacamonte",
+        ARRAIJAN_CERRO_SILVESTRE: "Cerro Silvestre",
+        ARRAIJAN_CABECERA: "Arraiján cabecera",
+        CHORRERA_BARRIO_COLON: "Barrio Colón",
+        CHORRERA_BARRIO_BALBOA: "Barrio Balboa",
+        CHORRERA_GUADALUPE: "Guadalupe",
+        CHORRERA_EL_COCO: "El Coco",
+        CHORRERA_PUERTO_CAIMITO: "Puerto Caimito",
+        UNKNOWN: "Sector desconocido"
+      };
+      var FACTOR_NAME = {
+        duration: "Horas sin agua",
+        affected: "Personas afectadas",
+        vulnerability: "Vulnerabilidad",
+        hours_without_water: "Horas sin agua",
+        estimated_affected: "Personas afectadas",
+        baseline: "Sin datos"
+      };
+      var ACTOR_NAME = {
+        ingestion: "Ingesta",
+        prioritization: "Evaluación",
+        planner: "Planificación",
+        orchestrator: "Orquestador",
+        coordinator: "Coordinación",
+        system: "Sistema"
+      };
+      var ACTION_NAME = {
+        lookup_sector_alias: "buscar sector",
+        extract_deterministic_signals: "extraer datos del texto",
+        ingest_report: "registrar reporte",
+        final_result: "resultado de ingesta",
+        inspect_cluster_evidence: "revisar evidencia",
+        compute_deterministic_priority: "calcular prioridad",
+        prioritize_cluster: "evaluar necesidad",
+        rank_clusters: "ordenar prioridades",
+        solve_assignment: "calcular ruta",
+        plan_assignment: "armar plan",
+        run_ingestion: "correr ingesta",
+        run_assessment: "correr evaluación",
+        run_planning: "correr planificación"
+      };
+
+      function sectorName(sectorId) {
+        if (!sectorId) return "Sector sin identificar";
+        return SECTOR_NAME[sectorId] || sectorId;
+      }
+
       function stateLabel(state) {
         if (state === null || state === undefined) return "sin plan";
         if (state === "error_parcial") return "error-parcial";
@@ -189,14 +240,14 @@
       function renderQueue(clusters) {
         var el = document.getElementById("queue");
         if (!clusters || !clusters.length) {
-          el.innerHTML = "<p class=\"empty\">Sin clusters.</p>";
+          el.innerHTML = "<p class=\"empty\">Sin incidentes agrupados.</p>";
           return;
         }
         var html = "<ul>";
         clusters.forEach(function (c) {
-          var sid = c.sector_id || "?";
           var count = c.report_count != null ? c.report_count : 0;
-          html += "<li><strong>" + sid + "</strong> — report_count: " + count + "</li>";
+          var noun = count === 1 ? "reporte" : "reportes";
+          html += "<li><strong>" + sectorName(c.sector_id) + "</strong> — " + count + " " + noun + "</li>";
         });
         html += "</ul>";
         el.innerHTML = html;
@@ -215,12 +266,13 @@
             stub = "<span class=\"stub-badge\">" + p.formula_version + "</span>";
           }
           html += "<div class=\"priority-item\">";
-          html += "<div><strong>Score:</strong> " + p.score + stub + "</div>";
+          html += "<div><strong>Puntaje:</strong> " + p.score + stub + "</div>";
           if (p.explanation) html += "<div>" + p.explanation + "</div>";
           if (p.breakdown && p.breakdown.length) {
             html += "<ul>";
             p.breakdown.forEach(function (b) {
-              html += "<li>" + b.factor + ": " + b.points + " — " + (b.reason || "") + "</li>";
+              var factor = FACTOR_NAME[b.factor] || b.factor;
+              html += "<li>" + factor + ": " + b.points + " — " + (b.reason || "") + "</li>";
             });
             html += "</ul>";
           }
@@ -235,16 +287,17 @@
           el.innerHTML = "<p class=\"empty\">Sin plan.</p>";
           return;
         }
-        var html = "<p><strong>plan_id:</strong> " + (plan.plan_id || "") + "</p>";
+        var html = "<p><strong>Identificador del plan:</strong> " + (plan.plan_id || "") + "</p>";
+        if (plan.explanation) html += "<p>" + plan.explanation + "</p>";
         if (plan.assignments && plan.assignments.length) {
           html += "<table><thead><tr><th>Vehículo</th><th>Sector</th><th>Orden</th><th>Volumen (L)</th></tr></thead><tbody>";
           plan.assignments.forEach(function (a) {
-            html += "<tr><td>" + a.vehicle_id + "</td><td>" + a.sector_id + "</td><td>" + a.order + "</td><td>" + a.volume_liters + "</td></tr>";
+            html += "<tr><td>" + a.vehicle_id + "</td><td>" + sectorName(a.sector_id) + "</td><td>" + a.order + "</td><td>" + a.volume_liters + "</td></tr>";
           });
           html += "</tbody></table>";
         }
         if (plan.route_order && plan.route_order.length) {
-          html += "<p><strong>route_order:</strong> " + plan.route_order.join(" → ") + "</p>";
+          html += "<p><strong>Orden de la ruta:</strong> " + plan.route_order.map(sectorName).join(" → ") + "</p>";
         }
         el.innerHTML = html;
       }
@@ -256,7 +309,7 @@
           return;
         }
         el.innerHTML = "<ul>" + plan.unserved_demand.map(function (s) {
-          return "<li>" + s + "</li>";
+          return "<li>" + sectorName(s) + "</li>";
         }).join("") + "</ul>";
       }
 
@@ -268,7 +321,10 @@
         }
         var html = "";
         traces.forEach(function (t) {
-          html += "<div class=\"trace-item\"><strong>" + t.actor + "</strong> / " + t.action + " — <em>" + t.status + "</em></div>";
+          var actor = ACTOR_NAME[t.actor] || t.actor;
+          var action = ACTION_NAME[t.action] || t.action;
+          var status = t.status === "ok" ? "correcto" : t.status;
+          html += "<div class=\"trace-item\"><strong>" + actor + "</strong> / " + action + " — <em>" + status + "</em></div>";
         });
         el.innerHTML = html;
       }
@@ -279,8 +335,12 @@
           el.innerHTML = "<p class=\"empty\">Sin ejecución.</p>";
           return;
         }
-        el.innerHTML = "<pre style=\"margin:0;white-space:pre-wrap;font-size:0.85rem\">" +
-          JSON.stringify(execution, null, 2) + "</pre>";
+        var html = "<p><strong>Guardado:</strong> " + (execution.saved ? "sí" : "no") + "</p>";
+        if (execution.plan_id) html += "<p><strong>Plan:</strong> " + execution.plan_id + "</p>";
+        if (execution.audit_id) html += "<p><strong>Auditoría:</strong> " + execution.audit_id + "</p>";
+        if (execution.outbox_id) html += "<p><strong>Aviso:</strong> " + execution.outbox_id + "</p>";
+        if (execution.detail) html += "<p><strong>Detalle:</strong> " + execution.detail + "</p>";
+        el.innerHTML = html;
       }
 
       function applyContext(data) {
