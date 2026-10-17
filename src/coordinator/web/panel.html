@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AguaJusta Oeste — Coordinación</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e7ecf3;
+      --muted: #8b9cb3;
+      --accent: #3d9aed;
+      --ok: #3dba7a;
+      --warn: #e6a23c;
+      --danger: #e05555;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      background: var(--surface);
+    }
+    h1 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+    .notice {
+      font-size: 0.85rem;
+      color: var(--warn);
+      flex: 1 1 100%;
+    }
+    main { padding: 1.25rem; max-width: 1100px; margin: 0 auto; }
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    h2 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    textarea, input[type="text"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.5rem 0.65rem;
+      font: inherit;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+    button {
+      font: inherit;
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.danger { background: var(--danger); }
+    button.ok { background: var(--ok); }
+    #status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--border);
+    }
+    ul { margin: 0; padding-left: 1.2rem; }
+    .empty { color: var(--muted); font-style: italic; }
+    .stub-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      background: var(--warn);
+      color: #1a1200;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      margin-left: 0.35rem;
+      font-weight: 700;
+    }
+    .priority-item, .trace-item { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+    .priority-item:last-child, .trace-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panel del coordinador — AguaJusta Oeste</h1>
+    <span id="status-badge">sin plan</span>
+    <p class="notice">Las notificaciones a residentes son SIMULATED (outbox simulada); no se envía WhatsApp ni SMS real.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Reportes ciudadanos</h2>
+      <label for="reports-input">Pegue reportes (un renglón por reporte):</label>
+      <textarea id="reports-input" placeholder="Ej.: 48 horas sin agua en Vista Alegre…"></textarea>
+      <div class="row">
+        <button type="button" id="load-reports">Cargar y generar borrador</button>
+        <button type="button" id="btn-revisar">Enviar a revisión</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Cola consolidada</h2>
+      <div id="queue"><p class="empty">Sin clusters.</p></div>
+    </section>
+
+    <section>
+      <h2>Prioridad</h2>
+      <div id="priority"><p class="empty">Sin prioridades.</p></div>
+    </section>
+
+    <section>
+      <h2>Plan y rutas</h2>
+      <div id="plan-routes"><p class="empty">Sin plan.</p></div>
+    </section>
+
+    <section>
+      <h2>Demanda no atendida</h2>
+      <div id="unserved"><p class="empty">—</p></div>
+    </section>
+
+    <section>
+      <h2>Trazas</h2>
+      <div id="traces"><p class="empty">Sin trazas.</p></div>
+    </section>
+
+    <section>
+      <h2>Decisión humana</h2>
+      <label for="actor-name">Actor:</label>
+      <input type="text" id="actor-name" value="coordinador">
+      <label for="decision-comment">Comentario (obligatorio para CORREGIR):</label>
+      <textarea id="decision-comment" rows="3"></textarea>
+      <div class="row">
+        <button type="button" class="ok" id="btn-aprobar" disabled>Aprobar</button>
+        <button type="button" class="danger" id="btn-rechazar" disabled>Rechazar</button>
+        <button type="button" id="btn-corregir" disabled>Corregir</button>
+      </div>
+      <h2 style="margin-top:1rem">Ejecución</h2>
+      <div id="execution"><p class="empty">Sin ejecución.</p></div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var ctx = null;
+
+      function postJson(url, payload) {
+        return fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload ? JSON.stringify(payload) : "{}"
+        }).then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok) throw new Error(data.error || "Error HTTP " + res.status);
+            return data;
+          });
+        });
+      }
+
+      function stateLabel(state) {
+        if (state === null || state === undefined) return "sin plan";
+        if (state === "error_parcial") return "error-parcial";
+        return String(state);
+      }
+
+      function setDecisionButtons(state) {
+        var pending = state === "pendiente";
+        document.getElementById("btn-aprobar").disabled = !pending;
+        document.getElementById("btn-rechazar").disabled = !pending;
+        document.getElementById("btn-corregir").disabled = !pending;
+        document.getElementById("btn-revisar").disabled = state !== "borrador";
+      }
+
+      function renderQueue(clusters) {
+        var el = document.getElementById("queue");
+        if (!clusters || !clusters.length) {
+          el.innerHTML = "<p class=\"empty\">Sin clusters.</p>";
+          return;
+        }
+        var html = "<ul>";
+        clusters.forEach(function (c) {
+          var sid = c.sector_id || "?";
+          var count = c.report_count != null ? c.report_count : 0;
+          html += "<li><strong>" + sid + "</strong> — report_count: " + count + "</li>";
+        });
+        html += "</ul>";
+        el.innerHTML = html;
+      }
+
+      function renderPriorities(priorities) {
+        var el = document.getElementById("priority");
+        if (!priorities || !priorities.length) {
+          el.innerHTML = "<p class=\"empty\">Sin prioridades.</p>";
+          return;
+        }
+        var html = "";
+        priorities.forEach(function (p) {
+          var stub = "";
+          if (p.formula_version) {
+            stub = "<span class=\"stub-badge\">" + p.formula_version + "</span>";
+          }
+          html += "<div class=\"priority-item\">";
+          html += "<div><strong>Score:</strong> " + p.score + stub + "</div>";
+          if (p.explanation) html += "<div>" + p.explanation + "</div>";
+          if (p.breakdown && p.breakdown.length) {
+            html += "<ul>";
+            p.breakdown.forEach(function (b) {
+              html += "<li>" + b.factor + ": " + b.points + " — " + (b.reason || "") + "</li>";
+            });
+            html += "</ul>";
+          }
+          html += "</div>";
+        });
+        el.innerHTML = html;
+      }
+
+      function renderPlan(plan) {
+        var el = document.getElementById("plan-routes");
+        if (!plan) {
+          el.innerHTML = "<p class=\"empty\">Sin plan.</p>";
+          return;
+        }
+        var html = "<p><strong>plan_id:</strong> " + (plan.plan_id || "") + "</p>";
+        if (plan.assignments && plan.assignments.length) {
+          html += "<table><thead><tr><th>Vehículo</th><th>Sector</th><th>Orden</th><th>Volumen (L)</th></tr></thead><tbody>";
+          plan.assignments.forEach(function (a) {
+            html += "<tr><td>" + a.vehicle_id + "</td><td>" + a.sector_id + "</td><td>" + a.order + "</td><td>" + a.volume_liters + "</td></tr>";
+          });
+          html += "</tbody></table>";
+        }
+        if (plan.route_order && plan.route_order.length) {
+          html += "<p><strong>route_order:</strong> " + plan.route_order.join(" → ") + "</p>";
+        }
+        el.innerHTML = html;
+      }
+
+      function renderUnserved(plan) {
+        var el = document.getElementById("unserved");
+        if (!plan || !plan.unserved_demand || !plan.unserved_demand.length) {
+          el.innerHTML = "<p class=\"empty\">Ninguna demanda pendiente.</p>";
+          return;
+        }
+        el.innerHTML = "<ul>" + plan.unserved_demand.map(function (s) {
+          return "<li>" + s + "</li>";
+        }).join("") + "</ul>";
+      }
+
+      function renderTraces(traces) {
+        var el = document.getElementById("traces");
+        if (!traces || !traces.length) {
+          el.innerHTML = "<p class=\"empty\">Sin trazas.</p>";
+          return;
+        }
+        var html = "";
+        traces.forEach(function (t) {
+          html += "<div class=\"trace-item\"><strong>" + t.actor + "</strong> / " + t.action + " — <em>" + t.status + "</em></div>";
+        });
+        el.innerHTML = html;
+      }
+
+      function renderExecution(execution) {
+        var el = document.getElementById("execution");
+        if (!execution) {
+          el.innerHTML = "<p class=\"empty\">Sin ejecución.</p>";
+          return;
+        }
+        el.innerHTML = "<pre style=\"margin:0;white-space:pre-wrap;font-size:0.85rem\">" +
+          JSON.stringify(execution, null, 2) + "</pre>";
+      }
+
+      function applyContext(data) {
+        ctx = data;
+        document.getElementById("status-badge").textContent = stateLabel(data.state);
+        setDecisionButtons(data.state);
+        renderQueue(data.clusters);
+        renderPriorities(data.priorities);
+        renderPlan(data.plan);
+        renderUnserved(data.plan);
+        renderTraces(data.traces);
+        renderExecution(data.execution);
+      }
+
+      function loadContext() {
+        return fetch("/api/context").then(function (r) { return r.json(); }).then(applyContext);
+      }
+
+      document.getElementById("load-reports").addEventListener("click", function () {
+        var raw = document.getElementById("reports-input").value;
+        var texts = raw.split("\n").map(function (l) { return l.trim(); }).filter(function (l) { return l.length > 0; });
+        postJson("/api/reports", { texts: texts }).then(applyContext).catch(function (e) { alert(e.message); });
+      });
+
+      document.getElementById("btn-revisar").addEventListener("click", function () {
+        postJson("/api/review", {}).then(applyContext).catch(function (e) { alert(e.message); });
+      });
+
+      function sendDecision(action) {
+        if (!ctx || !ctx.plan || !ctx.plan.plan_id) {
+          alert("No hay plan cargado.");
+          return;
+        }
+        if (action === "CORRECT") {
+          var comment = document.getElementById("decision-comment").value.trim();
+          if (!comment) {
+            alert("CORREGIR requiere un comentario.");
+            return;
+          }
+        }
+        var payload = {
+          plan_id: ctx.plan.plan_id,
+          action: action,
+          actor: document.getElementById("actor-name").value.trim() || "coordinador",
+          comment: document.getElementById("decision-comment").value
+        };
+        postJson("/api/decision", payload).then(applyContext).catch(function (e) { alert(e.message); });
+      }
+
+      document.getElementById("btn-aprobar").addEventListener("click", function () { sendDecision("APPROVE"); });
+      document.getElementById("btn-rechazar").addEventListener("click", function () { sendDecision("REJECT"); });
+      document.getElementById("btn-corregir").addEventListener("click", function () { sendDecision("CORRECT"); });
+
+      loadContext().catch(function () { /* panel offline */ });
+    })();
+  </script>
+</body>
+</html>
