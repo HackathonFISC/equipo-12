@@ -1,0 +1,131 @@
+{
+  "modo": "test",
+  "case_count": 16,
+  "group_counts": {
+    "priority_order": 4,
+    "volume_invariance": 4,
+    "constraint_compliance": 4,
+    "demand_coverage": 4
+  },
+  "metrics": {
+    "case_accuracy": 1.0,
+    "priority_order_accuracy": 1.0,
+    "volume_invariance_rate": 1.0,
+    "constraint_compliance_rate": 1.0,
+    "demand_coverage_accuracy": 1.0
+  },
+  "cases": [
+    {
+      "case_id": "ALLOC-01",
+      "group": "priority_order",
+      "name": "hospital outranks el coco",
+      "passed": true,
+      "detail": "hospital=37.44 el_coco=4.37"
+    },
+    {
+      "case_id": "ALLOC-02",
+      "group": "priority_order",
+      "name": "vista alegre outranks cerro silvestre",
+      "passed": true,
+      "detail": "vista=33.57 silvestre=1.44"
+    },
+    {
+      "case_id": "ALLOC-03",
+      "group": "priority_order",
+      "name": "four-cluster ground-truth order",
+      "passed": true,
+      "detail": "rank=['colon-hospital', 'guadalupe-clinic', 'burunga-families', 'nuevo-chorrillo'] agent=['colon-hospital', 'guadalupe-clinic', 'burunga-families', 'nuevo-chorrillo']"
+    },
+    {
+      "case_id": "ALLOC-04",
+      "group": "priority_order",
+      "name": "tie-break and caps",
+      "passed": true,
+      "detail": "scores=(100.0,100.0) order=['cluster-aaa', 'cluster-bbb']"
+    },
+    {
+      "case_id": "ALLOC-05",
+      "group": "volume_invariance",
+      "name": "report_count does not change score",
+      "passed": true,
+      "detail": "score=20.64"
+    },
+    {
+      "case_id": "ALLOC-06",
+      "group": "volume_invariance",
+      "name": "low volume does not outrank need",
+      "passed": true,
+      "detail": "first=caimito-quiet"
+    },
+    {
+      "case_id": "ALLOC-07",
+      "group": "volume_invariance",
+      "name": "dedup then hospital ranks first",
+      "passed": true,
+      "detail": "top_cluster=cluster:CHORRERA_BARRIO_COLON:HOSPITAL_NICOLAS_SOLANO hospital_id=cluster:CHORRERA_BARRIO_COLON:HOSPITAL_NICOLAS_SOLANO"
+    },
+    {
+      "case_id": "ALLOC-08",
+      "group": "volume_invariance",
+      "name": "agent preserves deterministic scores",
+      "passed": true,
+      "detail": "match=True scores=[31.55, 15.76, 2.88]"
+    },
+    {
+      "case_id": "ALLOC-09",
+      "group": "constraint_compliance",
+      "name": "vehicle capacity respected",
+      "passed": true,
+      "detail": "assignments=5 unserved=3 constraints=['capacity', 'shift-window', 'ortools-routing']"
+    },
+    {
+      "case_id": "ALLOC-10",
+      "group": "constraint_compliance",
+      "name": "tight shift leaves stop unserved",
+      "passed": true,
+      "detail": "assignments=0 unserved=['CHORRERA_EL_COCO']"
+    },
+    {
+      "case_id": "ALLOC-11",
+      "group": "constraint_compliance",
+      "name": "unknown and missing coords unserved",
+      "passed": true,
+      "detail": "assigned={'CHORRERA_BARRIO_COLON'} unserved={'UNKNOWN', 'ARRAIJAN_CABECERA'}"
+    },
+    {
+      "case_id": "ALLOC-12",
+      "group": "constraint_compliance",
+      "name": "sector mention withheld when point exists",
+      "passed": true,
+      "detail": "assignments=[900] unserved=[]"
+    },
+    {
+      "case_id": "ALLOC-13",
+      "group": "demand_coverage",
+      "name": "full coverage when capacity allows",
+      "passed": true,
+      "detail": "assignments=3 unserved=[]"
+    },
+    {
+      "case_id": "ALLOC-14",
+      "group": "demand_coverage",
+      "name": "priority-first under scarcity",
+      "passed": true,
+      "detail": "served=['CHORRERA_BARRIO_COLON'] unserved=['CHORRERA_EL_COCO']"
+    },
+    {
+      "case_id": "ALLOC-15",
+      "group": "demand_coverage",
+      "name": "two vista alegre points routed",
+      "passed": true,
+      "detail": "assignments=2 sectors=[<SectorId.ARRAIJAN_VISTA_ALEGRE: 'ARRAIJAN_VISTA_ALEGRE'>, <SectorId.ARRAIJAN_VISTA_ALEGRE: 'ARRAIJAN_VISTA_ALEGRE'>]"
+    },
+    {
+      "case_id": "ALLOC-16",
+      "group": "demand_coverage",
+      "name": "preload orchestrator pipeline",
+      "passed": true,
+      "detail": "assignments=6 constraints=['priority-v1', 'capacity', 'shift-window', 'ortools-routing'] vehicles=['cisterna-1', 'cisterna-2', 'cisterna-3'] priorities=8"
+    }
+  ]
+}
