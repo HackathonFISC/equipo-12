@@ -58,6 +58,82 @@ def _load_places_fixture() -> list[dict[str, object]]:
     return _load_named_fixture_list("places_panama_oeste.json", "places")
 
 
+_OPERATIONAL_PRELOAD_REPORTS: tuple[dict[str, str], ...] = (
+    {
+        "report_id": "OP-101",
+        "raw_text": (
+            "Urgente sin agua en el Hospital Nicolas Solano en Barrio Colon "
+            "desde hace 72 horas, 500 personas y pacientes afectados."
+        ),
+        "source_channel": "phone",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-102",
+        "raw_text": (
+            "En Burunga llevamos 48 horas sin agua, somos 80 familias "
+            "con ninos y adultos mayores sin suministro."
+        ),
+        "source_channel": "whatsapp",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-103",
+        "raw_text": (
+            "Sin agua por el chino de Vista Alegre desde hace 48 horas, "
+            "60 familias y una escuela afectadas."
+        ),
+        "source_channel": "citizen_portal",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-104",
+        "raw_text": (
+            "Por el Xtra de Vista Alegre llevamos 30 horas sin agua "
+            "en 50 familias."
+        ),
+        "source_channel": "whatsapp",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-105",
+        "raw_text": (
+            "En Guadalupe llevamos 60 horas sin agua, 100 familias "
+            "y un centro de salud afectados."
+        ),
+        "source_channel": "phone",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-106",
+        "raw_text": (
+            "Cerca del Parque Feuillet llevamos 24 horas sin agua, "
+            "45 familias afectadas."
+        ),
+        "source_channel": "citizen_portal",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-107",
+        "raw_text": (
+            "Puerto Caimito sigue sin agua desde hace 36 horas, "
+            "70 familias afectadas."
+        ),
+        "source_channel": "phone",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+    {
+        "report_id": "OP-108",
+        "raw_text": (
+            "En El Coco las familias llevan 18 horas sin agua, "
+            "35 familias afectadas."
+        ),
+        "source_channel": "whatsapp",
+        "provenance": "SYNTHETIC_DEMO",
+    },
+)
+
+
 def _load_sample_reports_fixture() -> list[dict[str, object]]:
     return _load_named_fixture_list("sample_citizen_reports.json", "reports")
 
@@ -274,7 +350,9 @@ class CoordinatorService:
             raise ValueError("plan already approved")
         if self._state == PlanState.PENDIENTE:
             raise ValueError("plan is pending human review; return to borrador via CORRECT first")
-        records = _load_sample_reports_fixture()
+        records = _load_sample_reports_fixture() + [
+            dict(item) for item in _OPERATIONAL_PRELOAD_REPORTS
+        ]
         self._reports = []
         self._report_inputs = {}
         for record in records:

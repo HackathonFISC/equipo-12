@@ -229,47 +229,25 @@
 .view#view-citizen .citizen-aside .coverage-tags span{font-size:13px;padding:8px 10px}
 .view#view-citizen .citizen-aside .aside-link{font-size:14px;line-height:1.5;padding:10px 4px}
 
-/* Role switcher, citizen AI, GPS modal, batch loader and human gate. */
-html[data-view="citizen"] #view-citizen,
-html[data-view="admin"] #view-admin,
-html[data-view="map"] #view-map,
-html[data-view="tracking"] #view-tracking{display:block}
-html[data-role="admin"] #navCitizen{display:none}
-html[data-role="citizen"] #navAdmin{display:none}
-html[data-view="citizen"] .nav-item[data-view="citizen"],
-html[data-view="admin"] .nav-item[data-view="admin"],
-html[data-view="map"] .nav-item[data-view="map"],
-html[data-view="tracking"] .nav-item[data-view="tracking"]{background:#1a4763;color:#fff;box-shadow:inset 3px 0 #29c1b4}
-.role-switcher{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 4px 14px}
-.role-switcher button,.top-role-switch button{border:1px solid #3d6278;background:#102d43;color:#d5e6f0;border-radius:8px;min-height:36px;padding:7px 6px;font-size:11px;font-weight:800}
-.role-switcher button.active,.top-role-switch button.active,
-html[data-role="citizen"] #switchRoleCitizenBtn,
-html[data-role="admin"] #switchRoleAdminBtn{background:#1c9f9b;border-color:#1c9f9b;color:#fff}
-.top-role-switch{display:flex;gap:6px}
-.top-role-switch button{background:#fff;color:#24556d;border-color:#d5e3ea}
-html[data-role="citizen"] #switchRoleCitizenTop,
-html[data-role="admin"] #switchRoleAdminTop,
-.top-role-switch button.active{background:#0b2438;border-color:#0b2438;color:#fff}
-.sidebar .nav-item{height:auto;align-items:flex-start}
-.sidebar .nav-item span:last-child{white-space:normal}
-.nav-kicker{margin:14px 13px 6px;font-size:9px;letter-spacing:1.2px;font-weight:800;color:#6f8da4}
-.ai-assistant{border:1px solid #d5ebe7;background:linear-gradient(180deg,#f3fbf9,#fff);border-radius:12px;padding:16px;margin:0 0 16px}
-.ai-assistant h2{font-size:18px}
-.ai-assistant textarea{width:100%;min-height:96px;border:2px solid #cbd8e1;border-radius:10px;padding:12px;font-size:16px;line-height:1.45;color:#1f394d}
-.ai-preview-banner{border:1px dashed #9fd0c8;background:#f4fbfa;border-radius:10px;padding:12px 14px;margin:0 0 18px}
-.ai-preview-banner strong{font-size:13px;color:#1d6b66}
-#aiSynthesizedPreview{margin:8px 0 0;font-size:15px;line-height:1.55;color:#1d3b4d;white-space:pre-wrap}
-.place-pills,.tracking-quick{display:flex;flex-wrap:wrap;gap:6px}
-.place-pill,.tracking-quick button{border:1px solid #cfe0ea;background:#fff;border-radius:999px;padding:6px 10px;font-size:13px;color:#24556d;font-weight:700}
-.place-pill.active,.tracking-quick button{background:#edf5fb}
-.admin-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
-.batch-drawer{border:1px solid #e1ebf1;background:#f8fbfd;border-radius:10px;padding:14px;margin:0 0 16px}
-.batch-drawer textarea,.gate-fields input,.gate-fields textarea{width:100%;border:1px solid #d5e0e8;border-radius:8px;padding:10px;font:14px/1.5 "DM Sans",sans-serif;color:#1f394d}
-.batch-drawer textarea{min-height:140px}
-.gate-fields label{display:block;font-size:12px;font-weight:800;margin:8px 0 4px;color:#29485d}
+
+/* Integration: role switcher, AI assistant, modals, human gate, chips */
+.role-switcher{display:flex;gap:6px;align-items:center}
+.role-switcher button,.role-pill{border:1px solid #dbe5ec;background:#fff;color:#435c70;border-radius:20px;min-height:32px;padding:6px 12px;font-size:10px;font-weight:800}
+.role-switcher button.active,.role-pill.active{background:#0b2438;border-color:#0b2438;color:#fff}
+.ai-assistant-card{border:1px solid #d5ebe7;background:linear-gradient(180deg,#f3fbf9,#fff);border-radius:12px;padding:16px;margin:0 0 16px}
+.ai-assistant-card h2{font-size:18px;margin:0 0 8px}
+.ai-assistant-card textarea{width:100%;min-height:88px;border:2px solid #cbd8e1;border-radius:10px;padding:12px;font-size:16px;line-height:1.45;color:#1f394d}
+.sample-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.sample-chips button{border:1px solid #cfe0ea;background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;color:#24556d;cursor:pointer}
+.sample-chips button:hover{background:#edf5fb}
+.admin-head-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.batch-details{margin:0 0 16px;border:1px solid #e1ebf1;border-radius:10px;padding:12px;background:#f8fbfd}
+.batch-details textarea{width:100%;min-height:120px;border:1px solid #d5e0e8;border-radius:8px;padding:10px;font:14px/1.5 "DM Sans",sans-serif}
+.gate-fields label{display:block;font-size:10px;font-weight:800;margin:8px 0 4px;color:#29485d}
+.gate-fields input,.gate-fields textarea{width:100%;border:1px solid #d5e0e8;border-radius:8px;padding:10px;font:13px/1.5 "DM Sans",sans-serif;color:#1f394d}
 .gate-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.gate-actions .button{width:100%;white-space:normal;min-height:42px}
-.button-danger{background:#bd4d4d;color:#fff}
+.gate-actions .button{width:100%;white-space:normal;min-height:40px;font-size:10px}
+.button-danger{background:#bd4d4d;color:#fff;border-color:#bd4d4d}
 .button-danger:hover{background:#a34343}
 button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
 .pipeline-dialog{width:min(760px,calc(100% - 28px));max-height:min(88vh,920px);overflow:auto}
@@ -277,258 +255,189 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
 .agent-card h3{margin:0 0 8px;font-size:14px}
 .agent-card p,.agent-card li{margin:0 0 6px;font-size:13px;line-height:1.5;color:#3e596c}
 .modal-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-#locationPreview{height:240px;width:100%;border-radius:10px;background:#e7eef2;margin:10px 0;overflow:hidden}
-#affectedMap{position:relative}
-#sector-map{min-height:180px;background:#e7f1f3;border-radius:10px;overflow:hidden}
-#sector-map svg{width:100%;height:auto;display:block}
-.map-svg-wrap{margin-top:16px}
-.map-fallback-inline{padding:16px;color:#52697a;font-size:14px}
-.summary-stack{display:grid;gap:8px;margin-top:8px}
-.tracking-quick{justify-content:center;margin-top:12px}
-.ops-stack{display:grid;gap:0}
-@media(max-width:680px){.top-role-switch{display:none}.gate-actions{grid-template-columns:1fr}}
+#modalLocationMap{height:220px;width:100%;border-radius:10px;background:#e7eef2;margin:10px 0;overflow:hidden}
+.modal-places{display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow:auto;margin:8px 0}
+.modal-places button{border:1px solid #cfe0ea;background:#fff;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:700;color:#24556d;text-align:left}
+.modal-places button.active{background:#edf5fb;border-color:#76a9e1}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip-row span,.chip-row button{font-size:8px;font-weight:700;color:#638091;background:#fff;border:1px solid #e2eaf0;padding:5px 7px;border-radius:5px}
+.outbox-list{margin:12px 0 0;display:grid;gap:8px}
+.outbox-item{border:1px solid #e2eaf0;border-radius:8px;padding:10px;background:#f9fbfd;font-size:10px;line-height:1.55;color:#4b6678}
+.outbox-item strong{display:block;color:#29485d;margin-bottom:4px}
+.plan-summary strong#planTotalLiters,.plan-summary strong#planVehiclesCount,.plan-summary strong#planStopsCount{display:inline}
+#state-pill{margin-left:6px}
+.citizen-plan-notice{border:1px solid #d6eafb;background:#edf7ff;border-radius:9px;padding:12px;margin:0 0 16px;font-size:14px;line-height:1.55;color:#285d87}
+@media(max-width:680px){.gate-actions{grid-template-columns:1fr}.role-switcher{display:none}}
 
   </style>
-  <script>
-    (function () {
-      var path = location.pathname || "/";
-      var role = (path === "/admin" || path.indexOf("/admin/") === 0) ? "admin" : "citizen";
-      var requested = new URLSearchParams(location.search).get("view");
-      var allowed = { citizen: 1, admin: 1, map: 1, tracking: 1 };
-      var view = requested && allowed[requested] ? requested : (role === "admin" ? "admin" : "citizen");
-      document.documentElement.dataset.role = role;
-      document.documentElement.dataset.view = view;
-    })();
-  </script>
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="/ciudadano" aria-label="AguaJusta Oeste inicio">
+      <a class="brand" href="#" aria-label="AguaJusta Oeste inicio">
         <span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3C15 11 8 18 8 25a12 12 0 0 0 24 0C32 18 25 11 20 3Z" fill="currentColor"/><path d="M14 26c.7 3.4 3.1 5.2 6.5 5.5" fill="none" stroke="#0b2438" stroke-width="2.4" stroke-linecap="round"/></svg></span>
         <span class="brand-copy"><strong>AguaJusta</strong><small>OESTE · GESTIÓN DEL AGUA</small></span>
       </a>
-      <div class="role-switcher" aria-label="Cambiar entre portal ciudadano y administración">
-        <button type="button" id="switchRoleCitizenBtn" aria-pressed="true">Ciudadano</button>
-        <button type="button" id="switchRoleAdminBtn" aria-pressed="false">Administración</button>
-      </div>
-      <div class="workspace-label" id="workspaceLabel">PORTAL CIUDADANO</div>
-      <nav class="main-nav" id="navCitizen" aria-label="Portal ciudadano">
-        <button type="button" class="nav-item" data-view="citizen"><span class="nav-icon">＋</span><span>Reportar falta de agua (Asistente IA)</span></button>
-        <button type="button" class="nav-item" data-view="tracking"><span class="nav-icon">◎</span><span>Consultar mi reporte y avisos</span></button>
-        <button type="button" class="nav-item" data-view="map"><span class="nav-icon">⌖</span><span>Mapa comunitario de afectaciones</span></button>
-      </nav>
-      <nav class="main-nav" id="navAdmin" aria-label="Centro de coordinación">
-        <button type="button" class="nav-item" data-view="admin"><span class="nav-icon">▦</span><span>Centro de coordinación y supervisión</span></button>
-        <button type="button" class="nav-item" data-view="map"><span class="nav-icon">⌖</span><span>Mapa territorial y rutas OR-Tools</span></button>
-        <div class="nav-kicker">ACCESO RÁPIDO</div>
-        <button type="button" class="nav-item" data-view="citizen"><span class="nav-icon">＋</span><span>Reportar falta de agua</span></button>
-        <button type="button" class="nav-item" data-view="tracking"><span class="nav-icon">◎</span><span>Consultar reporte</span></button>
+      <div class="workspace-label" id="workspaceLabelSidebar">ESPACIO DE TRABAJO</div>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-item active" data-view="map"><span class="nav-icon">⌖</span><span>Mapa de afectaciones</span></button>
+        <button class="nav-item" data-view="admin"><span class="nav-icon">▦</span><span>Centro de coordinación</span></button>
+        <button class="nav-item" data-view="citizen"><span class="nav-icon">＋</span><span>Reportar una incidencia</span></button>
+        <button class="nav-item" data-view="tracking"><span class="nav-icon">◎</span><span>Consultar reporte</span></button>
       </nav>
       <div class="sidebar-bottom">
-        <div class="demo-note"><span class="demo-dot"></span><div><strong>Bandeja SIMULATED</strong><small>Los avisos no salen por WhatsApp. El solver y la prioridad sí son reales.</small></div></div>
-        <div class="profile"><div class="avatar">AO</div><div><strong>AguaJusta Oeste</strong><small id="profileRole">Portal ciudadano</small></div><span class="profile-more">•••</span></div>
+        <div class="demo-note"><span class="demo-dot"></span><div><strong>Modo demostración</strong><small>Datos de ejemplo · Sin conexión al backend</small></div></div>
+        <div class="profile"><div class="avatar">AO</div><div><strong>AguaJusta Oeste</strong><small id="profileRoleLabel">Vista de coordinación</small></div><span class="profile-more">•••</span></div>
       </div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Abrir menú">☰</button>
-        <div class="breadcrumb"><span>Panamá Oeste</span><span class="crumb-slash">/</span><strong id="breadcrumbCurrent">Reportar falta de agua</strong></div>
-        <div class="topbar-right">
-          <div class="top-role-switch" aria-label="Cambiar modo">
-            <button type="button" id="switchRoleCitizenTop">Ciudadano</button>
-            <button type="button" id="switchRoleAdminTop">Administración</button>
-          </div>
-          <span class="status-chip status-received" id="status-badge">Sin plan</span>
-          <span class="connection-pill"><span class="pulse"></span> <span id="connectionMode">Motor local</span></span>
-          <button class="icon-button" id="helpButton" type="button" aria-label="Ayuda">?</button>
-        </div>
+        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
+        <div class="breadcrumb"><span>Panamá Oeste</span><span class="crumb-slash">/</span><strong id="breadcrumbCurrent">Mapa de afectaciones</strong></div>
+        <div class="topbar-right"><div class="role-switcher" aria-label="Rol"><button type="button" class="role-pill" id="switchRoleCitizenBtn">Ciudadano</button><button type="button" class="role-pill" id="switchRoleAdminBtn">Administración</button></div><span class="connection-pill"><span class="pulse"></span> <span id="connectionMode">Conectado</span></span><span class="status-chip status-received" id="status-badge">Sin plan</span><button class="icon-button" id="helpButton" aria-label="Ayuda">?</button></div>
       </header>
 
-      <section class="view" id="view-map">
+      <section class="view active" id="view-map">
         <div class="page-heading map-heading">
-          <div>
-            <div class="eyebrow">PANAMÁ OESTE · VISTA TERRITORIAL</div>
-            <h1>Mapa de afectaciones</h1>
-            <p class="page-subtitle" id="mapSubtitle">Vea los sectores con reportes de falta de agua en Arraiján y La Chorrera.</p>
-          </div>
-          <div class="map-heading-actions">
-            <span class="map-demo-label"><span></span> Anclas ASSUMPTION</span>
-            <button class="button button-primary" id="mapNewReport" type="button">＋ Nuevo reporte</button>
-          </div>
+          <div><div class="eyebrow">PANAMÁ OESTE · VISTA TERRITORIAL</div><h1>Mapa de afectaciones</h1><p class="page-subtitle" id="mapSubtitle">Visualiza los sectores reportados y la prioridad relativa de cada zona.</p></div>
+          <div class="map-heading-actions"><span class="map-demo-label"><span></span> Datos ilustrativos</span><button class="button button-primary" id="mapNewReport">＋ Nuevo reporte</button></div>
         </div>
-        <div class="map-disclaimer"><span>ⓘ</span><p><strong>Coordenadas de demostración.</strong> Los puntos salen de las anclas del proyecto, no de la red del IDAAN ni de un levantamiento. El calor refleja los reportes ya consolidados.</p></div>
+        <div class="map-disclaimer"><span>ⓘ</span><p><strong>Capa de calor demostrativa.</strong> Las manchas se generan con una distribución sintética alrededor de centros sectoriales aproximados; no representan densidad real ni límites oficiales. Para producción se usarán ubicaciones de reportes validados.</p></div>
         <div class="map-layout">
           <section class="panel map-panel">
-            <div class="map-toolbar"><div><strong>Arraiján y La Chorrera</strong><small>Panamá Oeste, Panamá</small></div><div class="map-toolbar-right"><span class="map-online-dot"></span><span>Sectores, anclas y rutas</span></div></div>
+            <div class="map-toolbar"><div><strong>Arraiján y La Chorrera</strong><small>Panamá Oeste, Panamá</small></div><div class="map-toolbar-right"><span class="map-online-dot"></span><span>Concentración de reportes · demo</span></div></div>
             <div id="affectedMap" role="application" aria-label="Mapa de sectores afectados en Arraiján y La Chorrera"></div>
             <div class="map-legend heatmap-legend">
-              <strong>Concentración de reportes</strong>
+              <strong>Concentración ilustrativa</strong>
               <span><i class="heat-legend heat-low"></i>Menor</span>
               <span><i class="heat-legend heat-mid"></i>Media</span>
               <span><i class="heat-legend heat-high"></i>Mayor</span>
-              <span class="legend-note">Teal: cisterna · ámbar/rojo: reportado · gris: silencioso</span>
+              <span class="legend-note">Intensidad simulada, no límites oficiales</span>
             </div>
           </section>
           <aside class="panel map-side-panel">
-            <div class="panel-header"><div><h2>Sectores</h2><p>Los 11 sectores del catálogo, filtrados por distrito</p></div><span class="map-count" id="mapSectorCount">0</span></div>
+            <div class="panel-header"><div><h2>Sectores afectados</h2><p>Selecciona un sector para ver su resumen</p></div><span class="map-count" id="mapSectorCount">6</span></div>
             <div class="map-area-filter"><label for="mapDistrictFilter">Área</label><select id="mapDistrictFilter"><option value="all">Todas las áreas</option><option value="Arraiján">Arraiján</option><option value="La Chorrera">La Chorrera</option></select></div>
             <div id="mapSectorList" class="map-sector-list"></div>
-            <div class="map-side-footer"><span class="map-footer-icon">↗</span><p>La prioridad que ve aquí es priority-v1. Un sector sin reportes permanece en gris.</p></div>
+            <div class="map-side-footer"><span class="map-footer-icon">↗</span><p>La prioridad oficial se mostrará aquí cuando el frontend se conecte al motor de prioridad del backend.</p></div>
           </aside>
         </div>
         <div class="map-bottom-grid">
-          <article class="map-stat-card"><span class="map-stat-icon stat-red">!</span><div><small>Sectores con prioridad alta</small><strong id="mapHighCount">0</strong></div></article>
-          <article class="map-stat-card"><span class="map-stat-icon stat-amber">◷</span><div><small>Reportes en el mapa</small><strong id="mapReportsCount">0</strong></div></article>
+          <article class="map-stat-card"><span class="map-stat-icon stat-red">!</span><div><small>Sectores con prioridad alta</small><strong id="mapHighCount">2</strong></div></article>
+          <article class="map-stat-card"><span class="map-stat-icon stat-amber">◷</span><div><small>Reportes en el mapa</small><strong id="mapReportsCount">6</strong></div></article>
           <article class="map-stat-card"><span class="map-stat-icon stat-teal">⌖</span><div><small>Distritos cubiertos</small><strong>2</strong></div></article>
         </div>
-        <section class="panel map-svg-wrap">
-          <div class="panel-header"><div><h2>Mapa determinístico de sectores</h2><p>El dibujo SVG no depende de la red. Sirve aunque Leaflet no cargue.</p></div></div>
-          <div id="sector-map"></div>
-          <div class="legend map-legend">
-            <span><i class="legend-dot legend-low"></i>Con cisterna</span>
-            <span><i class="legend-dot legend-high"></i>Con reportes, sin cisterna</span>
-            <span><i class="legend-dot" style="background:#8d8678"></i>Sin reportes</span>
-          </div>
-        </section>
       </section>
 
       <section class="view" id="view-admin">
         <div class="page-heading">
-          <div>
-            <div class="eyebrow">OPERACIONES · PANAMÁ OESTE</div>
-            <h1>Centro de coordinación y supervisión</h1>
-            <p class="page-subtitle">Ingesta, prioridad priority-v1 y rutas OR-Tools. Ningún agente aprueba su propio plan.</p>
-          </div>
+          <div><div class="eyebrow">OPERACIONES · PANAMÁ OESTE</div><h1>Centro de coordinación</h1><p class="page-subtitle">Una vista clara de las incidencias y de la planificación de suministro.</p></div>
+          <div class="admin-head-actions"><button class="button button-secondary" id="preload-reports" type="button">↻ Cargar lote operativo</button><button class="button button-primary" id="createFromAdmin" type="button"><span>＋</span> Nuevo reporte</button></div>
         </div>
-        <div class="admin-actions">
-          <button class="button button-primary" id="preload-reports" type="button">⚡ Precargar datos reales del proyecto</button>
-          <button class="button button-secondary" id="createFromAdmin" type="button">＋ Nuevo reporte ciudadano</button>
-          <button class="button button-secondary" id="toggleBatch" type="button">Cargar lote de texto</button>
-        </div>
-        <div class="batch-drawer hidden" id="batchDrawer">
-          <label for="reports-input">Un reporte por línea. El sistema no inventa lugar, horas ni personas.</label>
-          <textarea id="reports-input" placeholder="48 horas sin agua y 15 personas por el chino de Vista Alegre"></textarea>
-          <div class="admin-actions">
-            <button class="button button-primary" id="load-reports" type="button">Cargar lote y generar borrador</button>
-          </div>
-        </div>
-        <div class="demo-banner" id="demoBanner">
-          <div class="banner-symbol">✳</div>
-          <div><strong>La bandeja de avisos es SIMULATED</strong><p>Aprobar guarda el plan y encola avisos. No despacha cisternas ni escribe por WhatsApp.</p></div>
-          <button class="banner-close" id="closeBanner" type="button" aria-label="Cerrar aviso">×</button>
-        </div>
+        <div class="demo-banner"><div class="banner-symbol">✳</div><div><strong>Estás viendo una simulación interactiva</strong><p>Los reportes, puntajes y rutas son ilustrativos. Ninguna cisterna ha sido despachada.</p></div><button class="banner-close" id="closeBanner" aria-label="Cerrar aviso">×</button></div>
+        <details class="batch-details" id="batchDetails"><summary>Cargar lote personalizado (texto)</summary><label for="reports-input">Un reporte por línea</label><textarea id="reports-input" placeholder="48 horas sin agua y 15 personas por el chino de Vista Alegre"></textarea><button class="button button-primary" id="load-reports" type="button">Cargar lote</button></details>
         <div class="metrics-grid">
-          <article class="metric-card"><div class="metric-top"><span>Reportes registrados</span><span class="metric-icon blue">▤</span></div><div class="metric-value" id="metricReports">0</div><div class="metric-foot"><span class="neutral-dot"></span> Textos ya ingeridos</div></article>
-          <article class="metric-card"><div class="metric-top"><span>Sectores afectados</span><span class="metric-icon teal">⌖</span></div><div class="metric-value" id="metricSectors">0</div><div class="metric-foot"><span class="teal-text">Sectores conocidos con reporte</span></div></article>
-          <article class="metric-card"><div class="metric-top"><span>Plan por revisar</span><span class="metric-icon amber">◷</span></div><div class="metric-value" id="metricPending">0</div><div class="metric-foot"><span class="amber-text">Borrador o pendiente</span></div></article>
-          <article class="metric-card"><div class="metric-top"><span>Avisos encolados</span><span class="metric-icon green">↗</span></div><div class="metric-value" id="metricDispatched">0</div><div class="metric-foot"><span class="green-text">Solo si el plan está aprobado</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Reportes registrados</span><span class="metric-icon blue">▤</span></div><div class="metric-value" id="metricReports">24</div><div class="metric-foot"><span class="neutral-dot"></span> Casos recibidos en la demo</div></article>
+          <article class="metric-card"><div class="metric-top"><span>Sectores afectados</span><span class="metric-icon teal">⌖</span></div><div class="metric-value" id="metricSectors">8</div><div class="metric-foot"><span class="teal-text">Arraiján y La Chorrera</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Plan por revisar</span><span class="metric-icon amber">◷</span></div><div class="metric-value" id="metricPending">1</div><div class="metric-foot"><span class="amber-text">Requiere aprobación humana</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Despachos simulados</span><span class="metric-icon green">↗</span></div><div class="metric-value" id="metricDispatched">0</div><div class="metric-foot"><span class="green-text">Ninguno sin aprobación</span></div></article>
         </div>
+
         <div class="content-grid">
           <section class="panel incidents-panel">
-            <div class="panel-header"><div><h2>Incidencias consolidadas</h2><p>Cada fila es un cluster con su PriorityResult</p></div><button class="text-button" id="viewAllReports" type="button">Ver todas <span>→</span></button></div>
-            <div class="filters-row">
-              <label class="search-box"><span>⌕</span><input id="searchReports" type="search" placeholder="Buscar sector, cluster o código…"></label>
-              <select id="statusFilter" aria-label="Filtrar por estado"><option value="all">Todos los estados</option><option value="received">Recibido</option><option value="analyzing">En análisis</option><option value="planned">En plan</option><option value="approved">Aprobado</option></select>
-            </div>
+            <div class="panel-header"><div><h2>Incidencias recientes</h2><p>Prioridad calculada con criterios comunes</p></div><button class="text-button" id="viewAllReports">Ver todas <span>→</span></button></div>
+            <div class="filters-row"><label class="search-box"><span>⌕</span><input id="searchReports" type="search" placeholder="Buscar sector o código…"></label><select id="statusFilter" aria-label="Filtrar por estado"><option value="all">Todos los estados</option><option value="received">Recibido</option><option value="analyzing">En análisis</option><option value="planned">En plan</option><option value="approved">Aprobado</option></select></div>
             <div class="table-wrap"><table><thead><tr><th>INCIDENCIA</th><th>SECTOR</th><th>PERSONAS</th><th>PRIORIDAD</th><th>ESTADO</th><th></th></tr></thead><tbody id="reportsTable"></tbody></table></div>
-            <div class="panel-footer"><span id="resultsCount">Mostrando 0 incidentes</span><span class="footer-legend"><i></i> priority-v1</span></div>
+            <div class="panel-footer"><span id="resultsCount">Mostrando 5 incidencias</span><span class="footer-legend"><i></i> Datos de ejemplo</span></div>
           </section>
+
           <section class="panel plan-panel">
-            <div class="panel-header"><div><h2>Plan de distribución OR-Tools</h2><p>Capacidad, turnos y ventanas los fija el solver</p></div><span class="status-chip status-review" id="planStatus">Sin plan</span></div>
-            <div class="plan-summary">
-              <div><span class="summary-label">Agua estimada</span><strong id="planTotalLiters">0</strong> <small>L</small></div>
-              <div><span class="summary-label">Cisternas</span><strong id="planVehiclesCount">0</strong> <small>unid.</small></div>
-              <div><span class="summary-label">Paradas</span><strong id="planStopsCount">0</strong> <small>asignaciones</small></div>
+            <div class="panel-header"><div><h2>Plan de distribución</h2><p>Propuesta del planificador · demo</p></div><span class="status-chip status-review" id="planStatus">Sin plan</span></div>
+            <div class="plan-summary"><div><span class="summary-label">Agua estimada</span><strong id="planTotalLiters">0</strong> <small>L</small></div><div><span class="summary-label">Cisternas</span><strong id="planVehiclesCount">0</strong> <small>unid.</small></div><div><span class="summary-label">Paradas</span><strong id="planStopsCount">0</strong> <small>asign.</small></div></div>
+            <div class="route-title"><strong>Rutas propuestas</strong><span>3 recorridos</span></div>
+            <div class="route-list" id="plan-routes"><p class="empty">Cargue el lote operativo para ver rutas OR-Tools.</p></div>
+            <div class="route-explanation">
+              <div class="route-explanation-heading"><strong>¿Por qué se propone esta distribución?</strong><span>Explicación de demo</span></div>
+              <div class="route-factor-list"><span>Capacidad de cisternas</span><span>Duración del recorrido</span><span>Prioridad de sectores</span><span>Ventanas de entrega</span></div>
+              <p>Las rutas y cantidades visibles son de ejemplo, no el resultado de un solver real. En integración se mostrarán las restricciones efectivas, las paradas asignadas y la explicación que entregue el planificador determinístico.</p>
             </div>
-            <div class="route-title"><strong>Rutas propuestas</strong><span>OR-Tools</span></div>
-            <div class="route-list" id="plan-routes"><p class="empty">Todavía no hay un plan.</p></div>
-            <h3>Sin cisterna</h3>
-            <div id="unserved"><p class="empty">Ningún sector del plan quedó sin cisterna.</p></div>
-            <h3>Sectores sin reportes</h3>
-            <div id="silent-sectors"><p class="empty">Cargando el catálogo.</p></div>
-            <div class="human-gate"><div class="gate-icon">♙</div><div><strong>Compuerta de supervisión humana</strong><p>El borrador no encola avisos SIMULATED hasta que una persona lo apruebe.</p></div></div>
+            <div class="route-explanation">
+              <div class="route-explanation-heading"><strong>Demanda no atendida y sectores silenciosos</strong><span>priority-v1</span></div>
+              <p>Sectores sin cisterna o sin reportes en el catálogo:</p>
+              <div class="chip-row" id="unserved-chips"><span>Sin datos</span></div>
+              <div class="chip-row" id="silent-sectors-chips"><span>Cargando…</span></div>
+            </div>
+            <div class="human-gate"><div class="gate-icon">♙</div><div><strong>Tu aprobación es necesaria</strong><p>La propuesta no encola avisos SIMULATED hasta revisión humana. <span id="state-pill" class="status-chip status-review">Borrador</span></p></div></div>
             <div class="gate-fields">
-              <label for="actor-name">Nombre de quien decide</label>
-              <input id="actor-name" type="text" value="coordinador">
-              <label for="decision-comment">Comentario</label>
-              <textarea id="decision-comment" rows="3" placeholder="Obligatorio solo si corrige el plan"></textarea>
+              <label for="actor-input">Coordinador</label>
+              <input id="actor-input" type="text" value="coordinador">
+              <label for="comment-input">Comentario</label>
+              <textarea id="comment-input" rows="2" placeholder="Obligatorio al corregir el plan"></textarea>
             </div>
             <div class="gate-actions">
               <button class="button button-secondary" id="btn-revisar" type="button" disabled>Enviar a revisión</button>
               <button class="button button-primary" id="btn-aprobar" type="button" disabled>✓ Aprobar plan</button>
               <button class="button button-danger" id="btn-rechazar" type="button" disabled>Rechazar</button>
-              <button class="button button-secondary" id="btn-corregir" type="button" disabled>Corregir (devolver a borrador)</button>
+              <button class="button button-secondary" id="btn-corregir" type="button" disabled>Corregir plan</button>
             </div>
-            <p class="approval-message" id="approvalMessage" aria-live="polite">Sin aprobación humana no hay acción final. Los avisos son SIMULATED.</p>
-            <div id="execution"><p class="empty">Todavía no hay una decisión humana.</p></div>
+            <p class="approval-message" id="approvalMessage" aria-live="polite">Sin aprobación humana no hay acción final. Canal SIMULATED.</p>
+            <div id="execution"></div>
           </section>
         </div>
-        <section class="panel">
-          <div class="panel-header"><div><h2>Cola consolidada</h2><p>El mismo lugar se agrupa. Una mención general no se suma a un punto concreto.</p></div></div>
-          <div id="queue"><p class="empty">Todavía no hay incidentes consolidados.</p></div>
-        </section>
-        <section class="panel">
-          <div class="panel-header"><div><h2>Prioridad priority-v1</h2><p>Horas sin agua, personas afectadas y vulnerabilidad. El volumen de quejas no entra.</p></div></div>
-          <div id="priority"><p class="empty">Todavía no hay prioridades.</p></div>
-        </section>
         <div class="ops-extra-grid">
           <section class="panel agent-trace-panel">
-            <div class="panel-header"><div><h2>Trazabilidad agéntica</h2><p>Actor, acción, entrada, salida y estado</p></div></div>
+            <div class="panel-header"><div><h2>Trazabilidad del proceso agéntico</h2><p>Entrada, salida y justificación por etapa</p></div><span class="status-chip status-review">DEMO</span></div>
+            <div class="trace-demo-note">Estas trazas son ilustrativas y locales; al integrar el backend se reemplazarán por eventos reales de los agentes.</div>
             <div id="agentTraceList" class="agent-trace-list"></div>
-            <button class="button button-secondary" id="tracePreloadBtn" type="button">Precargar datos reales del proyecto</button>
-            <div id="traces"></div>
           </section>
           <section class="panel duplicate-review-panel">
-            <div class="panel-header"><div><h2>Revisión de duplicados</h2><p>Clusters, lugares separados y precisión incierta</p></div><span class="status-chip status-analyzing">REVISIÓN</span></div>
+            <div class="panel-header"><div><h2>Revisión de posibles duplicados</h2><p>Coincidencias sugeridas para revisión humana</p></div><span class="status-chip status-analyzing">REVISIÓN</span></div>
             <div id="duplicateReviewContent" class="duplicate-review-content"></div>
+            <div id="outbox-list" class="outbox-list" aria-label="Avisos SIMULATED"></div>
             <button class="button button-secondary duplicate-review-button" id="reviewDuplicateBtn" type="button">Revisar coincidencia</button>
-            <p class="small-muted">Dos anclas del mismo sector a más de 800 m siguen separadas. UNKNOWN y SECTOR piden revisión humana.</p>
+            <p class="small-muted">La coincidencia por sector es solo una señal de ejemplo; no confirma por sí sola que dos reportes sean el mismo incidente.</p>
           </section>
         </div>
+        <section class="panel activity-panel"><div class="panel-header"><div><h2>Actividad del sistema</h2><p>Registro demostrativo del flujo de trabajo</p></div><span class="live-label"><span></span> LOCAL</span></div><div class="activity-list" id="activityList"><div class="activity-item"><span class="activity-marker marker-blue"></span><div><strong>Plan de distribución preparado</strong><p>Propuesta de ejemplo lista para revisión humana.</p></div><time>Hace 4 min</time></div><div class="activity-item"><span class="activity-marker marker-teal"></span><div><strong>Incidencias agrupadas por sector</strong><p>La deduplicación evita que reportes repetidos aumenten la prioridad.</p></div><time>Hace 8 min</time></div><div class="activity-item"><span class="activity-marker marker-violet"></span><div><strong>Motor de prioridad aplicado</strong><p>La puntuación se calcula con reglas deterministas de la demo.</p></div><time>Hace 12 min</time></div></div></section>
       </section>
 
       <section class="view" id="view-citizen">
-        <div class="page-heading">
-          <div>
-            <div class="eyebrow">SERVICIO A LA COMUNIDAD</div>
-            <h1>Reportar falta de agua</h1>
-            <p class="page-subtitle">Cuente lo que sepa. El texto pasa por ingesta, deduplicación, prioridad y el solver. Una persona aprueba el plan en Administración.</p>
-          </div>
-          <span class="secure-note">◈ Avisos SIMULATED</span>
-        </div>
+        <div class="page-heading"><div><div class="eyebrow">SERVICIO A LA COMUNIDAD</div><h1>Reportar falta de agua</h1><p class="page-subtitle">Responda lo que sepa. No necesita conocer datos técnicos ni dar una dirección exacta.</p></div><span class="secure-note">◈ Información para coordinación</span></div>
         <div class="citizen-layout">
-          <section class="panel form-panel">
-            <div class="ai-assistant">
-              <h2>Asistente de reporte</h2>
-              <p>Escriba con sus palabras. El análisis local rellena el formulario; al enviar, los tres agentes leen el texto de la vista previa.</p>
-              <label for="aiChatInput">Relato libre</label>
-              <textarea id="aiChatInput" placeholder="Llevamos 48 horas sin agua cerca del Hospital Nicolás Solano, somos 30 personas con adultos mayores"></textarea>
-              <button class="button button-primary" id="aiFillFormBtn" type="button">Analizar texto con IA</button>
-            </div>
-            <form id="reportForm" class="senior-friendly-form">
-              <div class="ai-preview-banner">
-                <strong>Texto exacto que recibirán los tres agentes</strong>
-                <p id="aiSynthesizedPreview" aria-live="polite"></p>
+          <section class="panel form-panel"><div class="form-intro"><div class="form-icon">≋</div><div><h2>Su reporte, paso a paso</h2><p>No necesita saber datos técnicos para informar que falta el agua.</p></div></div>
+            <div class="ai-assistant-card" id="citizenAiCard">
+              <h2>Asistente rápido</h2>
+              <p>Describa la situación o use un ejemplo. El texto se envía a ingesta, priorización y planificador.</p>
+              <label for="aiQuickPrompt">Relato</label>
+              <textarea id="aiQuickPrompt" placeholder="Llevamos 48 horas sin agua cerca del Hospital Nicolás Solano, 120 personas afectadas con adultos mayores"></textarea>
+              <button class="button button-primary" id="aiAutofillBtn" type="button">Autocompletar formulario</button>
+              <div class="sample-chips" id="sampleReportChips" aria-label="Ejemplos">
+                <button type="button" data-sample="48 horas sin agua cerca del chino de Vista Alegre, 60 personas afectadas con escuela">Vista Alegre · chino</button>
+                <button type="button" data-sample="72 horas sin agua en Burunga, 80 personas afectadas con adultos mayores y ninos">Burunga · familias</button>
+                <button type="button" data-sample="36 horas sin agua en Guadalupe, 100 personas afectadas con centro de salud">Guadalupe · salud</button>
               </div>
-              <p class="form-required-note">Los campos con <strong>*</strong> son necesarios. La foto y el audio se quedan en este dispositivo: el motor solo recibe el texto.</p>
+              <p id="aiSynthesizedPreview" class="small-muted" aria-live="polite"></p>
+            </div>
+            <div class="citizen-plan-notice hidden" id="citizenPlanNotice" role="status"></div>
+            <form id="reportForm" class="senior-friendly-form">
+              <p class="form-required-note">Los campos con <strong>*</strong> son necesarios. No hace falta usar el GPS ni adjuntar archivos para enviar el reporte.</p>
+
               <section class="form-step" aria-labelledby="whereStepTitle">
-                <h3 class="form-step-title" id="whereStepTitle"><span class="form-step-number">1</span><span>¿Dónde falta el agua?<small>Elija el distrito, el sector y un punto de referencia.</small></span></h3>
+                <h3 class="form-step-title" id="whereStepTitle"><span class="form-step-number">1</span><span>¿Dónde falta el agua?<small>Elija su comunidad y describa un punto de referencia.</small></span></h3>
                 <div class="field">
                   <label for="reportDistrict">Distrito <span>*</span></label>
                   <select id="reportDistrict" required><option value="">Seleccione un distrito</option><option>Arraiján</option><option>La Chorrera</option></select>
                 </div>
                 <div class="field">
                   <label for="reportSector">Comunidad o sector <span>*</span></label>
-                  <select id="reportSector" required><option value="">Cargando los 11 sectores…</option></select>
+                  <select id="reportSector" required><option value="">Primero seleccione un distrito</option></select>
                 </div>
                 <div id="possibleDuplicateNotice" class="possible-duplicate-notice hidden" role="status"></div>
                 <div class="field">
-                  <label for="reportLocation">Punto de referencia <span id="reportLocationRequiredMark">*</span></label>
-                  <input id="reportLocation" required maxlength="180" placeholder="Ej. cerca del Hospital Nicolás Solano">
-                  <small id="reportLocationHelp">Escriba una calle o un lugar conocido, o use la ubicación automática.</small>
-                  <div id="placePills" class="place-pills" aria-label="Puntos de referencia del sector"></div>
+                  <label for="reportLocation">¿Cómo podemos encontrar el lugar? <span id="reportLocationRequiredMark">*</span></label>
+                  <input id="reportLocation" required maxlength="180" placeholder="Ej. cerca de la iglesia o del minisúper">
+                  <div id="placePills" class="sample-chips" aria-label="Referencias del sector"></div><small id="reportLocationHelp">Escriba una calle o un lugar conocido. Si comparte la ubicación del teléfono, este texto será opcional.</small>
                 </div>
                 <fieldset class="field form-choice-field precision-field">
                   <legend>¿Qué tan seguro está de la ubicación?</legend>
@@ -537,24 +446,50 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
                     <label class="radio-choice"><input type="radio" name="reportLocationPrecision" value="approximate" checked><span>Es una referencia aproximada</span></label>
                     <label class="radio-choice"><input type="radio" name="reportLocationPrecision" value="unknown"><span>No estoy seguro</span></label>
                   </div>
+                  <small>Si no está seguro, puede enviar el reporte de todos modos.</small>
                 </fieldset>
+
                 <div class="location-card" id="locationCard">
                   <div class="location-card-head">
                     <div>
-                      <h4 id="locationTitle">Ubicación automática</h4>
-                      <p>Opcional. Puede usar el GPS del teléfono o un punto conocido de Panamá Oeste para probar sin hardware GPS.</p>
+                      <h4 id="locationTitle">¿Quiere usar la ubicación de este teléfono?</h4>
+                      <p>Es opcional. Puede ayudar a encontrar el lugar. El navegador le preguntará si permite compartirla.</p>
                     </div>
+                    <span class="location-status status-idle" id="locationStatus">Opcional</span>
                   </div>
                   <div class="location-actions">
-                    <button class="button button-secondary" id="detectLocationBtn" type="button">⌖ Ubicación automática / GPS</button>
+                    <button class="button button-secondary" id="openAutoLocationModalBtn" type="button">⌖ Ventana de ubicación automática (GPS / Mapa)</button>
+                    <button class="button button-secondary hidden" id="detectLocationBtn" type="button">GPS</button>
                   </div>
-                  <p id="chosenLocationSummary" class="location-privacy">Todavía no hay coordenadas en este reporte.</p>
+                  <div class="location-error hidden" id="locationError" role="alert"></div>
+                  <details class="location-advanced" id="locationAdvanced">
+                    <summary>Opciones avanzadas de ubicación</summary>
+                    <p class="advanced-help">Solo hace falta abrir esto si conoce las coordenadas del lugar.</p>
+                    <div class="location-result hidden" id="locationResult" aria-live="polite">
+                      <div class="location-result-grid">
+                        <div><small>Latitud</small><strong id="locationLatitude">—</strong></div>
+                        <div><small>Longitud</small><strong id="locationLongitude">—</strong></div>
+                        <div><small>Precisión estimada</small><strong id="locationAccuracy">—</strong></div>
+                        <div><small>Fuente</small><strong id="locationSource">—</strong></div>
+                      </div>
+                      <p class="location-captured" id="locationCapturedAt"></p>
+                    </div>
+                    <div class="location-manual-grid">
+                      <div class="field"><label for="manualLatitude">Latitud</label><input id="manualLatitude" type="number" step="any" min="-90" max="90" placeholder="Ej. 8.8805"></div>
+                      <div class="field"><label for="manualLongitude">Longitud</label><input id="manualLongitude" type="number" step="any" min="-180" max="180" placeholder="Ej. -79.7835"></div>
+                    </div>
+                    <button class="button button-secondary manual-use-button" id="applyManualLocationBtn" type="button">Usar estas coordenadas</button>
+                    <button class="button button-secondary manual-use-button hidden" id="useManualLocationBtn" type="button">Aplicar coordenadas escritas</button>
+                    <div class="location-preview hidden" id="locationPreview" aria-label="Vista previa de ubicación"></div>
+                    <p class="location-privacy">En esta demostración, la ubicación se mantiene solo mientras la página está abierta. No se envía a ninguna entidad.</p>
+                  </details>
                 </div>
               </section>
+
               <section class="form-step" aria-labelledby="waterStepTitle">
                 <h3 class="form-step-title" id="waterStepTitle"><span class="form-step-number">2</span><span>Cuéntenos qué está pasando<small>Puede dar una cantidad aproximada.</small></span></h3>
                 <fieldset class="field form-choice-field duration-field">
-                  <legend>Tiempo sin agua <span>*</span></legend>
+                  <legend>¿Desde hace cuánto tiempo no tienen agua? <span>*</span></legend>
                   <div class="radio-choice-grid">
                     <label class="radio-choice"><input type="radio" name="reportHours" value="6" required><span>Menos de 12 horas</span></label>
                     <label class="radio-choice"><input type="radio" name="reportHours" value="18"><span>De 12 a 24 horas</span></label>
@@ -563,171 +498,97 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
                   </div>
                 </fieldset>
                 <div class="field">
-                  <label for="reportPeople">Personas afectadas <span>*</span></label>
+                  <label for="reportPeople">¿A cuántas personas les falta el agua? <span>*</span></label>
                   <input id="reportPeople" type="number" min="1" max="10000" required placeholder="Escriba un número aproximado" inputmode="numeric">
+                  <small>Puede incluir a las personas de su casa o de las casas cercanas que están afectadas.</small>
                 </div>
               </section>
+
               <section class="form-step" aria-labelledby="needsStepTitle">
-                <h3 class="form-step-title" id="needsStepTitle"><span class="form-step-number">3</span><span>¿Alguien necesita atención prioritaria?<small>Marque lo que corresponda. Es opcional.</small></span></h3>
+                <h3 class="form-step-title" id="needsStepTitle"><span class="form-step-number">3</span><span>¿Alguien necesita atención prioritaria?<small>Marque todas las opciones que correspondan. Esta pregunta es opcional.</small></span></h3>
                 <fieldset class="field form-choice-field">
                   <legend>En la comunidad afectada hay…</legend>
                   <div class="choice-grid">
                     <label class="choice"><input type="checkbox" name="vulnerability" value="adultos mayores"> <span>Personas mayores</span></label>
-                    <label class="choice"><input type="checkbox" name="vulnerability" value="hospital"> <span>Atención médica / hospital</span></label>
-                    <label class="choice"><input type="checkbox" name="vulnerability" value="infantes"> <span>Niños / infantes</span></label>
+                    <label class="choice"><input type="checkbox" name="vulnerability" value="ninos"> <span>Niños pequeños</span></label>
+                    <label class="choice"><input type="checkbox" name="vulnerability" value="hospital"> <span>Hospital / atención médica</span></label>
+                    <label class="choice"><input type="checkbox" name="vulnerability" value="centro de salud"> <span>Centro de salud</span></label>
                     <label class="choice"><input type="checkbox" name="vulnerability" value="escuela"> <span>Escuela</span></label>
                     <label class="choice"><input type="checkbox" name="vulnerability" value="albergue"> <span>Albergue</span></label>
                   </div>
+                  <small>No escriba nombres ni información médica privada.</small>
                 </fieldset>
               </section>
+
               <details class="optional-details" id="optionalDetails">
                 <summary>Quiero añadir detalles, una foto o una nota de voz <span>(opcional)</span></summary>
                 <div class="optional-details-content">
-                  <div class="field"><label for="reportDetails">Detalles</label><textarea id="reportDetails" rows="4" maxlength="600" placeholder="Por ejemplo: el agua se fue esta mañana."></textarea><div class="char-count"><span>No incluya datos personales.</span><span id="charCount">0 / 600</span></div></div>
+                  <div class="field"><label for="reportDetails">¿Hay algo más que debamos saber?</label><textarea id="reportDetails" rows="4" maxlength="600" placeholder="Por ejemplo: el agua se fue esta mañana o hay una tubería rota."></textarea><div class="char-count"><span>No incluya datos personales.</span><span id="charCount">0 / 600</span></div></div>
                   <div class="attachment-grid">
-                    <div class="field attachment-field"><label for="reportPhotos">Foto <span class="optional">Opcional</span></label><input id="reportPhotos" type="file" accept="image/*"></div>
-                    <div class="field attachment-field"><label for="reportAudio">Audio <span class="optional">Opcional</span></label><input id="reportAudio" type="file" accept="audio/*"></div>
+                    <div class="field attachment-field"><label for="reportPhotos">Añadir una foto <span class="optional">Opcional</span></label><label class="file-picker" for="reportPhotos"><span class="file-picker-icon">▧</span><span><strong>Elegir una foto</strong><small>Fotografía de un grifo seco o una tubería rota</small></span><span class="file-picker-action">Elegir</span></label><input class="file-input-hidden" id="reportPhotos" type="file" accept="image/*" multiple><small>Puede continuar sin añadir fotos.</small></div>
+                    <div class="field attachment-field"><label for="reportAudio">Añadir una nota de voz <span class="optional">Opcional</span></label><label class="file-picker" for="reportAudio"><span class="file-picker-icon">♫</span><span><strong>Elegir un audio</strong><small>Una grabación que explique la situación</small></span><span class="file-picker-action">Elegir</span></label><input class="file-input-hidden" id="reportAudio" type="file" accept="audio/*" multiple><small>La transcripción dependerá de la futura integración.</small></div>
                   </div>
                   <div id="attachmentPreview" class="attachment-preview hidden" aria-live="polite"></div>
                 </div>
               </details>
+
               <label class="consent-row"><input type="checkbox" id="reportConsent" required><span>Confirmo que la información es correcta según lo que sé.</span></label>
-              <button class="button button-primary submit-button" id="submitReportBtn" type="submit">Enviar a los tres agentes <span aria-hidden="true">→</span></button>
-              <p class="form-disclaimer">El texto entra al coordinador local. La aprobación humana vive en /admin. Los avisos quedan en bandeja SIMULATED.</p>
+              <button class="button button-primary submit-button" type="submit">Registrar reporte <span aria-hidden="true">→</span></button>
+              <p class="form-disclaimer">Esta es una demostración. El reporte se guarda solo en esta página; no se envía al IDAAN ni a otra entidad.</p>
             </form>
-            <div class="success-panel hidden" id="reportSuccess" role="status">
-              <div class="success-check">✓</div>
-              <div>
-                <h2>Reporte procesado</h2>
-                <p>Ingesta, deduplicación, priority-v1 y el solver ya dejaron el borrador. La ventana de análisis muestra el código. Nada se despacha sin aprobación.</p>
-              </div>
-            </div>
           </section>
-          <aside class="citizen-aside">
-            <div class="aside-card aside-blue"><div class="aside-icon">i</div><h3>Qué pasa después</h3><p>El relato lo lee la ingesta. El código agrupa duplicados y calcula la prioridad. El solver propone cisternas. Una persona del centro de coordinación aprueba o rechaza.</p></div>
-            <div class="aside-card"><div class="aside-icon soft-teal">⌖</div><h3>Cobertura</h3><p>Once sectores de Arraiján y La Chorrera. Un sector sin reportes no recibe una prioridad inventada.</p><div class="coverage-tags"><span>Arraiján</span><span>La Chorrera</span></div></div>
-            <button class="aside-link" id="goTracking" type="button">¿Ya tiene un código? <strong>Consultar reporte →</strong></button>
-          </aside>
+          <aside class="citizen-aside"><div class="aside-card aside-blue"><div class="aside-icon">i</div><h3>¿Necesita ayuda?</h3><p>Si no sabe una respuesta exacta, indique lo que conoce. Puede pedir ayuda a un familiar o vecino de confianza.</p><p>Usar la ubicación del teléfono, añadir fotos y grabar una nota de voz son opciones; no son necesarios para enviar el aviso.</p></div><div class="aside-card"><div class="aside-icon soft-teal">⌖</div><h3>Área de cobertura</h3><p>Esta demostración está preparada para sectores de Arraiján y La Chorrera, Panamá Oeste.</p><div class="coverage-tags"><span>Arraiján</span><span>La Chorrera</span></div></div><button class="aside-link" id="goTracking">¿Ya tiene un código? <strong>Consultar reporte →</strong></button></aside>
         </div>
+        <div class="success-panel hidden" id="reportSuccess" role="status"><div class="success-check">✓</div><div><h2>Reporte registrado en la demo</h2><p>Su código de referencia es <strong id="newReportCode">AJ-0000</strong>. Guárdelo para consultar el estado en esta sesión.</p><button class="button button-secondary" id="trackNewReport">Consultar estado</button></div></div>
       </section>
 
       <section class="view" id="view-tracking">
-        <div class="page-heading"><div><div class="eyebrow">SEGUIMIENTO CIUDADANO</div><h1>Consultar mi reporte y avisos</h1><p class="page-subtitle">Use el código del reporte, el cluster o un fixture como SYN-001 o svc-1.</p></div></div>
-        <div class="tracking-layout">
-          <section class="panel tracking-search-panel">
-            <div class="tracking-icon">⌕</div>
-            <h2>Encuentre su reporte</h2>
-            <p>El seguimiento muestra las cuatro etapas, el puntaje priority-v1, la cisterna y el aviso SIMULATED si ya fue aprobado.</p>
-            <form id="trackingForm" class="tracking-form">
-              <label class="sr-only" for="trackingCode">Código del reporte</label>
-              <input id="trackingCode" placeholder="Ej. svc-1 o SYN-001" required>
-              <button class="button button-primary" type="submit">Consultar</button>
-            </form>
-            <div id="trackingQuickList" class="tracking-quick" aria-label="Códigos disponibles"></div>
-          </section>
-          <section class="panel tracking-result hidden" id="trackingResult" aria-live="polite"></section>
-        </div>
+        <div class="page-heading"><div><div class="eyebrow">SEGUIMIENTO CIUDADANO</div><h1>Consultar reporte</h1><p class="page-subtitle">Revisa el estado de un reporte utilizando su código de referencia.</p></div></div>
+        <div class="tracking-layout"><section class="panel tracking-search-panel"><div class="tracking-icon">⌕</div><h2>Encuentra tu reporte</h2><p>Introduce el código que recibiste al registrar la incidencia.</p><form id="trackingForm" class="tracking-form"><label class="sr-only" for="trackingCode">Código del reporte</label><input id="trackingCode" placeholder="Ej. AJ-1042" required><button class="button button-primary" type="submit">Consultar</button></form><div id="trackingQuickList" class="tracking-quick"></div><p class="tracking-demo-note">Puedes probar con <button type="button" class="inline-code" data-code="AJ-1042">AJ-1042</button> o con el código de un reporte creado en esta sesión.</p></section><section class="panel tracking-result hidden" id="trackingResult" aria-live="polite"></section></div>
       </section>
-      <footer class="footer"><span>AguaJusta Oeste</span><span>Avisos en bandeja SIMULATED · no es un servicio del IDAAN</span><span>Prioridad priority-v1 · rutas OR-Tools</span></footer>
+      <footer class="footer"><span>AguaJusta Oeste</span><span>Prototipo de interfaz · No es un servicio oficial</span><span>Preparado para futura integración API</span></footer>
     </main>
   </div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <dialog id="autoLocationDialog" class="detail-dialog pipeline-dialog">
     <form method="dialog"><button class="dialog-close" type="submit" aria-label="Cerrar">×</button></form>
-    <div class="eyebrow">UBICACIÓN AUTOMÁTICA</div>
-    <h2>Elegir el punto del reporte</h2>
-    <p>Las anclas son ASSUMPTION de demostración. Sirven para probar en un escritorio sin GPS.</p>
-    <div class="location-actions">
-      <button class="button button-secondary" id="useBrowserGpsBtn" type="button">Detectar con GPS del navegador</button>
+    <div class="eyebrow">UBICACIÓN AUTOMÁTICA · PANAMÁ OESTE</div>
+    <h2>Seleccionar ubicación del reporte</h2>
+    <p>Use el GPS de su dispositivo, toque el mapa interactivo o elija uno de los 15 puntos de referencia de Arraiján y La Chorrera.</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+      <button class="button button-primary" id="modalDetectGpsBtn" type="button">⌖ Detectar mi ubicación GPS</button>
+      <span class="location-status status-idle" id="modalLocationStatus">Listo para ubicar</span>
     </div>
-    <div class="field">
-      <label for="gpsPresetSelect">Punto georreferenciado del proyecto</label>
-      <select id="gpsPresetSelect"><option value="">Seleccione un punto conocido</option></select>
-    </div>
-    <div id="locationPreview" aria-label="Vista previa de ubicación">Elija un punto para ver el mapa.</div>
-    <div class="location-result" id="locationResult">
-      <div class="location-result-grid">
-        <div><small>Latitud</small><strong id="locationLatitude">—</strong></div>
-        <div><small>Longitud</small><strong id="locationLongitude">—</strong></div>
-        <div><small>Distancia al ancla</small><strong id="locationAccuracy">—</strong></div>
-        <div><small>Lugar detectado</small><strong id="locationSource">—</strong></div>
-      </div>
-      <p class="location-captured" id="locationCapturedAt"></p>
-    </div>
-    <span class="location-status status-idle" id="locationStatus">Sin punto</span>
-    <div class="location-error hidden" id="locationError" role="alert"></div>
+    <div class="location-error hidden" id="modalLocationError" role="alert"></div>
+    <div id="modalLocationMap" aria-label="Mapa interactivo de ubicación"></div>
+    <div class="eyebrow" style="margin-top:10px">15 ANCLAS CONOCIDAS (ASSUMPTION)</div>
+    <div class="modal-places" id="modalPlacesList"></div>
     <div class="location-manual-grid">
-      <div class="field"><label for="manualLatitude">Latitud</label><input id="manualLatitude" type="number" step="any" min="-90" max="90" placeholder="Ej. 8.882"></div>
-      <div class="field"><label for="manualLongitude">Longitud</label><input id="manualLongitude" type="number" step="any" min="-180" max="180" placeholder="Ej. -79.782"></div>
+      <div class="field"><label for="modalManualLatitude">Latitud</label><input id="modalManualLatitude" type="number" step="any" min="-90" max="90" placeholder="Ej. 8.9500"></div>
+      <div class="field"><label for="modalManualLongitude">Longitud</label><input id="modalManualLongitude" type="number" step="any" min="-180" max="180" placeholder="Ej. -79.7000"></div>
     </div>
-    <button class="button button-secondary" id="applyManualLocationBtn" type="button">Usar estas coordenadas</button>
     <div class="modal-actions">
-      <button class="button button-primary" id="confirmAutoLocationBtn" type="button">Usar esta ubicación en mi reporte</button>
+      <button class="button button-secondary" id="modalApplyLocationBtn" type="button">Probar coordenadas en el mapa</button>
+      <button class="button button-primary" id="confirmAutoLocationBtn" type="button">✓ Usar esta ubicación en el reporte</button>
     </div>
   </dialog>
-
   <dialog id="aiExtractionDialog" class="detail-dialog pipeline-dialog">
     <form method="dialog"><button class="dialog-close" type="submit" aria-label="Cerrar">×</button></form>
-    <div class="eyebrow">PIPELINE MULTIAGENTE</div>
-    <h2>Reporte <span id="newReportCode">—</span></h2>
-    <article class="agent-card">
-      <h3>Agente 1 · Ingesta y geolocalización</h3>
-      <p>Sector normalizado: <strong id="extSector">—</strong></p>
-      <p>Ancla: <strong id="extPlace">—</strong></p>
-      <p>Horas extraídas: <strong id="extHours">—</strong></p>
-      <p>Personas: <strong id="extPeople">—</strong></p>
-      <p>Vulnerabilidades: <strong id="extVuln">—</strong></p>
-      <p>Incertidumbres: <strong id="extUncertainty">—</strong></p>
-    </article>
-    <article class="agent-card">
-      <h3>Deduplicación determinística</h3>
-      <p>Cluster: <strong id="extCluster">—</strong></p>
-      <p>Reportes agrupados: <strong id="extReportCount">—</strong></p>
-      <p>Más quejas del mismo incidente no alteran el puntaje.</p>
-    </article>
-    <article class="agent-card">
-      <h3>Agente 2 · priority-v1</h3>
-      <p>Puntaje: <strong id="extScore">—</strong></p>
-      <div id="extBreakdown"></div>
-    </article>
-    <article class="agent-card">
-      <h3>Agente 3 · Solver OR-Tools</h3>
-      <p>Estado del plan: <strong id="extPlanState">—</strong></p>
-      <p>El borrador espera aprobación humana en /admin. Ningún agente aprueba su propio plan.</p>
-    </article>
-    <div class="modal-actions">
-      <button class="button button-secondary" id="trackNewReport" type="button">Consultar seguimiento</button>
-      <button class="button button-primary" id="goAdminFromModalBtn" type="button">Ver en Centro de Coordinación /admin</button>
-    </div>
+    <div class="eyebrow">PIPELINE MULTIA-AGENTE · 3 ROLES</div>
+    <h2>Reporte procesado: <span id="modalNewReportCode">—</span></h2>
+    <article class="agent-card"><h3>Agente 1 · Ingesta y Guardrails</h3><p>Sector detectado: <strong id="extSector">—</strong></p><p>Lugar / Ancla: <strong id="extPlace">—</strong></p><p>Horas sin agua: <strong id="extHours">—</strong> · Personas afectadas: <strong id="extPeople">—</strong></p><p>Vulnerabilidad: <strong id="extVuln">—</strong></p><p>Incertidumbres / Guardrail: <strong id="extUncertainty">—</strong></p></article>
+    <article class="agent-card"><h3>Deduplicación Geográfica (Haversine 800 m)</h3><p>Cluster consolidado: <strong id="extCluster">—</strong> · Reportes agrupados: <strong id="extReportCount">—</strong></p></article>
+    <article class="agent-card"><h3>Agente 2 · Priorización Determinística (priority-v1)</h3><p>Puntaje auditable: <strong id="extScore">—</strong></p><div id="extBreakdown"></div></article>
+    <article class="agent-card"><h3>Agente 3 · Planificador de Cisternas (OR-Tools)</h3><p><strong id="extPlanState">—</strong></p></article>
+    <div class="modal-actions"><button class="button button-secondary" id="modalTrackNewReportBtn" type="button">Consultar estado del reporte</button><button class="button button-primary" id="goAdminFromModalBtn" type="button">Ir al Centro de Coordinación (/admin)</button></div>
   </dialog>
 
-  <dialog id="detailDialog" class="detail-dialog pipeline-dialog">
-    <form method="dialog"><button class="dialog-close" type="submit" aria-label="Cerrar">×</button></form>
-    <div id="detailContent"></div>
-  </dialog>
-  <dialog id="helpDialog" class="detail-dialog help-dialog">
-    <form method="dialog"><button class="dialog-close" type="submit" aria-label="Cerrar">×</button></form>
-    <div class="eyebrow">AYUDA</div>
-    <h2>Cómo se reparte el agua en esta demostración</h2>
-    <p>El portal ciudadano (/ciudadano) arma un texto. El centro de coordinación (/admin) revisa el plan. Los números de prioridad y las rutas los calcula el programa, no el modelo de lenguaje.</p>
-    <ul>
-      <li>Ingesta extrae sector, horas, personas y vulnerabilidad sin inventar lo que falta.</li>
-      <li>La deduplicación agrupa el mismo lugar. Más quejas no compran prioridad.</li>
-      <li>priority-v1 puntúa horas, afectados y vulnerabilidad.</li>
-      <li>OR-Tools propone cisternas. Una persona aprueba, rechaza o corrige.</li>
-      <li>Los avisos quedan en bandeja SIMULATED. No hay despacho real ni WhatsApp.</li>
-    </ul>
-  </dialog>
-</body>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script>
-  if (window.L) {
-    document.write('<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js" crossorigin=""><\/script>');
-  }
-</script>
-<script>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="detailDialog" class="detail-dialog"><form method="dialog"><button class="dialog-close" aria-label="Cerrar">×</button></form><div id="detailContent"></div></dialog>
+  <dialog id="helpDialog" class="detail-dialog help-dialog"><form method="dialog"><button class="dialog-close" aria-label="Cerrar">×</button></form><div class="eyebrow">AYUDA · ARQUITECTURA MULTI-AGENTE</div><h2>Acerca de AguaJusta Oeste</h2><p>Sistema multi-agente para priorización justa, explicable y auditable de camiones cisterna en Arraiján y La Chorrera (Panamá Oeste).</p><ul><li><strong>Agente 1 (Ingesta):</strong> Extrae sector, duración, afectados y vulnerabilidad con guardrails determinísticos.</li><li><strong>Agente 2 (Priorización priority-v1):</strong> Puntúa de 0 a 100 según horas sin agua (0-40), afectados (0-30) y vulnerabilidad (0-30). El volumen de quejas repetidas no compra prioridad.</li><li><strong>Agente 3 (Planificación OR-Tools):</strong> Asigna rutas de cisternas respetando capacidad y ventana de turno.</li><li><strong>Supervisión Humana:</strong> Ningún agente aprueba su propio plan; los avisos SIMULATED solo se encolan en SQLite tras aprobación humana.</li></ul></dialog>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js" crossorigin=""></script>
+  <script>
 (function () {
   var ctx = null;
   var currentRole = "citizen";
@@ -850,7 +711,11 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   }
   function pathRole() {
     var path = window.location.pathname || "/";
+    var params = new URLSearchParams(window.location.search);
+    var roleParam = params.get("role");
+    if (roleParam === "admin" || roleParam === "citizen") return roleParam;
     if (path === "/admin" || path.indexOf("/admin/") === 0) return "admin";
+    if (path === "/ciudadano" || path.indexOf("/ciudadano/") === 0) return "citizen";
     return "citizen";
   }
   function titleFor(view) {
@@ -864,19 +729,13 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     currentRole = role;
     document.body.dataset.role = role;
     document.documentElement.dataset.role = role;
-    document.getElementById("navCitizen").classList.toggle("hidden", role !== "citizen");
-    document.getElementById("navAdmin").classList.toggle("hidden", role !== "admin");
     var citizenOn = role === "citizen";
     document.getElementById("switchRoleCitizenBtn").classList.toggle("active", citizenOn);
-    document.getElementById("switchRoleCitizenTop").classList.toggle("active", citizenOn);
     document.getElementById("switchRoleCitizenBtn").setAttribute("aria-pressed", citizenOn ? "true" : "false");
-    document.getElementById("switchRoleCitizenTop").setAttribute("aria-pressed", citizenOn ? "true" : "false");
     document.getElementById("switchRoleAdminBtn").classList.toggle("active", !citizenOn);
-    document.getElementById("switchRoleAdminTop").classList.toggle("active", !citizenOn);
     document.getElementById("switchRoleAdminBtn").setAttribute("aria-pressed", !citizenOn ? "true" : "false");
-    document.getElementById("switchRoleAdminTop").setAttribute("aria-pressed", !citizenOn ? "true" : "false");
-    document.getElementById("profileRole").textContent = citizenOn ? "Portal ciudadano" : "Centro de coordinación";
-    document.getElementById("workspaceLabel").textContent = citizenOn ? "PORTAL CIUDADANO" : "ADMINISTRACIÓN";
+    document.getElementById("profileRoleLabel").textContent = citizenOn ? "Portal ciudadano" : "Centro de coordinación";
+    document.getElementById("workspaceLabelSidebar").textContent = citizenOn ? "PORTAL CIUDADANO" : "ADMINISTRACIÓN";
   }
   function navigate(view, updateUrl) {
     document.querySelectorAll(".view").forEach(function (el) {
@@ -898,7 +757,8 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     }
     if (updateUrl !== false) {
       var path = currentRole === "admin" ? "/admin" : "/ciudadano";
-      history.replaceState({ role: currentRole, view: view }, "", path + "?view=" + encodeURIComponent(view));
+      if (window.location.pathname === "/") path = "/";
+      history.replaceState({ role: currentRole, view: view }, "", path === "/" ? "/" : path);
     }
     window.scrollTo(0, 0);
   }
@@ -906,7 +766,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     applyRoleChrome(role);
     var view = role === "admin" ? "admin" : "citizen";
     var path = role === "admin" ? "/admin" : "/ciudadano";
-    history.pushState({ role: role, view: view }, "", path + "?view=" + encodeURIComponent(view));
+    history.pushState({ role: role, view: view }, "", path);
     navigate(view, false);
   }
   function applyRoute() {
@@ -915,7 +775,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     var allowed = { citizen: 1, tracking: 1, map: 1, admin: 1 };
     var role = pathRole();
     applyRoleChrome(role);
-    var view = requested && allowed[requested] ? requested : (role === "admin" ? "admin" : "citizen");
+    var view = requested && allowed[requested] ? requested : (role === "admin" ? "admin" : (window.location.pathname === "/" ? "map" : "citizen"));
     navigate(view, false);
   }
   function openDialog(id) {
@@ -947,42 +807,33 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     var people = document.getElementById("reportPeople").value.trim();
     var location = document.getElementById("reportLocation").value.trim();
     var sectorId = document.getElementById("reportSector").value;
-    var district = document.getElementById("reportDistrict").value;
     var details = document.getElementById("reportDetails").value.trim();
-    var lat = document.getElementById("manualLatitude").value.trim();
-    var lng = document.getElementById("manualLongitude").value.trim();
-    var precision = (document.querySelector('input[name="reportLocationPrecision"]:checked') || {}).value || "";
     var vulns = checkedValues("vulnerability");
-    var bits = [];
-    if (hours) bits.push(hours + " horas sin agua");
-    if (people) bits.push(people + " personas");
-    var where = [];
-    if (location) where.push(location);
-    if (sectorId) where.push(sectorName(sectorId));
-    if (district) where.push(district);
-    var sentence = bits.join(" y ");
-    if (where.length) sentence += (sentence ? " en " : "") + where.join(", ");
-    if (vulns.length) sentence += (sentence ? ". Hay " : "Hay ") + vulns.join(", ");
-    if (precision === "unknown") sentence += ". La ubicación es incierta";
-    else if (precision === "approximate") sentence += ". Referencia aproximada";
-    else if (precision === "precise") sentence += ". Punto conocido";
-    if (lat && lng) sentence += ". Coordenadas " + lat + ", " + lng;
+    var sectorLabel = sectorId ? sectorName(sectorId) : "sector desconocido";
+    var locRef = location || sectorLabel;
+    var sentence = "En " + sectorLabel + " (" + locRef + ") llevamos " + (hours || "?") + " horas sin agua, " + (people || "?") + " personas afectadas";
+    if (vulns.length) sentence += ". Hay " + vulns.join(", ");
     if (details) sentence += ". " + details;
     return sentence.replace(/\s+/g, " ").trim();
   }
   function renderPreview() {
     var el = document.getElementById("aiSynthesizedPreview");
     if (useChatText) {
-      var chat = document.getElementById("aiChatInput").value.trim();
+      var chat = document.getElementById("aiQuickPrompt").value.trim();
       if (chat) { el.textContent = chat; return; }
     }
     el.textContent = synthesize();
   }
   function setLocationError(message) {
     var error = document.getElementById("locationError");
-    if (!message) { error.classList.add("hidden"); error.textContent = ""; return; }
-    error.classList.remove("hidden");
-    error.textContent = message;
+    var modalError = document.getElementById("modalLocationError");
+    if (!message) {
+      if (error) { error.classList.add("hidden"); error.textContent = ""; }
+      if (modalError) { modalError.classList.add("hidden"); modalError.textContent = ""; }
+      return;
+    }
+    if (error) { error.classList.remove("hidden"); error.textContent = message; }
+    if (modalError) { modalError.classList.remove("hidden"); modalError.textContent = message; }
   }
   function updateLocationRequirement() {
     var lat = document.getElementById("manualLatitude").value.trim();
@@ -995,7 +846,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       : "Escriba una calle o un lugar conocido, o use la ubicación automática.";
   }
   function updateChosenSummary() {
-    var summary = document.getElementById("chosenLocationSummary");
+    var summary = document.getElementById("locationPreview");
     var lat = document.getElementById("manualLatitude").value.trim();
     var lng = document.getElementById("manualLongitude").value.trim();
     var location = document.getElementById("reportLocation").value.trim();
@@ -1030,17 +881,12 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     }).join("");
   }
   function fillGpsPresets() {
-    var select = document.getElementById("gpsPresetSelect");
-    var current = select.value;
+    var root = document.getElementById("modalPlacesList");
+    if (!root) return;
     var places = (ctx && ctx.places) || [];
-    var html = '<option value="">Seleccione un punto conocido</option>';
-    places.forEach(function (p) {
-      if (typeof p.latitude !== "number") return;
-      var label = niceName(p.name) + " (" + trimCoord(p.latitude) + ", " + trimCoord(p.longitude) + ")";
-      html += '<option value="' + esc(p.place_id) + '">' + esc(label) + "</option>";
-    });
-    select.innerHTML = html;
-    if (current) select.value = current;
+    root.innerHTML = places.slice(0, 15).map(function (p) {
+      return '<button type="button" data-place-id="' + esc(p.place_id) + '">' + esc(niceName(p.name)) + '</button>';
+    }).join("");
   }
   function trimCoord(n) {
     return String(Number(n).toFixed(4)).replace(/0+$/, "").replace(/\.$/, "");
@@ -1091,7 +937,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     var vulns = [];
     if (/adultos?\s+mayores|anciano/.test(folded)) vulns.push("adultos mayores");
     if (/hospital|atencion medica|clinica/.test(folded)) vulns.push("hospital");
-    if (/infantes|ninos|bebes/.test(folded)) vulns.push("infantes");
+    if (/infantes|ninos|bebes/.test(folded)) vulns.push("ninos");
     if (/escuela|colegio/.test(folded)) vulns.push("escuela");
     if (/albergue/.test(folded)) vulns.push("albergue");
     return { hours: hours, people: people, place: bestPlace, sector: bestSector, vulns: vulns };
@@ -1126,11 +972,11 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     lockPreview = false;
     updateLocationRequirement();
     updateChosenSummary();
-    useChatText = document.getElementById("aiChatInput").value.trim().length > 0;
+    useChatText = document.getElementById("aiQuickPrompt").value.trim().length > 0;
     renderPreview();
   }
   function updatePreviewMap(lat, lng) {
-    var el = document.getElementById("locationPreview");
+    var el = document.getElementById("modalLocationMap");
     if (!window.L) {
       el.innerHTML = '<p class="map-fallback-inline">El mapa en línea no está disponible. El punto es ' + esc(lat.toFixed(5)) + ", " + esc(lng.toFixed(5)) + ".</p>";
       previewMap = null;
@@ -1145,6 +991,11 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
         maxZoom: 18,
         attribution: "Tiles &copy; Esri"
       }).addTo(previewMap);
+      previewMap.on("click", function (ev) {
+        if (!ev || !ev.latlng) return;
+        var near = nearestOf((ctx && ctx.places) || [], ev.latlng.lat, ev.latlng.lng);
+        setPending(ev.latlng.lat, ev.latlng.lng, null, "map", near.item);
+      });
     }
     previewMap.setView([lat, lng], 14);
     if (previewMarker) previewMarker.remove();
@@ -1163,10 +1014,13 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     var anchorMeters = null;
     if (sector && typeof sector.latitude === "number") anchorMeters = haversine(lat, lng, sector.latitude, sector.longitude);
     pendingFix = { latitude: lat, longitude: lng, accuracy_m: accuracy, sourceKind: sourceKind, place: place || null, sector: sector, anchorMeters: anchorMeters };
+    document.getElementById("locationResult").classList.remove("hidden");
     document.getElementById("locationLatitude").textContent = lat.toFixed(6);
     document.getElementById("locationLongitude").textContent = lng.toFixed(6);
     document.getElementById("manualLatitude").value = lat.toFixed(6);
     document.getElementById("manualLongitude").value = lng.toFixed(6);
+    document.getElementById("modalManualLatitude").value = lat.toFixed(6);
+    document.getElementById("modalManualLongitude").value = lng.toFixed(6);
     var acc = "—";
     if (anchorMeters != null && isFinite(anchorMeters)) {
       acc = Math.round(anchorMeters) + " m";
@@ -1179,13 +1033,17 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     document.getElementById("locationSource").textContent = source;
     document.getElementById("locationCapturedAt").textContent = "Lectura " + new Date().toLocaleString("es-PA") + " · anclas ASSUMPTION";
     document.getElementById("locationStatus").className = "location-status status-detected";
-    document.getElementById("locationStatus").textContent = "Punto listo";
+    document.getElementById("locationStatus").textContent = source;
+    document.getElementById("modalLocationStatus").className = "location-status status-detected";
+    document.getElementById("modalLocationStatus").textContent = source;
     setLocationError("");
     updatePreviewMap(lat, lng);
   }
   function confirmLocation() {
-    var typedLat = Number(document.getElementById("manualLatitude").value);
-    var typedLng = Number(document.getElementById("manualLongitude").value);
+    var modalLatVal = document.getElementById("modalManualLatitude").value.trim();
+    var modalLngVal = document.getElementById("modalManualLongitude").value.trim();
+    var typedLat = Number(modalLatVal || document.getElementById("manualLatitude").value);
+    var typedLng = Number(modalLngVal || document.getElementById("manualLongitude").value);
     var samePoint = pendingFix && isFinite(typedLat) && isFinite(typedLng) &&
       Math.abs(pendingFix.latitude - typedLat) < 0.000001 &&
       Math.abs(pendingFix.longitude - typedLng) < 0.000001;
@@ -1244,10 +1102,14 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   }
   function breakdownHtml(priority) {
     if (!priority || !priority.breakdown || !priority.breakdown.length) return "<p>Sin desglose todavía.</p>";
-    return "<ul>" + priority.breakdown.map(function (row) {
+    return priority.breakdown.map(function (row) {
       var label = FACTOR_LABEL[row.factor] || row.factor;
-      return "<li><strong>" + esc(label) + ":</strong> " + esc(row.points) + ". " + esc(row.reason || "") + "</li>";
-    }).join("") + "</ul>";
+      var maxPts = (row.factor === "duration" || row.factor === "hours_without_water") ? 40 : 30;
+      var cls = (row.factor === "duration" || row.factor === "hours_without_water") ? "factor-time" : (row.factor === "vulnerability" ? "factor-vulnerability" : "factor-people");
+      var pts = Number(row.points || 0);
+      var pct = Math.min(100, Math.max(0, (pts / maxPts) * 100));
+      return '<div class="priority-factor"><div><span>' + esc(label) + (row.reason ? " · " + esc(row.reason) : "") + '</span><strong>' + esc(pts) + "/" + maxPts + '</strong></div><div class="priority-factor-track"><i class="' + cls + '" style="width:' + pct.toFixed(1) + '%"></i></div></div>';
+    }).join("");
   }
   function rowStatus(cluster) {
     var state = ctx && ctx.state;
@@ -1260,9 +1122,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   }
   function setDecisionButtons(state) {
     document.getElementById("btn-aprobar").disabled = state !== "pendiente";
-    var reject = document.getElementById("btn-rechazar");
-    reject.disabled = !(state === "pendiente" || state === "aprobado");
-    reject.textContent = state === "aprobado" ? "Anular aprobación" : "Rechazar";
+    document.getElementById("btn-rechazar").disabled = state !== "pendiente";
     document.getElementById("btn-corregir").disabled = state !== "pendiente";
     document.getElementById("btn-revisar").disabled = state !== "borrador";
   }
@@ -1311,36 +1171,6 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     }
     document.getElementById("resultsCount").textContent = "Mostrando " + rows.length + " de " + ((ctx.clusters || []).length) + " incidentes";
   }
-  function renderQueue() {
-    if (!ctx) return;
-    var el = document.getElementById("queue");
-    var clusters = ctx.clusters || [];
-    if (!clusters.length) {
-      el.innerHTML = '<p class="empty">Todavía no hay incidentes consolidados. Puede precargar los fixtures o cargar un lote.</p>';
-      return;
-    }
-    el.innerHTML = "<ul>" + clusters.map(function (c) {
-      var count = Number(c.report_count || 0);
-      var people = c.estimated_affected_count == null ? "sin dato de personas" : c.estimated_affected_count + " personas afectadas";
-      var note = "";
-      if (c.geo_precision === "SECTOR") note = " Mención general del sector: queda para revisión y no se suma a un lugar concreto.";
-      if (c.geo_precision === "UNKNOWN") note = " Ubicación desconocida: requiere revisión humana.";
-      return "<li><strong>" + esc(sectorName(c.sector_id)) + "</strong> — " + esc(count) + (count === 1 ? " reporte" : " reportes") + ", " + esc(people) + ". " + esc(note) + " La cantidad de quejas no cambia el puntaje.</li>";
-    }).join("") + "</ul>";
-  }
-  function renderPriority() {
-    if (!ctx) return;
-    var el = document.getElementById("priority");
-    var list = ctx.priorities || [];
-    if (!list.length) {
-      el.innerHTML = '<p class="empty">Todavía no hay prioridades priority-v1.</p>';
-      return;
-    }
-    el.innerHTML = list.map(function (p) {
-      var cluster = clusterById(p.cluster_id);
-      return '<div class="priority-item"><strong>' + esc(sectorName(cluster ? cluster.sector_id : p.cluster_id)) + "</strong> · " + esc(p.score) + "/100 · " + esc(p.formula_version || "priority-v1") + breakdownHtml(p) + "<p>" + esc(p.explanation || "") + "</p></div>";
-    }).join("");
-  }
   function renderPlan() {
     if (!ctx) return;
     var plan = ctx.plan;
@@ -1351,6 +1181,8 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     badge.className = badgeClass(ctx.state);
     planStatus.textContent = stateLabel(ctx.state);
     planStatus.className = badgeClass(ctx.state);
+    var pill = document.getElementById("state-pill");
+    if (pill) { pill.textContent = stateLabel(ctx.state); pill.className = badgeClass(ctx.state); }
     var liters = 0;
     var vehicles = {};
     var stops = plan && plan.assignments ? plan.assignments.length : 0;
@@ -1388,17 +1220,17 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       html += "</div>";
       routes.innerHTML = html;
     }
-    var unserved = document.getElementById("unserved");
+    var unserved = document.getElementById("unserved-chips");
     var missing = (plan && plan.unserved_demand) || [];
     unserved.innerHTML = missing.length
-      ? "<ul>" + missing.map(function (id) { return "<li>" + esc(sectorName(id)) + " quedó sin cisterna en este borrador.</li>"; }).join("") + "</ul>"
-      : '<p class="empty">Ningún sector del plan quedó sin cisterna.</p>';
+      ? missing.map(function (id) { return '<span>' + esc(sectorName(id)) + " sin cisterna</span>"; }).join("")
+      : '<span>Sin demanda no atendida</span>';
     var seen = {};
     (ctx.clusters || []).forEach(function (c) { seen[c.sector_id] = true; });
     var silent = ((ctx.sectors) || []).filter(function (s) { return s.sector_id !== "UNKNOWN" && !seen[s.sector_id]; });
-    document.getElementById("silent-sectors").innerHTML = silent.length
-      ? "<ul>" + silent.map(function (s) { return "<li>" + esc(niceName(s.name)) + " (" + esc(prettyDistrict(s.district)) + ") no tiene reportes. El catálogo no inventa población ni vulnerabilidad.</li>"; }).join("") + "</ul>"
-      : '<p class="empty">Todos los sectores del catálogo tienen al menos un reporte en este lote.</p>';
+    document.getElementById("silent-sectors-chips").innerHTML = silent.length
+      ? silent.map(function (s) { return '<span>' + esc(niceName(s.name)) + " silencioso</span>"; }).join("")
+      : '<span>Todos los sectores reportados</span>';
   }
   function renderExecution() {
     if (!ctx) return;
@@ -1444,19 +1276,13 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   function renderTraces() {
     if (!ctx) return;
     var rich = document.getElementById("agentTraceList");
-    var plain = document.getElementById("traces");
     var traces = ctx.traces || [];
-    document.getElementById("tracePreloadBtn").classList.toggle("hidden", traces.length > 0);
     if (!traces.length) {
       rich.innerHTML = '<div class="empty-state-small"><strong>Todavía no hay trazas de agentes</strong><p>Precargue los datos reales del proyecto o cargue un lote para ver ingesta, prioridad y solver.</p></div>';
-      plain.innerHTML = '<p class="empty">Todavía no hay trazas.</p>';
       return;
     }
     rich.innerHTML = traces.map(function (t, index) {
       return '<details class="agent-trace-item" ' + (index === traces.length - 1 ? "open" : "") + '><summary><span class="trace-stage-number">' + String(index + 1).padStart(2, "0") + '</span><span class="trace-stage-copy"><strong>' + esc(t.actor) + "</strong><small>" + esc(t.action) + " · " + esc(t.timestamp || "") + '</small></span><span class="trace-state">' + esc(t.status) + '</span></summary><div class="trace-detail-grid"><div><small>Entrada</small><p>' + esc(t.input_summary) + '</p></div><div><small>Salida</small><p>' + esc(t.output_summary) + '</p></div><div class="trace-reason"><small>Traza</small><p>' + esc(t.trace_id || "") + "</p></div></div></details>";
-    }).join("");
-    plain.innerHTML = traces.map(function (t) {
-      return '<div class="trace-item"><strong>' + esc(t.actor) + "</strong> · " + esc(t.action) + " — <em>" + esc(t.status) + "</em></div>";
     }).join("");
   }
   function duplicateBlocks() {
@@ -1523,38 +1349,27 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       return prettyDistrict(s.district) === filter;
     });
   }
-  function renderSvgMap() {
-    var el = document.getElementById("sector-map");
-    var points = ((ctx && ctx.sectors) || []).filter(function (s) {
-      return s.sector_id !== "UNKNOWN" && typeof s.latitude === "number" && typeof s.longitude === "number";
+
+  function buildDemoHeatPoints(items) {
+    var offsets = [
+      [0, 0, 1.00], [0.0015, 0.0012, 0.82], [-0.0017, 0.0010, 0.72],
+      [0.0010, -0.0020, 0.68], [-0.0024, -0.0015, 0.56],
+      [0.0030, -0.0003, 0.48], [-0.0006, 0.0030, 0.60],
+      [0.0028, 0.0025, 0.40], [-0.0030, -0.0028, 0.42],
+      [0.0040, -0.0018, 0.34], [-0.0037, 0.0028, 0.36],
+      [0.0012, 0.0040, 0.30], [-0.0045, -0.0004, 0.28]
+    ];
+    return items.flatMap(function (s) {
+      var people = 0;
+      ((ctx && ctx.clusters) || []).forEach(function (c) { if (c.sector_id === s.sector_id) people += Number(c.estimated_affected_count || c.report_count || 0); });
+      var scale = 0.75 + Math.min(0.45, people / 300);
+      var weight = Math.min(1, 0.42 + (people / 150) * 0.45);
+      return offsets.map(function (o) {
+        return [s.latitude + o[0] * scale, s.longitude + o[1] * scale, Math.max(0.12, Math.min(1, weight * o[2]))];
+      });
     });
-    if (!points.length) {
-      el.innerHTML = '<p class="empty">No hay coordenadas de demostración para dibujar el mapa.</p>';
-      return;
-    }
-    var minLat = points[0].latitude, maxLat = minLat, minLon = points[0].longitude, maxLon = minLon;
-    points.forEach(function (s) {
-      minLat = Math.min(minLat, s.latitude); maxLat = Math.max(maxLat, s.latitude);
-      minLon = Math.min(minLon, s.longitude); maxLon = Math.max(maxLon, s.longitude);
-    });
-    var padLat = Math.max(0.02, (maxLat - minLat) * 0.18);
-    var padLon = Math.max(0.02, (maxLon - minLon) * 0.18);
-    minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
-    function xy(lat, lon) {
-      return [36 + ((lon - minLon) / (maxLon - minLon)) * 560, 28 + ((maxLat - lat) / (maxLat - minLat)) * 360];
-    }
-    var svg = '<svg viewBox="0 0 640 440" role="img" aria-label="Mapa determinístico de sectores de Panamá Oeste">';
-    svg += '<rect width="640" height="440" rx="18" fill="#e7f2f1"/>';
-    svg += '<path d="M40 300 C 140 250, 220 340, 340 280 C 460 220, 520 300, 600 240" fill="none" stroke="#b7d5d2" stroke-width="28" stroke-linecap="round"/>';
-    points.forEach(function (s) {
-      var pos = xy(s.latitude, s.longitude);
-      var visual = sectorVisual(s.sector_id);
-      svg += '<circle cx="' + pos[0].toFixed(1) + '" cy="' + pos[1].toFixed(1) + '" r="7" fill="' + visual.color + '"/>';
-      svg += '<text x="' + (pos[0] + 10).toFixed(1) + '" y="' + (pos[1] + 4).toFixed(1) + '" font-size="12" font-family="DM Sans, sans-serif" fill="#1c2430">' + esc(niceName(s.name)) + "</text>";
-    });
-    svg += "</svg>";
-    el.innerHTML = svg;
   }
+
   function ensureMap() {
     if (mapApi.map || !window.L || !document.getElementById("affectedMap")) {
       if (!window.L) showMapFallback("Mapa interactivo no disponible sin conexión. El mapa SVG de sectores sigue abajo.");
@@ -1569,11 +1384,11 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
         maxBoundsViscosity: 1,
         minZoom: 9
       }).fitBounds(mapApi.bounds, { padding: [16, 16], maxZoom: 10 });
-      var tiles = window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
-        maxZoom: 16,
-        attribution: "Tiles &copy; Esri"
-      });
-      tiles.addTo(mapApi.map);
+      var baseTiles = window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxZoom: 16, attribution: "Tiles &copy; Esri" });
+      var labelTiles = window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 16, attribution: "" });
+      baseTiles.addTo(mapApi.map);
+      labelTiles.addTo(mapApi.map);
+      var tiles = baseTiles;
       tiles.on("tileerror", function () { showMapFallback("No se pudieron cargar las calles. Los sectores y el mapa SVG siguen disponibles."); });
       mapApi.markers = window.L.layerGroup().addTo(mapApi.map);
     } catch (err) {
@@ -1590,7 +1405,6 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     mapEl.appendChild(warning);
   }
   function renderLeaflet() {
-    renderSvgMap();
     var sectors = visibleSectors();
     var ids = {};
     sectors.forEach(function (s) { ids[s.sector_id] = true; });
@@ -1640,10 +1454,11 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       var priority = priorityForCluster(c.cluster_id);
       heat.push([c.latitude, c.longitude, Math.max(0.15, Math.min(1, priority ? Number(priority.score) / 100 : 0.4))]);
     });
-    if (heat.length && typeof window.L.heatLayer === "function") {
-      mapApi.heat = window.L.heatLayer(heat, {
-        radius: 28, blur: 22, maxZoom: 14, max: 1, minOpacity: 0.25,
-        gradient: { 0.2: "#13b889", 0.45: "#f2df58", 0.7: "#f5a623", 1: "#d92332" }
+    var heatItems = sectors.filter(function (s) { return typeof s.latitude === "number" && sectorVisual(s.sector_id).level !== "silent"; });
+    if (typeof window.L.heatLayer === "function" && heatItems.length) {
+      mapApi.heat = window.L.heatLayer(buildDemoHeatPoints(heatItems), {
+        radius: 25, blur: 22, maxZoom: 14, max: 1, minOpacity: 0.26,
+        gradient: { 0.18: "#13b889", 0.38: "#9bcf7a", 0.54: "#f2df58", 0.70: "#f5a623", 0.86: "#ed623b", 1.00: "#d92332" }
       }).addTo(mapApi.map);
     }
   }
@@ -1745,6 +1560,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     }
     var reportId = latest.report_id || "—";
     document.getElementById("newReportCode").textContent = reportId;
+    document.getElementById("modalNewReportCode").textContent = reportId;
     var cluster = null;
     (data.clusters || []).forEach(function (c) {
       if ((c.source_report_ids || []).indexOf(reportId) !== -1) cluster = c;
@@ -1795,6 +1611,33 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       return '<div class="attachment-preview-row"><span>' + (item.kind === "Foto" ? "▧" : "♫") + "</span><div><strong>" + esc(item.name) + "</strong><small>" + esc(item.kind) + " · no se envía al motor, solo el texto</small></div></div>";
     }).join("");
   }
+
+  function renderOutbox() {
+    var el = document.getElementById("outbox-list");
+    if (!el) return;
+    var notices = (ctx && ctx.outbox_notices) || [];
+    if (!notices.length) {
+      el.innerHTML = '<p class="small-muted">Sin avisos SIMULATED todavía. Tras aprobar el plan aparecerán aquí (PREVIEW antes de aprobación).</p>';
+      return;
+    }
+    el.innerHTML = notices.map(function (n) {
+      return '<div class="outbox-item"><strong>' + esc(sectorName(n.sector_id)) + ' · ' + esc(n.channel || "SIMULATED") + ' · ' + esc(n.status || "") + '</strong>' + esc(n.message || "") + '</div>';
+    }).join("");
+  }
+  function renderActivity() {
+    var el = document.getElementById("activityList");
+    if (!el || !ctx) return;
+    var items = [];
+    if (ctx.plan) items.push(["Plan de distribución preparado", "Propuesta OR-Tools lista para revisión humana.", "marker-blue"]);
+    if ((ctx.clusters || []).length) items.push(["Incidencias agrupadas por sector", "La deduplicación evita que reportes repetidos aumenten la prioridad.", "marker-teal"]);
+    if ((ctx.priorities || []).length) items.push(["Motor priority-v1 aplicado", "Puntaje determinístico con desglose auditable.", "marker-violet"]);
+    if (ctx.execution && ctx.execution.saved) items.push(["Decisión humana registrada", "Avisos SIMULATED encolados si corresponde.", "marker-teal"]);
+    if (!items.length) return;
+    el.innerHTML = items.map(function (it) {
+      return '<div class="activity-item"><span class="activity-marker ' + it[2] + '"></span><div><strong>' + esc(it[0]) + '</strong><p>' + esc(it[1]) + '</p></div><time>Ahora</time></div>';
+    }).join("");
+  }
+
   function applyContext(data) {
     var district = document.getElementById("reportDistrict").value;
     var sector = document.getElementById("reportSector").value;
@@ -1803,9 +1646,9 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     fillGpsPresets();
     renderMetrics();
     renderTable();
-    renderQueue();
-    renderPriority();
     renderPlan();
+    renderOutbox();
+    renderActivity();
     setDecisionButtons(data.state);
     renderExecution();
     renderTraces();
@@ -1817,25 +1660,24 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   }
   function sendDecision(action) {
     if (!ctx || !ctx.plan || !ctx.plan.plan_id) { showToast("No hay un plan cargado."); return; }
-    var comment = document.getElementById("decision-comment").value;
-    if (action === "CORRECT" && !comment.trim()) { showToast("Corregir requiere un comentario."); return; }
+    var comment = document.getElementById("comment-input").value;
+    if (action === "CORRECT" && !comment.trim()) {
+      document.getElementById("comment-input").focus();
+      document.getElementById("comment-input").value = "Ajuste solicitado por el coordinador";
+      showToast("Corregir requiere un comentario; se sugirió uno editable.");
+      return;
+    }
     postJson("/api/decision", {
       plan_id: ctx.plan.plan_id,
       action: action,
-      actor: document.getElementById("actor-name").value.trim() || "coordinador",
+      actor: document.getElementById("actor-input").value.trim() || "coordinador",
       comment: comment
     }).then(applyContext).catch(function (err) { showToast(err.message); });
   }
 
   document.getElementById("switchRoleCitizenBtn").addEventListener("click", function () { switchRole("citizen"); });
-  document.getElementById("switchRoleCitizenTop").addEventListener("click", function () { switchRole("citizen"); });
   document.getElementById("switchRoleAdminBtn").addEventListener("click", function () { switchRole("admin"); });
-  document.getElementById("switchRoleAdminTop").addEventListener("click", function () { switchRole("admin"); });
-  document.getElementById("navCitizen").addEventListener("click", function (event) {
-    var button = event.target.closest(".nav-item");
-    if (button) navigate(button.getAttribute("data-view"));
-  });
-  document.getElementById("navAdmin").addEventListener("click", function (event) {
+  document.querySelector(".main-nav").addEventListener("click", function (event) {
     var button = event.target.closest(".nav-item");
     if (button) navigate(button.getAttribute("data-view"));
   });
@@ -1844,22 +1686,16 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   });
   document.getElementById("helpButton").addEventListener("click", function () { openDialog("helpDialog"); });
   document.getElementById("closeBanner").addEventListener("click", function () {
-    document.getElementById("demoBanner").classList.add("hidden");
+    document.querySelector(".demo-banner").classList.add("hidden");
   });
   document.getElementById("createFromAdmin").addEventListener("click", function () { navigate("citizen"); });
   document.getElementById("mapNewReport").addEventListener("click", function () { navigate("citizen"); });
   document.getElementById("goTracking").addEventListener("click", function () { navigate("tracking"); });
-  document.getElementById("toggleBatch").addEventListener("click", function () {
-    document.getElementById("batchDrawer").classList.toggle("hidden");
-  });
   document.getElementById("preload-reports").addEventListener("click", function () {
     postJson("/api/preload", {}).then(function (data) {
       applyContext(data);
       showToast("Fixtures cargados. El plan quedó en borrador.");
     }).catch(function (err) { showToast(err.message); });
-  });
-  document.getElementById("tracePreloadBtn").addEventListener("click", function () {
-    document.getElementById("preload-reports").click();
   });
   document.getElementById("load-reports").addEventListener("click", function () {
     var texts = document.getElementById("reports-input").value.split("\n").map(function (line) { return line.trim(); }).filter(Boolean);
@@ -1900,14 +1736,21 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     var button = event.target.closest("[data-map-sector]");
     if (button) focusMapSector(button.getAttribute("data-map-sector"));
   });
-  document.getElementById("aiFillFormBtn").addEventListener("click", function () {
-    var text = document.getElementById("aiChatInput").value.trim();
+  document.getElementById("sampleReportChips").addEventListener("click", function (event) {
+    var chip = event.target.closest("[data-sample]");
+    if (!chip) return;
+    document.getElementById("aiQuickPrompt").value = chip.getAttribute("data-sample") || "";
+    useChatText = true;
+    renderPreview();
+  });
+  document.getElementById("aiAutofillBtn").addEventListener("click", function () {
+    var text = document.getElementById("aiQuickPrompt").value.trim();
     if (!text) { showToast("Escriba el relato antes de analizarlo."); return; }
     if (!ctx) { showToast("Todavía no llega el catálogo de sectores."); return; }
     applyParsed(parseFreeText(text));
     showToast("El formulario se llenó con el relato. Revise los campos antes de enviar.");
   });
-  document.getElementById("aiChatInput").addEventListener("input", function () {
+  document.getElementById("aiQuickPrompt").addEventListener("input", function () {
     if (useChatText) renderPreview();
   });
   document.getElementById("reportForm").addEventListener("input", onFormEdit);
@@ -1944,44 +1787,70 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
   });
   document.getElementById("reportPhotos").addEventListener("change", renderAttachments);
   document.getElementById("reportAudio").addEventListener("change", renderAttachments);
-  document.getElementById("detectLocationBtn").addEventListener("click", function () {
+  function openAutoLocationModal() {
     setLocationError("");
     openDialog("autoLocationDialog");
-    setTimeout(function () { if (previewMap) previewMap.invalidateSize(); }, 80);
-  });
-  document.getElementById("useBrowserGpsBtn").addEventListener("click", function () {
+    setTimeout(function () {
+      var lat = pendingFix ? pendingFix.lat : 8.91;
+      var lng = pendingFix ? pendingFix.lng : -79.74;
+      updatePreviewMap(lat, lng);
+      if (previewMap) previewMap.invalidateSize();
+    }, 80);
+  }
+  document.getElementById("openAutoLocationModalBtn").addEventListener("click", openAutoLocationModal);
+  document.getElementById("detectLocationBtn").addEventListener("click", openAutoLocationModal);
+  document.getElementById("modalDetectGpsBtn").addEventListener("click", function () {
     setLocationError("");
     if (!navigator.geolocation) {
       document.getElementById("locationStatus").className = "location-status status-unsupported";
       document.getElementById("locationStatus").textContent = "Sin GPS";
+      document.getElementById("modalLocationStatus").className = "location-status status-unsupported";
+      document.getElementById("modalLocationStatus").textContent = "Sin GPS";
       setLocationError("Este navegador no comparte la ubicación. Elija un punto de la lista.");
       return;
     }
     document.getElementById("locationStatus").className = "location-status status-detecting";
     document.getElementById("locationStatus").textContent = "Buscando…";
-    document.getElementById("useBrowserGpsBtn").disabled = true;
+    document.getElementById("modalLocationStatus").className = "location-status status-detecting";
+    document.getElementById("modalLocationStatus").textContent = "Buscando…";
+    document.getElementById("modalDetectGpsBtn").disabled = true;
     navigator.geolocation.getCurrentPosition(function (position) {
       var near = nearestOf((ctx && ctx.places) || [], position.coords.latitude, position.coords.longitude);
       setPending(position.coords.latitude, position.coords.longitude, position.coords.accuracy, "browser", near.item);
-      document.getElementById("useBrowserGpsBtn").disabled = false;
+      document.getElementById("modalDetectGpsBtn").disabled = false;
     }, function (error) {
       var text = error && error.code === 1
         ? "No se permitió el GPS. Puede elegir un ancla de la lista."
         : "No se obtuvo el GPS. Elija un punto conocido o escriba coordenadas.";
       document.getElementById("locationStatus").className = "location-status status-error";
       document.getElementById("locationStatus").textContent = "Sin GPS";
+      document.getElementById("modalLocationStatus").className = "location-status status-error";
+      document.getElementById("modalLocationStatus").textContent = "Sin GPS";
       setLocationError(text);
-      document.getElementById("useBrowserGpsBtn").disabled = false;
+      document.getElementById("modalDetectGpsBtn").disabled = false;
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
   });
-  document.getElementById("gpsPresetSelect").addEventListener("change", function () {
-    var place = findPlace(document.getElementById("gpsPresetSelect").value);
+  document.getElementById("modalPlacesList").addEventListener("click", function (event) {
+    var button = event.target.closest("[data-place-id]");
+    if (!button) return;
+    var place = findPlace(button.getAttribute("data-place-id"));
     if (!place) return;
     setPending(Number(place.latitude), Number(place.longitude), null, "preset", place);
   });
   document.getElementById("applyManualLocationBtn").addEventListener("click", function () {
     var lat = Number(document.getElementById("manualLatitude").value);
     var lng = Number(document.getElementById("manualLongitude").value);
+    if (!isFinite(lat) || lat < -90 || lat > 90 || !isFinite(lng) || lng < -180 || lng > 180) {
+      setLocationError("Escriba una latitud entre -90 y 90 y una longitud entre -180 y 180.");
+      return;
+    }
+    var near = nearestOf((ctx && ctx.places) || [], lat, lng);
+    setPending(lat, lng, null, "manual", near.item);
+    confirmLocation();
+  });
+  document.getElementById("modalApplyLocationBtn").addEventListener("click", function () {
+    var lat = Number(document.getElementById("modalManualLatitude").value);
+    var lng = Number(document.getElementById("modalManualLongitude").value);
     if (!isFinite(lat) || lat < -90 || lat > 90 || !isFinite(lng) || lng < -180 || lng > 180) {
       setLocationError("Escriba una latitud entre -90 y 90 y una longitud entre -180 y 180.");
       return;
@@ -1997,7 +1866,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     renderPreview();
     var text = document.getElementById("aiSynthesizedPreview").textContent.trim();
     if (!text) { showToast("El texto del reporte está vacío."); return; }
-    var button = document.getElementById("submitReportBtn");
+    var button = document.querySelector("#reportForm button[type=submit]");
     button.disabled = true;
     postJson("/api/citizen-report", { text: text, source_channel: "citizen_portal" }).then(function (data) {
       applyContext(data);
@@ -2006,7 +1875,7 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       form.reset();
       statedHours = null;
       useChatText = false;
-      document.getElementById("aiChatInput").value = "";
+      document.getElementById("aiQuickPrompt").value = "";
       document.getElementById("manualLatitude").value = "";
       document.getElementById("manualLongitude").value = "";
       document.getElementById("charCount").textContent = "0 / 600";
@@ -2023,13 +1892,15 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
       showToast(err.message);
     }).then(function () { button.disabled = false; });
   });
-  document.getElementById("trackNewReport").addEventListener("click", function () {
+  function goTrackLatestReport() {
     var code = document.getElementById("newReportCode").textContent.trim();
     document.getElementById("trackingCode").value = code;
     closeDialog("aiExtractionDialog");
     navigate("tracking");
     lookupReport(code);
-  });
+  }
+  document.getElementById("trackNewReport").addEventListener("click", goTrackLatestReport);
+  document.getElementById("modalTrackNewReportBtn").addEventListener("click", goTrackLatestReport);
   document.getElementById("goAdminFromModalBtn").addEventListener("click", function () {
     closeDialog("aiExtractionDialog");
     switchRole("admin");
@@ -2058,14 +1929,25 @@ button:disabled,.button:disabled{opacity:.45;cursor:not-allowed}
     renderPreview();
   }
 
+  function loadContext() {
+    return fetch("/api/context").then(function (res) { return res.json(); }).then(function (data) {
+      var empty = (!data.extracted_reports || data.extracted_reports.length === 0) && !data.state;
+      if (empty && !preloadOnce) {
+        preloadOnce = true;
+        return postJson("/api/preload", {}).then(applyContext);
+      }
+      applyContext(data);
+    });
+  }
+  var preloadOnce = false;
   applyRoute();
   window.addEventListener("popstate", applyRoute);
   renderPreview();
-  fetch("/api/context").then(function (res) { return res.json(); }).then(applyContext).catch(function () {
+  loadContext().catch(function () {
     document.getElementById("connectionMode").textContent = "Sin conexión";
-    showToast("No se pudo leer /api/context. La página sigue usable y el mapa SVG no depende de la red.");
+    showToast("No se pudo leer /api/context.");
   });
 })();
-
-</script>
+  </script>
+</body>
 </html>
