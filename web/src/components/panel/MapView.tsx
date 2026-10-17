@@ -17,6 +17,44 @@ interface LeafletLike {
   addTo: (map: unknown) => LeafletLike;
   bindTooltip: (text: string) => LeafletLike;
   remove: () => void;
+  removeLayer: (layer: unknown) => void;
+  invalidateSize: () => void;
+  fitBounds: (bounds: unknown, options?: Record<string, unknown>) => void;
+}
+
+interface LeafletNS {
+  map: (el: HTMLElement, opts?: Record<string, unknown>) => LeafletLike;
+  tileLayer: (url: string, opts?: Record<string, unknown>) => LeafletLike;
+  polygon: (pts: [number, number][], opts?: Record<string, unknown>) => LeafletLike;
+  circleMarker: (latlng: [number, number], opts?: Record<string, unknown>) => LeafletLike;
+  layerGroup: () => LeafletLike & { clearLayers: () => void };
+  latLngBounds: (latlngs: [number, number][]) => unknown;
+  heatLayer?: (points: number[][], opts?: Record<string, unknown>) => LeafletLike;
+}
+
+// Firmas de calor: clusters con coordenadas (peso por reportes) o anclas de respaldo.
+function heatPoints(snapshot: MapViewProps["snapshot"]): number[][] {
+  const clustered = snapshot.clusters.filter(
+    (cluster) =>
+      typeof cluster.latitude === "number" && typeof cluster.longitude === "number",
+  );
+  if (clustered.length > 0) {
+    return clustered.map((cluster) => [
+      cluster.latitude as number,
+      cluster.longitude as number,
+      Math.min(1, Math.max(0.28, (cluster.report_count || 1) / 6)),
+    ]);
+  }
+  return snapshot.places
+    .filter(
+      (place) =>
+        typeof place.latitude === "number" && typeof place.longitude === "number",
+    )
+    .map((place) => [Number(place.latitude), Number(place.longitude), 0.4]);
+}
+
+function token(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 };
 
 export function MapView({
@@ -51,6 +89,8 @@ export function MapView({
   useEffect(() => {
     let cancelled = false;
     let map: LeafletLike | null = null;
+    let heatLayer: LeafletLike | null = null;
+    let markers: (LeafletLike & { clearLayers: () => void }) | null = null;
 
     async function init() {
       const container = mapDivRef.current;
@@ -63,23 +103,19 @@ export function MapView({
         }
         return;
       }
-      const leaflet = L as unknown as {
-        map: (el: HTMLElement, opts: Record<string, unknown>) => LeafletLike;
-        tileLayer: (url: string, opts: Record<string, unknown>) => LeafletLike;
-        polygon: (pts: [number, number][], opts: Record<string, unknown>) => LeafletLike;
-        circleMarker: (latlng: [number, number], opts: Record<string, unknown>) => LeafletLike;
-      };
+      const leaflet = L as unknown as LeafletNS;
       // ponytail: casteo mínimo de Leaflet; la libra por CDN no trae tipos.
       const instance = leaflet.map(container, {
         center: [9.0, -79.9],
         zoom: 10,
         scrollWheelZoom: false,
+        minZoom: 9,
       });
       map = instance;
       leaflet
         .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap",
-          maxZoom: 18,
+          maxZoom: 19,
         })
         .addTo(instance);
       leaflet
@@ -90,14 +126,48 @@ export function MapView({
           fill: false,
         })
         .addTo(instance);
+      instance.fitBounds(leaflet.latLngBounds(PANAMA_OESTE_BORDER), {
+        padding: [18, 18],
+        maxZoom: 11,
+      });
+      window.setTimeout(() => map?.invalidateSize(), 80);
+
+      // Firmas de calor: heatLayer si el plugin (leaflet.heat por CDN) está.
+      const water = token("--color-water");
+      const info = token("--color-info");
+      const pending = token("--color-pending");
+      const points = heatPoints(snapshot);
+      if (typeof leaflet.heatLayer === "function" && points.length > 0) {
+        const gradient: Record<number, string> = {};
+        if (water) gradient[0.2] = water;
+        if (info) gradient[0.55] = info;
+        if (pending) gradient[0.9] = pending;
+        heatLayer = leaflet.heatLayer(points, {
+          radius: 32,
+          blur: 24,
+          maxZoom: 14,
+          minOpacity: 0.28,
+          gradient,
+        });
+        heatLayer.addTo(instance);
+        return;
+      }
+      // Respaldo: círculos por sector del filtro.
+      if (!markers) {
+        markers = leaflet.layerGroup().addTo(instance) as LeafletLike & {
+          clearLayers: () => void;
+        };
+      }
       for (const sector of visible) {
         leaflet
           .circleMarker([sector.latitude, sector.longitude], {
-            radius: 14,
+            radius: 8,
             color: sector.color,
-            fillOpacity: 0.55,
+            fillColor: sector.color,
+            fillOpacity: 0.45,
+            weight: 1.2,
           })
-          .addTo(instance)
+          .addTo(markers)
           .bindTooltip(`${sector.name} · ${sector.label}`);
       }
     }
@@ -105,9 +175,11 @@ export function MapView({
     void init();
     return () => {
       cancelled = true;
+      heatLayer = null;
+      markers = null;
       map?.remove();
     };
-  }, [visible]);
+  }, [visible, snapshot]);
 
   return (
     <div className="space-y-4">
