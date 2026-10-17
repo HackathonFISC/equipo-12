@@ -1,4 +1,8 @@
-"""Coordinator glue: ingest, consolidate, draft, review, and human decision."""
+"""Coordinator glue: ingest, consolidate, draft, review, and human decision.
+
+Each ``CoordinatorService`` instance owns at most one plan; start a new instance
+for a new batch of reports.
+"""
 
 from __future__ import annotations
 
@@ -13,11 +17,10 @@ from src.contracts import (
     ProvenanceTag,
     ReportExtracted,
     ReportInput,
-    SectorId,
     TraceEntry,
 )
 from src.coordinator.engine import EngineOutput, PlanEngine, demo_engine
-from src.coordinator.state import PlanState, transition
+from src.coordinator.state import PlanState
 from src.coordinator.store import ApprovalStore
 from src.ingestion.agent import IngestionResult, ingest_report
 from src.ingestion.deduplicator import deduplicate_reports
@@ -108,11 +111,14 @@ class CoordinatorService:
             raise ValueError("plan must be submitted for review before decide")
 
         assert self._payload_json is not None
-        return self._store.apply_decision(
+        result = self._store.apply_decision(
             self._plan_id,
             decision,
             self._payload_json,
         )
+        if decision.action == DecisionAction.CORRECT:
+            self._submitted = False
+        return result
 
 
 __all__ = ["CoordinatorService"]

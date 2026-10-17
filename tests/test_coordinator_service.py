@@ -150,6 +150,32 @@ class CoordinatorServiceTests(unittest.TestCase):
             self.assertEqual(state, PlanState.BORRADOR.value)
             self.assertEqual(revision, 1)
             self.assertEqual(self._outbox_count(db_path), 0)
+
+            with self.assertRaises(ValueError) as ctx:
+                svc.decide(_decision(plan_id, DecisionAction.APPROVE))
+            self.assertIn("submitted", str(ctx.exception).lower())
+            self.assertEqual(self._outbox_count(db_path), 0)
+            _, revision_after = self._plan_row(db_path, plan_id)
+            self.assertEqual(revision_after, 1)
+
+            svc.submit_for_review()
+            result = svc.decide(_decision(plan_id, DecisionAction.APPROVE))
+            self.assertTrue(result.saved)
+            self.assertGreaterEqual(self._outbox_count(db_path), 1)
+        finally:
+            db_path.unlink(missing_ok=True)
+
+    def test_decide_before_submit_raises(self) -> None:
+        store, db_path = _temp_store()
+        try:
+            svc = CoordinatorService(store)
+            svc.ingest_texts(_SAMPLE_TEXTS[:2])
+            output = svc.prepare_draft()
+            plan_id = output.plan.plan_id
+            with self.assertRaises(ValueError) as ctx:
+                svc.decide(_decision(plan_id, DecisionAction.APPROVE))
+            self.assertIn("submitted", str(ctx.exception).lower())
+            self.assertEqual(self._outbox_count(db_path), 0)
         finally:
             db_path.unlink(missing_ok=True)
 
