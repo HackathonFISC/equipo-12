@@ -22,6 +22,56 @@
   --color-map-border: #b91c1c;
   --color-simulated: #334155;
   --color-synthetic: #92400e;
+  --color-navy-raised: #153a53;
+  --color-navy-active: #1a4763;
+  --color-sidebar: #a9c0d0;
+  --color-sidebar-dim: #6f8da4;
+  --color-water-bright: #29c1b4;
+  --color-heat-low: #13b889;
+  --color-heat-mid: #f2df58;
+  --color-heat-high: #d92332;
+  --color-priority-high: #c15d45;
+  --color-priority-mid: #b78326;
+  --color-priority-low: #218875;
+  --animate-dialogOverlayShow: dialogOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dialogContentShow: dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-accordionOpen: accordionOpen 150ms cubic-bezier(0.87, 0, 0.13, 1);
+  --animate-accordionClose: accordionClose 150ms cubic-bezier(0.87, 0, 0.13, 1);
+
+  @keyframes dialogOverlayShow {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes dialogContentShow {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -45%) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+  @keyframes accordionOpen {
+    from {
+      height: 0px;
+    }
+    to {
+      height: var(--accordion-content-height);
+    }
+  }
+  @keyframes accordionClose {
+    from {
+      height: var(--accordion-content-height);
+    }
+    to {
+      height: 0px;
+    }
+  }
 }
 
 body {
