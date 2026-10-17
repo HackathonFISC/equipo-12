@@ -4,160 +4,237 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AguaJusta Oeste — Coordinación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,560;9..144,640&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f1419;
-      --surface: #1a2332;
-      --border: #2d3a4d;
-      --text: #e7ecf3;
-      --muted: #8b9cb3;
-      --accent: #3d9aed;
-      --ok: #3dba7a;
-      --warn: #e6a23c;
-      --danger: #e05555;
+      --paper: #f3efe4;
+      --sheet: #fffdf8;
+      --ink: #1c2430;
+      --muted: #5c6774;
+      --line: #e2d9c8;
+      --water: #0f6e73;
+      --water-deep: #0b4f55;
+      --sand: #e7d3b0;
+      --clay: #a24b32;
+      --ok: #1f7a4d;
+      --quiet: #8d8678;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% -10%, #d7ebe8 0, transparent 42%),
+        var(--paper);
+      font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.55;
     }
     header {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.9rem 1.1rem;
       align-items: center;
-      gap: 1rem;
-      background: var(--surface);
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.92);
     }
-    h1 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+    .mark { width: 3.25rem; height: 3.25rem; }
+    h1 {
+      margin: 0;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 2rem;
+      font-weight: 560;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .lede { margin: 0.2rem 0 0; color: var(--muted); }
+    #status-badge {
+      justify-self: start;
+      grid-column: 2;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: var(--sand);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
     .notice {
-      font-size: 0.85rem;
-      color: var(--warn);
-      flex: 1 1 100%;
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--water-deep);
+      font-size: 0.98rem;
     }
-    main { padding: 1.25rem; max-width: 1100px; margin: 0 auto; }
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+      gap: 1rem;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.1rem;
+    }
     section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+      background: var(--sheet);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem 1.1rem 1.15rem;
       margin-bottom: 1rem;
     }
-    h2 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    h2 {
+      margin: 0 0 0.35rem;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 560;
+    }
+    .hint { margin: 0 0 0.75rem; color: var(--muted); font-size: 0.95rem; }
+    label { display: block; margin: 0.4rem 0 0.25rem; font-weight: 700; }
     textarea, input[type="text"] {
       width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 6px;
-      padding: 0.5rem 0.65rem;
+      border: 1px solid #cfc4b0;
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
       font: inherit;
+      color: var(--ink);
+      background: #fff;
     }
-    textarea { min-height: 120px; resize: vertical; }
-    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+    textarea { min-height: 8rem; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
     button {
       font: inherit;
-      border: none;
-      border-radius: 6px;
-      padding: 0.45rem 0.85rem;
+      font-weight: 700;
+      border: 0;
+      border-radius: 999px;
+      padding: 0.55rem 0.95rem;
       cursor: pointer;
-      background: var(--accent);
+      background: var(--water);
       color: #fff;
     }
     button:disabled { opacity: 0.45; cursor: not-allowed; }
-    button.danger { background: var(--danger); }
+    button.danger { background: var(--clay); }
     button.ok { background: var(--ok); }
-    #status-badge {
-      display: inline-block;
-      padding: 0.25rem 0.65rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      background: var(--border);
-    }
-    ul { margin: 0; padding-left: 1.2rem; }
-    .empty { color: var(--muted); font-style: italic; }
+    button.ghost { background: transparent; color: var(--water-deep); border: 1px solid var(--water); }
+    .map-card { position: sticky; top: 0.8rem; }
+    #sector-map { width: 100%; }
+    #sector-map svg { width: 100%; height: auto; display: block; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.7rem 1rem; margin-top: 0.6rem; font-size: 0.92rem; }
+    .swatch { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 50%; margin-right: 0.3rem; }
+    ul { margin: 0.2rem 0 0; padding-left: 1.1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.4rem 0.35rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 700; }
+    .empty { color: var(--muted); margin: 0; }
+    .priority-item, .trace-item { padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
     .stub-badge {
-      display: inline-block;
-      font-size: 0.75rem;
-      background: var(--warn);
-      color: #1a1200;
-      padding: 0.1rem 0.4rem;
-      border-radius: 4px;
-      margin-left: 0.35rem;
-      font-weight: 700;
+      margin-left: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--muted);
     }
-    .priority-item, .trace-item { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
-    .priority-item:last-child, .trace-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    th, td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-weight: 500; }
+    @media (max-width: 860px) {
+      main { grid-template-columns: 1fr; }
+      .map-card { position: static; }
+      h1 { font-size: 1.7rem; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Panel del coordinador — AguaJusta Oeste</h1>
-    <span id="status-badge">sin plan</span>
-    <p class="notice">Las notificaciones a residentes son SIMULATED (outbox simulada); no se envía WhatsApp ni SMS a residentes. Si hay un número del equipo configurado, la aprobación puede enviar un solo aviso de prueba a ese número.</p>
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="16" fill="#0f6e73"/>
+      <path d="M18 40c6-14 22-14 28 0" fill="none" stroke="#f3efe4" stroke-width="3" stroke-linecap="round"/>
+      <path d="M16 44h32v6H16z" fill="#e7d3b0"/>
+      <circle cx="32" cy="22" r="5" fill="#f3efe4"/>
+    </svg>
+    <div>
+      <h1>AguaJusta Oeste</h1>
+      <p class="lede">Coordinación de cisternas en Panamá Oeste</p>
+    </div>
+    <span id="status-badge">Sin plan</span>
+    <p class="notice">Los avisos a los residentes quedan en una bandeja simulada (SIMULATED) y no se envían por WhatsApp ni por SMS. Si el equipo configuró un número propio, la aprobación puede enviar un solo mensaje de prueba a ese número.</p>
   </header>
   <main>
-    <section>
-      <h2>Reportes ciudadanos</h2>
-      <label for="reports-input">Pegue reportes (un renglón por reporte):</label>
-      <textarea id="reports-input" placeholder="Ej.: 48 horas sin agua en Vista Alegre…"></textarea>
-      <div class="row">
-        <button type="button" id="load-reports">Cargar y generar borrador</button>
-        <button type="button" id="btn-revisar">Enviar a revisión</button>
-      </div>
-    </section>
-
-    <section>
-      <h2>Cola consolidada</h2>
-      <div id="queue"><p class="empty">Sin clusters.</p></div>
-    </section>
-
-    <section>
-      <h2>Prioridad</h2>
-      <div id="priority"><p class="empty">Sin prioridades.</p></div>
-    </section>
-
-    <section>
-      <h2>Plan y rutas</h2>
-      <div id="plan-routes"><p class="empty">Sin plan.</p></div>
-    </section>
-
-    <section>
-      <h2>Demanda no atendida</h2>
-      <div id="unserved"><p class="empty">—</p></div>
-    </section>
-
-    <section>
-      <h2>Trazas</h2>
-      <div id="traces"><p class="empty">Sin trazas.</p></div>
-    </section>
-
-    <section>
-      <h2>Decisión humana</h2>
-      <label for="actor-name">Actor:</label>
-      <input type="text" id="actor-name" value="coordinador">
-      <label for="decision-comment">Comentario (obligatorio para CORREGIR):</label>
-      <textarea id="decision-comment" rows="3"></textarea>
-      <div class="row">
-        <button type="button" class="ok" id="btn-aprobar" disabled>Aprobar</button>
-        <button type="button" class="danger" id="btn-rechazar" disabled>Rechazar</button>
-        <button type="button" id="btn-corregir" disabled>Corregir</button>
-      </div>
-      <h2 style="margin-top:1rem">Ejecución</h2>
-      <div id="execution"><p class="empty">Sin ejecución.</p></div>
-    </section>
+    <div>
+      <section>
+        <h2>Reportes</h2>
+        <p class="hint">Escriba un reporte por línea. El sistema no inventa el lugar, las horas ni la cantidad de personas.</p>
+        <label for="reports-input">Texto de los reportes</label>
+        <textarea id="reports-input" placeholder="Ejemplo: 48 horas sin agua y 15 personas en el chino de Vista Alegre"></textarea>
+        <div class="row">
+          <button type="button" id="load-reports">Cargar y generar borrador</button>
+          <button type="button" class="ghost" id="btn-revisar" disabled>Enviar a revisión</button>
+        </div>
+      </section>
+      <section>
+        <h2>Incidentes</h2>
+        <p class="hint">Los reportes del mismo lugar se unen. Una mención general del sector no se suma si ya hay un lugar concreto.</p>
+        <div id="queue"><p class="empty">Todavía no hay incidentes consolidados.</p></div>
+      </section>
+      <section>
+        <h2>Prioridad</h2>
+        <p class="hint">El puntaje sale de las horas sin agua, de las personas afectadas y de la vulnerabilidad. La cantidad de quejas no lo cambia.</p>
+        <div id="priority"><p class="empty">Todavía no hay prioridades.</p></div>
+      </section>
+      <section>
+        <h2>Ruta propuesta</h2>
+        <p class="hint">La ruta, los litros y el turno los calcula el programa. No son una política del IDAAN.</p>
+        <div id="plan-routes"><p class="empty">Todavía no hay un plan.</p></div>
+      </section>
+      <section>
+        <h2>Sin cisterna</h2>
+        <div id="unserved"><p class="empty">Ningún sector del plan quedó sin cisterna.</p></div>
+      </section>
+      <section>
+        <h2>Decisión</h2>
+        <p class="hint">Nadie del sistema aprueba su propio plan. Rechazar un plan ya aprobado cancela los avisos simulados. Un WhatsApp ya enviado no se puede retirar.</p>
+        <label for="actor-name">Nombre de quien decide</label>
+        <input type="text" id="actor-name" value="coordinador">
+        <label for="decision-comment">Comentario</label>
+        <textarea id="decision-comment" rows="3" placeholder="Obligatorio solo si corrige el plan"></textarea>
+        <div class="row">
+          <button type="button" class="ok" id="btn-aprobar" disabled>Aprobar</button>
+          <button type="button" class="danger" id="btn-rechazar" disabled>Rechazar</button>
+          <button type="button" class="ghost" id="btn-corregir" disabled>Corregir</button>
+        </div>
+        <div id="execution"><p class="empty">Todavía no hay una decisión.</p></div>
+      </section>
+      <section>
+        <h2>Trazas</h2>
+        <div id="traces"><p class="empty">Todavía no hay trazas.</p></div>
+      </section>
+    </div>
+    <div>
+      <section class="map-card">
+        <h2>Mapa de sectores</h2>
+        <p class="hint">Las posiciones son anclas de demostración. No son un levantamiento ni la red del IDAAN.</p>
+        <div id="sector-map"></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:#0f6e73"></i>Con cisterna</span>
+          <span><i class="swatch" style="background:#a24b32"></i>Con reportes, sin cisterna</span>
+          <span><i class="swatch" style="background:#8d8678"></i>Sin reportes</span>
+        </div>
+      </section>
+      <section>
+        <h2>Sectores sin reportes</h2>
+        <p class="hint">No entran al plan. El catálogo no trae población ni vulnerabilidad, así que no se les inventa una prioridad.</p>
+        <div id="silent-sectors"><p class="empty">Cargando el catálogo.</p></div>
+      </section>
+    </div>
   </main>
   <script>
     (function () {
       var ctx = null;
+      var NAMES = {
+        "Barrio Colon": "Barrio Colón",
+        "Arraijan Cabecera": "Arraiján Cabecera",
+        "Arraijan": "Arraiján"
+      };
+      var FACTORS = {
+        hours_without_water: "Horas sin agua",
+        estimated_affected: "Personas afectadas",
+        vulnerability: "Vulnerabilidad",
+        duration: "Duración",
+        affected: "Personas afectadas"
+      };
 
       function postJson(url, payload) {
         return fetch(url, {
@@ -172,16 +249,42 @@
         });
       }
 
+      function esc(value) {
+        return String(value == null ? "" : value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function niceName(name) {
+        return NAMES[name] || name;
+      }
+
+      function sectorName(sectorId) {
+        var sectors = (ctx && ctx.sectors) || [];
+        for (var i = 0; i < sectors.length; i++) {
+          if (sectors[i].sector_id === sectorId) return niceName(sectors[i].name);
+        }
+        return String(sectorId || "Sector desconocido").replaceAll("_", " ");
+      }
+
       function stateLabel(state) {
-        if (state === null || state === undefined) return "sin plan";
-        if (state === "error_parcial") return "error-parcial";
+        if (state === null || state === undefined) return "Sin plan";
+        if (state === "borrador") return "Borrador";
+        if (state === "pendiente") return "Pendiente de revisión";
+        if (state === "aprobado") return "Aprobado";
+        if (state === "rechazado") return "Rechazado";
+        if (state === "error_parcial") return "Error parcial";
         return String(state);
       }
 
       function setDecisionButtons(state) {
         var pending = state === "pendiente";
+        var approved = state === "aprobado";
         document.getElementById("btn-aprobar").disabled = !pending;
-        document.getElementById("btn-rechazar").disabled = !pending;
+        document.getElementById("btn-rechazar").disabled = !(pending || approved);
+        document.getElementById("btn-rechazar").textContent = approved ? "Anular aprobación" : "Rechazar";
         document.getElementById("btn-corregir").disabled = !pending;
         document.getElementById("btn-revisar").disabled = state !== "borrador";
       }
@@ -189,14 +292,20 @@
       function renderQueue(clusters) {
         var el = document.getElementById("queue");
         if (!clusters || !clusters.length) {
-          el.innerHTML = "<p class=\"empty\">Sin clusters.</p>";
+          el.innerHTML = "<p class=\"empty\">Todavía no hay incidentes consolidados.</p>";
           return;
         }
         var html = "<ul>";
         clusters.forEach(function (c) {
-          var sid = c.sector_id || "?";
           var count = c.report_count != null ? c.report_count : 0;
-          html += "<li><strong>" + sid + "</strong> — report_count: " + count + "</li>";
+          var people = c.estimated_affected_count != null ? c.estimated_affected_count : "sin dato";
+          var note = "";
+          if (c.geo_precision === "SECTOR") {
+            note = " Mención general del sector: queda para revisión.";
+          }
+          html += "<li><strong>" + esc(sectorName(c.sector_id)) + "</strong> — " +
+            esc(count) + (count === 1 ? " reporte" : " reportes") +
+            ", " + esc(people) + " personas afectadas." + esc(note) + "</li>";
         });
         html += "</ul>";
         el.innerHTML = html;
@@ -205,22 +314,22 @@
       function renderPriorities(priorities) {
         var el = document.getElementById("priority");
         if (!priorities || !priorities.length) {
-          el.innerHTML = "<p class=\"empty\">Sin prioridades.</p>";
+          el.innerHTML = "<p class=\"empty\">Todavía no hay prioridades.</p>";
           return;
         }
         var html = "";
         priorities.forEach(function (p) {
-          var stub = "";
-          if (p.formula_version) {
-            stub = "<span class=\"stub-badge\">" + p.formula_version + "</span>";
-          }
           html += "<div class=\"priority-item\">";
-          html += "<div><strong>Score:</strong> " + p.score + stub + "</div>";
-          if (p.explanation) html += "<div>" + p.explanation + "</div>";
+          html += "<div><strong>" + esc(sectorName(clusterSector(p.cluster_id))) + "</strong> · puntaje " +
+            esc(p.score) + "<span class=\"stub-badge\">" + esc(p.formula_version || "") + "</span></div>";
+          if (p.explanation && p.explanation.indexOf("priority-v1:") !== 0) {
+            html += "<div>" + esc(p.explanation) + "</div>";
+          }
           if (p.breakdown && p.breakdown.length) {
             html += "<ul>";
             p.breakdown.forEach(function (b) {
-              html += "<li>" + b.factor + ": " + b.points + " — " + (b.reason || "") + "</li>";
+              var factor = FACTORS[b.factor] || b.factor;
+              html += "<li>" + esc(factor) + ": " + esc(b.points) + ". " + esc(b.reason || "") + "</li>";
             });
             html += "</ul>";
           }
@@ -229,46 +338,154 @@
         el.innerHTML = html;
       }
 
+      function clusterSector(clusterId) {
+        var clusters = (ctx && ctx.clusters) || [];
+        for (var i = 0; i < clusters.length; i++) {
+          if (clusters[i].cluster_id === clusterId) return clusters[i].sector_id;
+        }
+        return clusterId;
+      }
+
       function renderPlan(plan) {
         var el = document.getElementById("plan-routes");
         if (!plan) {
-          el.innerHTML = "<p class=\"empty\">Sin plan.</p>";
+          el.innerHTML = "<p class=\"empty\">Todavía no hay un plan.</p>";
           return;
         }
-        var html = "<p><strong>plan_id:</strong> " + (plan.plan_id || "") + "</p>";
+        var html = "<p><strong>Identificador:</strong> " + esc(plan.plan_id || "") + "</p>";
+        if (plan.explanation) html += "<p>" + esc(localPlanText(plan.explanation)) + "</p>";
         if (plan.assignments && plan.assignments.length) {
-          html += "<table><thead><tr><th>Vehículo</th><th>Sector</th><th>Orden</th><th>Volumen (L)</th></tr></thead><tbody>";
+          html += "<table><thead><tr><th>Cisterna</th><th>Sector</th><th>Turno</th><th>Litros</th></tr></thead><tbody>";
           plan.assignments.forEach(function (a) {
-            html += "<tr><td>" + a.vehicle_id + "</td><td>" + a.sector_id + "</td><td>" + a.order + "</td><td>" + a.volume_liters + "</td></tr>";
+            html += "<tr><td>" + esc(a.vehicle_id) + "</td><td>" + esc(sectorName(a.sector_id)) +
+              "</td><td>" + esc(a.order) + "</td><td>" + esc(a.volume_liters) + "</td></tr>";
           });
           html += "</tbody></table>";
         }
         if (plan.route_order && plan.route_order.length) {
-          html += "<p><strong>route_order:</strong> " + plan.route_order.join(" → ") + "</p>";
+          html += "<p><strong>Orden de visita:</strong> " +
+            plan.route_order.map(function (id) { return esc(sectorName(id)); }).join(" → ") + "</p>";
         }
         el.innerHTML = html;
+      }
+
+      function localPlanText(text) {
+        var extra = "";
+        var cut = text.indexOf(" La mención general");
+        if (cut !== -1) {
+          extra = text.slice(cut);
+          text = text.slice(0, cut);
+        }
+        if (text.indexOf("priority-v1 plan") === 0) {
+          text = "Plan de demostración. El programa asigna las cisternas según la capacidad y la jornada. Los litros por persona, la velocidad y el depósito son supuestos, no una política del IDAAN.";
+        }
+        return text + extra;
       }
 
       function renderUnserved(plan) {
         var el = document.getElementById("unserved");
         if (!plan || !plan.unserved_demand || !plan.unserved_demand.length) {
-          el.innerHTML = "<p class=\"empty\">Ninguna demanda pendiente.</p>";
+          el.innerHTML = "<p class=\"empty\">Ningún sector del plan quedó sin cisterna.</p>";
           return;
         }
         el.innerHTML = "<ul>" + plan.unserved_demand.map(function (s) {
-          return "<li>" + s + "</li>";
+          return "<li>" + esc(sectorName(s)) + "</li>";
         }).join("") + "</ul>";
+      }
+
+      function renderSilent(sectors, clusters) {
+        var el = document.getElementById("silent-sectors");
+        var seen = {};
+        (clusters || []).forEach(function (c) { seen[c.sector_id] = true; });
+        var silent = (sectors || []).filter(function (s) { return !seen[s.sector_id]; });
+        if (!silent.length) {
+          el.innerHTML = "<p class=\"empty\">Todos los sectores del catálogo tienen al menos un reporte en este lote.</p>";
+          return;
+        }
+        el.innerHTML = "<ul>" + silent.map(function (s) {
+          return "<li>" + esc(niceName(s.name)) + " (" + esc(niceName(s.district)) + ")</li>";
+        }).join("") + "</ul>";
+      }
+
+      function renderMap(sectors, clusters, plan) {
+        var el = document.getElementById("sector-map");
+        var points = (sectors || []).filter(function (s) {
+          return typeof s.latitude === "number" && typeof s.longitude === "number";
+        });
+        if (!points.length) {
+          el.innerHTML = "<p class=\"empty\">No hay coordenadas de demostración para dibujar el mapa.</p>";
+          return;
+        }
+        var reported = {};
+        (clusters || []).forEach(function (c) { reported[c.sector_id] = true; });
+        var assigned = {};
+        var unserved = {};
+        if (plan) {
+          (plan.assignments || []).forEach(function (a) { assigned[a.sector_id] = true; });
+          (plan.unserved_demand || []).forEach(function (id) { unserved[id] = true; });
+        }
+        var minLat = points[0].latitude, maxLat = points[0].latitude;
+        var minLon = points[0].longitude, maxLon = points[0].longitude;
+        points.forEach(function (s) {
+          minLat = Math.min(minLat, s.latitude);
+          maxLat = Math.max(maxLat, s.latitude);
+          minLon = Math.min(minLon, s.longitude);
+          maxLon = Math.max(maxLon, s.longitude);
+        });
+        var padLat = Math.max(0.02, (maxLat - minLat) * 0.18);
+        var padLon = Math.max(0.02, (maxLon - minLon) * 0.18);
+        minLat -= padLat; maxLat += padLat; minLon -= padLon; maxLon += padLon;
+        function xy(lat, lon) {
+          var x = 36 + ((lon - minLon) / (maxLon - minLon)) * 560;
+          var y = 28 + ((maxLat - lat) / (maxLat - minLat)) * 360;
+          return [x, y];
+        }
+        var svg = "<svg viewBox=\"0 0 640 440\" role=\"img\" aria-label=\"Mapa de sectores de Panamá Oeste\">";
+        svg += "<rect width=\"640\" height=\"440\" rx=\"18\" fill=\"#e7f2f1\"/>";
+        svg += "<path d=\"M40 300 C 140 250, 220 340, 340 280 C 460 220, 520 300, 600 240\" fill=\"none\" stroke=\"#b7d5d2\" stroke-width=\"28\" stroke-linecap=\"round\"/>";
+        var placed = [];
+        points.forEach(function (s) {
+          var pos = xy(s.latitude, s.longitude);
+          var color = "#8d8678";
+          if (assigned[s.sector_id]) color = "#0f6e73";
+          else if (reported[s.sector_id] || unserved[s.sector_id]) color = "#a24b32";
+          var label = niceName(s.name);
+          var offsets = [[12, 4], [12, -14], [-8, 18], [12, 18]];
+          var chosen = offsets[0];
+          for (var i = 0; i < offsets.length; i++) {
+            var candidate = { x: pos[0] + offsets[i][0], y: pos[1] + offsets[i][1] };
+            var crowded = placed.some(function (p) {
+              return Math.abs(p.x - candidate.x) < 96 && Math.abs(p.y - candidate.y) < 15;
+            });
+            if (!crowded) {
+              chosen = offsets[i];
+              break;
+            }
+          }
+          var textX = pos[0] + chosen[0];
+          var textY = pos[1] + chosen[1];
+          if (textX > 520) textX = pos[0] - 8;
+          placed.push({ x: textX, y: textY });
+          svg += "<circle cx=\"" + pos[0].toFixed(1) + "\" cy=\"" + pos[1].toFixed(1) + "\" r=\"7\" fill=\"" + color + "\"/>";
+          var anchor = textX < pos[0] ? "end" : "start";
+          svg += "<text x=\"" + textX.toFixed(1) + "\" y=\"" + textY.toFixed(1) +
+            "\" text-anchor=\"" + anchor + "\" font-size=\"13\" font-family=\"Atkinson Hyperlegible, sans-serif\" fill=\"#1c2430\">" +
+            esc(label) + "</text>";
+        });
+        svg += "</svg>";
+        el.innerHTML = svg;
       }
 
       function renderTraces(traces) {
         var el = document.getElementById("traces");
         if (!traces || !traces.length) {
-          el.innerHTML = "<p class=\"empty\">Sin trazas.</p>";
+          el.innerHTML = "<p class=\"empty\">Todavía no hay trazas.</p>";
           return;
         }
         var html = "";
         traces.forEach(function (t) {
-          html += "<div class=\"trace-item\"><strong>" + t.actor + "</strong> / " + t.action + " — <em>" + t.status + "</em></div>";
+          html += "<div class=\"trace-item\"><strong>" + esc(t.actor) + "</strong> · " +
+            esc(t.action) + " — <em>" + esc(t.status) + "</em></div>";
         });
         el.innerHTML = html;
       }
@@ -276,11 +493,24 @@
       function renderExecution(execution) {
         var el = document.getElementById("execution");
         if (!execution) {
-          el.innerHTML = "<p class=\"empty\">Sin ejecución.</p>";
+          el.innerHTML = "<p class=\"empty\">Todavía no hay una decisión.</p>";
           return;
         }
-        el.innerHTML = "<pre style=\"margin:0;white-space:pre-wrap;font-size:0.85rem\">" +
-          JSON.stringify(execution, null, 2) + "</pre>";
+        var detail = execution.detail || "";
+        var known = {
+          "plan approved and dispatch queued": "Plan aprobado. Los avisos a los residentes quedaron en la bandeja simulada.",
+          "plan rejected": "Plan rechazado. No se enviaron avisos.",
+          "plan returned to borrador": "El plan volvió a borrador.",
+          "plan is already approved": "Ese plan ya estaba aprobado."
+        };
+        var text = known[detail] || detail;
+        if (detail.indexOf("whatsapp sent to team number") !== -1) {
+          text += " Se envió un mensaje de prueba al número del equipo.";
+        }
+        if (detail.indexOf("whatsapp send failed") !== -1) {
+          text += " No se pudo enviar el mensaje de prueba.";
+        }
+        el.innerHTML = "<p>" + esc(text) + "</p>";
       }
 
       function applyContext(data) {
@@ -291,6 +521,8 @@
         renderPriorities(data.priorities);
         renderPlan(data.plan);
         renderUnserved(data.plan);
+        renderSilent(data.sectors, data.clusters);
+        renderMap(data.sectors, data.clusters, data.plan);
         renderTraces(data.traces);
         renderExecution(data.execution);
       }
@@ -311,13 +543,13 @@
 
       function sendDecision(action) {
         if (!ctx || !ctx.plan || !ctx.plan.plan_id) {
-          alert("No hay plan cargado.");
+          alert("No hay un plan cargado.");
           return;
         }
         if (action === "CORRECT") {
           var comment = document.getElementById("decision-comment").value.trim();
           if (!comment) {
-            alert("CORREGIR requiere un comentario.");
+            alert("Corregir requiere un comentario.");
             return;
           }
         }
