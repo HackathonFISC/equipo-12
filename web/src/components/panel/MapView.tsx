@@ -114,11 +114,12 @@ export function MapView({
       map = instance;
       leaflet
         .tileLayer(
-          "https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png",
+          // ponytail: CARTO exige API key desde 2025; Esri Dark Gray no pide key.
+          // Orden Esri es {z}/{y}/{x} (y antes de x) y sin subdominios.
+          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
           {
-            subdomains: "abcd",
-            maxZoom: 20,
-            attribution: "© OpenStreetMap © CARTO",
+            maxZoom: 16,
+            attribution: "Tiles © Esri — Source: Esri, HERE, Garmin, USGS",
           },
         )
         .addTo(instance);
