@@ -6,6 +6,7 @@ import json
 import os
 import sqlite3
 import tempfile
+import threading
 import unittest
 from datetime import UTC, datetime
 from pathlib import Path
@@ -311,6 +312,74 @@ class ApprovalStoreTests(unittest.TestCase):
         with self._conn() as conn:
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM plans").fetchone()[0], 0)
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM audit").fetchone()[0], 0)
+
+    def test_concurrent_approve_and_reject_single_winner(self) -> None:
+        payload = _sample_payload()
+        self.store.create_plan("plan-1", payload)
+        barrier = threading.Barrier(2)
+        errors: list[BaseException] = []
+        results: list[object] = []
+
+        def worker(action: DecisionAction) -> None:
+            store = ApprovalStore(self.db_path)
+            try:
+                barrier.wait(timeout=5)
+                results.append(
+                    store.apply_decision(
+                        "plan-1",
+                        _decision("plan-1", action),
+                        payload,
+                    )
+                )
+            except BaseException as exc:
+                errors.append(exc)
+
+        threads = [
+            threading.Thread(target=worker, args=(DecisionAction.APPROVE,)),
+            threading.Thread(target=worker, args=(DecisionAction.REJECT,)),
+        ]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=10)
+
+        with self._conn() as conn:
+            outbox_count = conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0]
+            state = conn.execute("SELECT state FROM plans WHERE id = ?", ("plan-1",)).fetchone()[0]
+
+        self.assertIn(outbox_count, (0, 1))
+        self.assertIn(state, (PlanState.APROBADO.value, PlanState.RECHAZADO.value))
+        self.assertNotEqual(state, PlanState.PENDIENTE.value)
+        self.assertEqual(len(results) + len(errors), 2)
+
+    def test_recovery_failure_surfaces_on_original_exception(self) -> None:
+        payload = _sample_payload()
+        self.store.create_plan("plan-1", payload)
+        faulty = ApprovalStore(
+            self.db_path,
+            fail_after="decision",
+            fail_recovery=True,
+        )
+        caught: RuntimeError | None = None
+        try:
+            faulty.apply_decision(
+                "plan-1",
+                _decision("plan-1", DecisionAction.APPROVE),
+                payload,
+            )
+        except RuntimeError as exc:
+            caught = exc
+
+        self.assertIsNotNone(caught)
+        assert caught is not None
+        self.assertIn("fault injection", str(caught))
+        notes = getattr(caught, "__notes__", [])
+        self.assertTrue(
+            any("ERROR_PARCIAL recovery failed" in note for note in notes),
+            msg=f"notes={notes!r}",
+        )
+        with self._conn() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0], 0)
 
     def test_fault_injection_rolls_back_outbox(self) -> None:
         payload = _sample_payload()

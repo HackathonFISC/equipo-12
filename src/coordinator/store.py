@@ -61,14 +61,17 @@ class ApprovalStore:
         db_path: Path | None = None,
         *,
         fail_after: str | None = None,
+        fail_recovery: bool = False,
     ) -> None:
         self.db_path = db_path if db_path is not None else _DEFAULT_DB
         self.fail_after = fail_after
+        # ponytail: test-only seam to assert recovery failures surface on __notes__
+        self.fail_recovery = fail_recovery
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_schema()
 
-    def _connect(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
+    def _connect(self, *, same_thread: bool = True) -> sqlite3.Connection:
+        conn = sqlite3.connect(self.db_path, check_same_thread=same_thread)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
         return conn
@@ -220,27 +223,26 @@ class ApprovalStore:
         return outbox_ids
 
     def _best_effort_error_partial(self, plan_id: str, prior_state: PlanState) -> None:
+        if self.fail_recovery:
+            raise RuntimeError("recovery fault injection")
         try:
             error_state = transition(prior_state, None, failed=True)
         except ValueError:
             return
-        try:
-            with self._connect() as conn:
-                now = _now_iso()
-                conn.execute(
-                    "UPDATE plans SET state = ?, updated_at = ? WHERE id = ?",
-                    (error_state.value, now, plan_id),
-                )
-                self._insert_audit(
-                    conn,
-                    actor="system",
-                    action="ERROR_PARCIAL",
-                    input_summary=f"plan_id={plan_id}",
-                    output_summary=f"state={error_state.value}",
-                    status="error",
-                )
-        except Exception:
-            pass
+        with self._connect() as conn:
+            now = _now_iso()
+            conn.execute(
+                "UPDATE plans SET state = ?, updated_at = ? WHERE id = ?",
+                (error_state.value, now, plan_id),
+            )
+            self._insert_audit(
+                conn,
+                actor="system",
+                action="ERROR_PARCIAL",
+                input_summary=f"plan_id={plan_id}",
+                output_summary=f"state={error_state.value}",
+                status="error",
+            )
 
     def apply_decision(
         self,
@@ -251,16 +253,19 @@ class ApprovalStore:
         if decision.plan_id != plan_id:
             raise ValueError("decision.plan_id must match plan_id")
 
-        with self._connect() as conn:
+        conn = self._connect(same_thread=False)
+        current: PlanState | None = None
+        try:
+            conn.execute("BEGIN IMMEDIATE")
             row = self._fetch_plan(conn, plan_id)
-        if row is None:
-            raise ValueError(f"unknown plan: {plan_id}")
+            if row is None:
+                conn.execute("ROLLBACK")
+                raise ValueError(f"unknown plan: {plan_id}")
 
-        current = PlanState(row["state"])
-        revision = int(row["revision"])
+            current = PlanState(row["state"])
+            revision = int(row["revision"])
 
-        if decision.action == DecisionAction.APPROVE and current == PlanState.APROBADO:
-            with self._connect() as conn:
+            if decision.action == DecisionAction.APPROVE and current == PlanState.APROBADO:
                 audit_id = self._insert_audit(
                     conn,
                     actor=decision.actor,
@@ -269,71 +274,92 @@ class ApprovalStore:
                     output_summary="plan already approved",
                     status="rejected",
                 )
-            return ExecutionResult(
-                saved=False,
-                plan_id=plan_id,
-                audit_id=audit_id,
-                outbox_id=None,
-                detail="plan is already approved",
+                conn.commit()
+                return ExecutionResult(
+                    saved=False,
+                    plan_id=plan_id,
+                    audit_id=audit_id,
+                    outbox_id=None,
+                    detail="plan is already approved",
+                )
+
+            try:
+                new_state = transition(current, decision.action)
+            except ValueError as exc:
+                conn.execute("ROLLBACK")
+                raise ValueError(str(exc)) from exc
+
+            now = _now_iso()
+            new_revision = revision
+            payload_to_store = row["payload_json"]
+            saved = False
+            detail = ""
+
+            if decision.action == DecisionAction.APPROVE:
+                payload_to_store = plan_payload
+                saved = True
+                detail = "plan approved and dispatch queued"
+            elif decision.action == DecisionAction.REJECT:
+                detail = "plan rejected"
+            elif decision.action == DecisionAction.CORRECT:
+                new_revision = revision + 1
+                payload_to_store = plan_payload
+                detail = "plan returned to borrador"
+
+            updated = conn.execute(
+                """
+                UPDATE plans
+                SET state = ?, payload_json = ?, revision = ?, updated_at = ?
+                WHERE id = ? AND state = ? AND revision = ?
+                """,
+                (
+                    new_state.value,
+                    payload_to_store,
+                    new_revision,
+                    now,
+                    plan_id,
+                    current.value,
+                    revision,
+                ),
             )
+            if updated.rowcount == 0:
+                conn.execute("ROLLBACK")
+                raise ValueError("plan state changed concurrently or plan missing")
 
-        try:
-            new_state = transition(current, decision.action)
-        except ValueError as exc:
-            raise ValueError(str(exc)) from exc
+            self._insert_decision(conn, decision)
 
-        audit_id = ""
-        first_outbox_id: str | None = None
-        saved = False
-        detail = ""
+            if self.fail_after == "decision":
+                raise RuntimeError("fault injection after decision insert")
 
-        try:
-            with self._connect() as conn:
-                now = _now_iso()
-                new_revision = revision
-                payload_to_store = row["payload_json"]
+            first_outbox_id: str | None = None
+            if decision.action == DecisionAction.APPROVE:
+                outbox_ids = self._insert_outbox_rows(conn, plan_id, plan_payload)
+                first_outbox_id = outbox_ids[0] if outbox_ids else None
 
-                if decision.action == DecisionAction.APPROVE:
-                    payload_to_store = plan_payload
-                    saved = True
-                    detail = "plan approved and dispatch queued"
-                elif decision.action == DecisionAction.REJECT:
-                    detail = "plan rejected"
-                elif decision.action == DecisionAction.CORRECT:
-                    new_revision = revision + 1
-                    payload_to_store = plan_payload
-                    detail = "plan returned to borrador"
-
-                conn.execute(
-                    """
-                    UPDATE plans
-                    SET state = ?, payload_json = ?, revision = ?, updated_at = ?
-                    WHERE id = ?
-                    """,
-                    (new_state.value, payload_to_store, new_revision, now, plan_id),
-                )
-
-                self._insert_decision(conn, decision)
-
-                if self.fail_after == "decision":
-                    raise RuntimeError("fault injection after decision insert")
-
-                outbox_ids: list[str] = []
-                if decision.action == DecisionAction.APPROVE:
-                    outbox_ids = self._insert_outbox_rows(conn, plan_id, plan_payload)
-                    first_outbox_id = outbox_ids[0] if outbox_ids else None
-
-                audit_id = self._insert_audit(
-                    conn,
-                    actor=decision.actor,
-                    action=decision.action.value,
-                    input_summary=decision.model_dump_json(),
-                    output_summary=detail,
-                    status="ok",
-                )
-        except Exception:
-            self._best_effort_error_partial(plan_id, current)
+            audit_id = self._insert_audit(
+                conn,
+                actor=decision.actor,
+                action=decision.action.value,
+                input_summary=decision.model_dump_json(),
+                output_summary=detail,
+                status="ok",
+            )
+            conn.commit()
+        except ValueError:
             raise
+        except Exception as exc:
+            try:
+                conn.execute("ROLLBACK")
+            except sqlite3.Error:
+                pass
+            if current is not None:
+                try:
+                    self._best_effort_error_partial(plan_id, current)
+                except Exception as recovery_exc:
+                    exc.add_note(f"ERROR_PARCIAL recovery failed: {recovery_exc}")
+            raise
+        finally:
+            conn.close()
 
         return ExecutionResult(
             saved=saved,
