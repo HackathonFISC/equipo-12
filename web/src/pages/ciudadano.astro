@@ -1,11 +1,13 @@
 ---
 import Base from "../layouts/Base.astro";
-import IslandStub from "../components/IslandStub.tsx";
+import CitizenIsland from "../islands/CitizenIsland.tsx";
+import TrackingIsland from "../islands/TrackingIsland.tsx";
+import MapIsland from "../islands/MapIsland.tsx";
 ---
-
-<Base title="Portal ciudadano · AguaJusta Oeste">
-  <main class="mx-auto max-w-3xl p-6">
-    <p>Ruta: /ciudadano</p>
-    <IslandStub client:idle />
+<Base title="Portal ciudadano · AguaJusta">
+  <main class="mx-auto grid max-w-5xl gap-6 p-4">
+    <CitizenIsland client:load />
+    <TrackingIsland client:load />
+    <MapIsland client:load />
   </main>
 </Base>
