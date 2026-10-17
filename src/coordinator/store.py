@@ -145,6 +145,43 @@ class ApprovalStore:
             (plan_id,),
         ).fetchone()
 
+    def submit_for_review(self, plan_id: str) -> None:
+        conn = self._connect(same_thread=False)
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            row = self._fetch_plan(conn, plan_id)
+            if row is None:
+                conn.execute("ROLLBACK")
+                raise ValueError(f"unknown plan: {plan_id}")
+
+            current = PlanState(row["state"])
+            revision = int(row["revision"])
+            if current != PlanState.BORRADOR:
+                conn.execute("ROLLBACK")
+                raise ValueError(f"plan is not in borrador: {plan_id}")
+
+            try:
+                new_state = transition(current, None)
+            except ValueError as exc:
+                conn.execute("ROLLBACK")
+                raise ValueError(str(exc)) from exc
+
+            now = _now_iso()
+            updated = conn.execute(
+                """
+                UPDATE plans
+                SET state = ?, updated_at = ?
+                WHERE id = ? AND state = ? AND revision = ?
+                """,
+                (new_state.value, now, plan_id, current.value, revision),
+            )
+            if updated.rowcount == 0:
+                conn.execute("ROLLBACK")
+                raise ValueError("plan state changed concurrently or plan missing")
+            conn.commit()
+        finally:
+            conn.close()
+
     def _insert_decision(
         self,
         conn: sqlite3.Connection,
