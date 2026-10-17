@@ -113,10 +113,14 @@ export function MapView({
       });
       map = instance;
       leaflet
-        .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "© OpenStreetMap",
-          maxZoom: 19,
-        })
+        .tileLayer(
+          "https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png",
+          {
+            subdomains: "abcd",
+            maxZoom: 20,
+            attribution: "© OpenStreetMap © CARTO",
+          },
+        )
         .addTo(instance);
       leaflet
         .polygon(PANAMA_OESTE_BORDER, {
@@ -133,18 +137,18 @@ export function MapView({
       window.setTimeout(() => map?.invalidateSize(), 80);
 
       // Firmas de calor: heatLayer si el plugin (leaflet.heat por CDN) está.
-      const water = token("--color-water");
-      const info = token("--color-info");
-      const pending = token("--color-pending");
+      const heatLow = token("--color-heat-low");
+      const heatMid = token("--color-heat-mid");
+      const heatHigh = token("--color-heat-high");
       const points = heatPoints(snapshot);
       if (typeof leaflet.heatLayer === "function" && points.length > 0) {
         const gradient: Record<number, string> = {};
-        if (water) gradient[0.2] = water;
-        if (info) gradient[0.55] = info;
-        if (pending) gradient[0.9] = pending;
+        if (heatLow) gradient[0.2] = heatLow;
+        if (heatMid) gradient[0.55] = heatMid;
+        if (heatHigh) gradient[1] = heatHigh;
         heatLayer = leaflet.heatLayer(points, {
-          radius: 32,
-          blur: 24,
+          radius: 34,
+          blur: 26,
           maxZoom: 14,
           minOpacity: 0.28,
           gradient,
@@ -161,11 +165,11 @@ export function MapView({
       for (const sector of visible) {
         leaflet
           .circleMarker([sector.latitude, sector.longitude], {
-            radius: 8,
+            radius: 12,
             color: sector.color,
             fillColor: sector.color,
             fillOpacity: 0.45,
-            weight: 1.2,
+            weight: 1.6,
           })
           .addTo(markers)
           .bindTooltip(`${sector.name} · ${sector.label}`);
@@ -229,7 +233,11 @@ export function MapView({
               <option value="La Chorrera">La Chorrera</option>
             </select>
           </div>
-          <div id="affectedMap" ref={mapDivRef} className="h-[540px] w-full" />
+          <div
+            id="affectedMap"
+            ref={mapDivRef}
+            className="h-[540px] w-full bg-[#0e1419]"
+          />
           <div className="flex flex-wrap items-center gap-3 border-t border-line px-4 py-2 text-xs text-muted">
             <span className="flex items-center gap-1">
               <span className="size-3 rounded-sm bg-[#d92332]" aria-hidden="true" /> alta
