@@ -113,15 +113,10 @@ export function MapView({
       });
       map = instance;
       leaflet
-        .tileLayer(
-          // ponytail: CARTO exige API key desde 2025; Esri Dark Gray no pide key.
-          // Orden Esri es {z}/{y}/{x} (y antes de x) y sin subdominios.
-          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-          {
-            maxZoom: 16,
-            attribution: "Tiles © Esri — Source: Esri, HERE, Garmin, USGS",
-          },
-        )
+        .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap",
+          maxZoom: 19,
+        })
         .addTo(instance);
       leaflet
         .polygon(PANAMA_OESTE_BORDER, {
@@ -138,18 +133,18 @@ export function MapView({
       window.setTimeout(() => map?.invalidateSize(), 80);
 
       // Firmas de calor: heatLayer si el plugin (leaflet.heat por CDN) está.
-      const heatLow = token("--color-heat-low");
-      const heatMid = token("--color-heat-mid");
-      const heatHigh = token("--color-heat-high");
+      const water = token("--color-water");
+      const info = token("--color-info");
+      const pending = token("--color-pending");
       const points = heatPoints(snapshot);
       if (typeof leaflet.heatLayer === "function" && points.length > 0) {
         const gradient: Record<number, string> = {};
-        if (heatLow) gradient[0.2] = heatLow;
-        if (heatMid) gradient[0.55] = heatMid;
-        if (heatHigh) gradient[1] = heatHigh;
+        if (water) gradient[0.2] = water;
+        if (info) gradient[0.55] = info;
+        if (pending) gradient[0.9] = pending;
         heatLayer = leaflet.heatLayer(points, {
-          radius: 34,
-          blur: 26,
+          radius: 32,
+          blur: 24,
           maxZoom: 14,
           minOpacity: 0.28,
           gradient,
@@ -166,11 +161,11 @@ export function MapView({
       for (const sector of visible) {
         leaflet
           .circleMarker([sector.latitude, sector.longitude], {
-            radius: 12,
+            radius: 8,
             color: sector.color,
             fillColor: sector.color,
             fillOpacity: 0.45,
-            weight: 1.6,
+            weight: 1.2,
           })
           .addTo(markers)
           .bindTooltip(`${sector.name} · ${sector.label}`);
@@ -234,11 +229,7 @@ export function MapView({
               <option value="La Chorrera">La Chorrera</option>
             </select>
           </div>
-          <div
-            id="affectedMap"
-            ref={mapDivRef}
-            className="h-[540px] w-full bg-[#0e1419]"
-          />
+          <div id="affectedMap" ref={mapDivRef} className="h-[540px] w-full" />
           <div className="flex flex-wrap items-center gap-3 border-t border-line px-4 py-2 text-xs text-muted">
             <span className="flex items-center gap-1">
               <span className="size-3 rounded-sm bg-[#d92332]" aria-hidden="true" /> alta
