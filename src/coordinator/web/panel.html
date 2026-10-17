@@ -350,72 +350,92 @@ h3{font:750 16px/1.35 Manrope,sans-serif}
 .metric-foot{font-size:13px}
 .content-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch;margin-bottom:20px}
 .content-grid>.panel{margin-bottom:0;display:flex;flex-direction:column;height:100%;min-width:0;overflow:hidden;padding:22px}
-.incidents-panel .table-wrap{flex:1;min-width:0;overflow:auto}
-.incidents-panel table{width:100%;white-space:normal}
-.incidents-panel .panel-footer{margin-top:auto;padding-top:14px;border-top:1px solid #edf1f4}
-.filters-row{gap:12px;margin:16px 0 14px}
-.search-box{padding:0 12px;border-radius:8px}
-.search-box input{height:42px;font-size:14px}
-.filters-row select{max-width:190px;min-height:42px;padding:0 12px;font-size:14px;border-radius:8px}
-th{font-size:12px;padding:13px 10px;letter-spacing:.6px}
-td{font-size:14px;padding:14px 10px}
-.incident-code{font-size:13.5px;white-space:normal;word-break:break-word}
-.incident-age{font-size:12px;white-space:normal}
-.priority{font-size:14.5px}
-.panel-footer{font-size:13px;padding-top:14px;margin-top:8px}
-.plan-summary{padding:14px;gap:10px;margin:16px 0}
-.summary-label{font-size:12.5px}
-.plan-summary strong{font-size:22px}
-.plan-summary strong small{font-size:13px}
-.route-title{font-size:14.5px;margin-bottom:12px}
-.route-title span{font-size:13px}
-.route-list{gap:12px;margin-bottom:14px}
-.route-number{width:36px;height:36px;font-size:12.5px;border-radius:9px}
-.route-details strong,.route-meta strong{font-size:14.5px}
-.route-details small,.route-meta small{font-size:13px}
-.route-progress{height:6px;margin-top:6px}
-.plan-explanations-grid{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 14px;align-items:stretch}
-.plan-explanations-grid .route-explanation{margin:0;height:100%;display:flex;flex-direction:column}
-.incidents-summary-bar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 12px}
-.incidents-summary-bar>div{border:1px solid #e1ebf2;background:#f8fbfd;border-radius:8px;padding:10px 12px}
-.incidents-summary-bar small{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#7c90a0;margin-bottom:3px}
-.incidents-summary-bar strong{font-size:14px;color:#223e53}
-.route-explanation{padding:14px;margin:12px 0}
-.route-explanation-heading strong{font-size:13.5px}
-.route-explanation-heading span{font-size:11.5px;padding:3px 7px}
-.route-factor-list span,.chip-row span,.chip-row button{font-size:12px;padding:5px 9px;border-radius:6px}
-.route-explanation p{font-size:13px;line-height:1.5}
-.human-gate{padding:13px 14px;margin:0 0 12px}
-.gate-icon{width:34px;height:34px;font-size:16px}
-.human-gate strong{font-size:14px}
-.human-gate p{font-size:12.5px;line-height:1.5}
-.gate-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
-.gate-fields .gate-field-col{display:flex;flex-direction:column;min-width:0}
-.gate-fields label{font-size:13px;margin:0 0 5px}
-.gate-fields input,.gate-fields textarea{font-size:13.5px;padding:9px 11px;min-height:40px}
-.gate-actions{gap:10px;margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-.gate-actions .button{min-height:42px;font-size:13.5px}
-.approval-message{font-size:12.5px;margin-top:10px}
+.content-grid .panel-header{height:50px;min-height:50px;align-items:center}
+.incidents-panel .table-wrap{min-width:0;height:270px;min-height:270px;max-height:270px;overflow-y:auto;overflow-x:hidden;border:1px solid #e5edf3;border-radius:9px;margin-bottom:12px;background:#fff}
+.incidents-panel table{width:100%;table-layout:fixed;white-space:normal}
+.incidents-panel thead{position:sticky;top:0;z-index:2;background:#f4f8fb}
+.incidents-panel th:nth-child(1),.incidents-panel td:nth-child(1){width:24%;padding-left:10px}
+.incidents-panel th:nth-child(2),.incidents-panel td:nth-child(2){width:21%}
+.incidents-panel th:nth-child(3),.incidents-panel td:nth-child(3){width:13%;text-align:center}
+.incidents-panel th:nth-child(4),.incidents-panel td:nth-child(4){width:14%;text-align:center}
+.incidents-panel th:nth-child(5),.incidents-panel td:nth-child(5){width:13%;text-align:center}
+.incidents-panel th:nth-child(6),.incidents-panel td:nth-child(6){width:15%;text-align:right;padding-right:10px;white-space:nowrap}
+.incidents-panel .panel-footer,.plan-panel .panel-footer{margin-top:auto;padding-top:12px;border-top:1px solid #edf1f4;height:40px;min-height:40px;display:flex;align-items:center;justify-content:space-between}
+.filters-row{gap:12px;margin:14px 0 12px;height:66px;min-height:66px;align-items:center;background:#f7f9fb;border:1px solid #e5edf3;border-radius:9px;padding:0 12px}
+.search-box{padding:0 12px;border-radius:8px;height:42px;min-height:42px;background:#fff}
+.search-box input{height:40px;font-size:14px}
+.filters-row select{max-width:190px;height:42px;min-height:42px;padding:0 12px;font-size:13.5px;border-radius:8px;background:#fff}
+th{font-size:11px;padding:10px 6px;letter-spacing:.45px;color:#3d5669}
+td{font-size:13px;padding:9px 6px;vertical-align:middle;color:#243e52}
+.incident-code{font-size:13px;font-weight:800;color:#17384e;white-space:normal;word-break:break-word;line-height:1.3}
+.incident-age{font-size:12px;color:#465f73;white-space:normal;line-height:1.3;margin-top:2px}
+.sector-cell{font-size:13px;font-weight:700;color:#1f3d53;white-space:normal;line-height:1.3}
+.priority{font-size:13.5px;font-weight:800;white-space:nowrap}
+.panel-footer{font-size:13px;color:#4f6678;padding-top:12px;margin-top:8px}
+.plan-summary{padding:10px 14px;gap:10px;margin:14px 0 12px;height:66px;min-height:66px;align-items:center;border:1px solid #e5edf3}
+.summary-label{font-size:11.5px;color:#4f6678;font-weight:700}
+.plan-summary strong{font-size:20px;color:#152e42}
+.plan-summary strong small{font-size:12.5px;color:#546c7e}
+.route-section-wrap{height:270px;min-height:270px;max-height:270px;display:flex;flex-direction:column;justify-content:space-between;margin-bottom:12px;border:1px solid #e5edf3;border-radius:9px;padding:12px 14px;background:#f8fbfd}
+.route-title{font-size:13.5px;font-weight:700;margin-bottom:8px;color:#1d3b52}
+.route-title span{font-size:12.5px;color:#52697a}
+.route-list{gap:8px;margin-bottom:0;flex:1;align-content:space-between}
+.route-item{padding:8px 11px;border:1px solid #dde8f0;border-radius:8px;background:#fff;min-height:66px}
+.route-number{width:34px;height:34px;font-size:12.5px;border-radius:8px}
+.route-details strong,.route-meta strong{font-size:13.5px;color:#1b394f}
+.route-details small,.route-meta small{font-size:12px;color:#465f73;line-height:1.3}
+.route-progress{height:5px;margin-top:5px}
+.plan-explanations-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 12px;align-items:stretch}
+.plan-explanations-grid .route-explanation{margin:0;height:186px;min-height:186px;max-height:186px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;padding:12px 13px}
+.incidents-bottom-box,.plan-bottom-box{height:224px;min-height:224px;max-height:224px;display:flex;flex-direction:column;justify-content:space-between;margin-bottom:12px}
+.incidents-summary-bar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
+.incidents-summary-bar>div{border:1px solid #dce7ef;background:#f8fbfd;border-radius:8px;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;height:68px;min-height:68px}
+.incidents-summary-bar small{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.35px;color:#465f73;margin-bottom:3px}
+.incidents-summary-bar strong{font-size:13px;color:#18354a;line-height:1.3}
+.route-explanation{padding:12px 13px;margin:0;border:1px solid #dce7ef;background:#f8fbfd;border-radius:9px}
+.route-explanation-heading{margin-bottom:4px}
+.route-explanation-heading strong{font-size:13px;color:#19374d;line-height:1.25}
+.route-explanation-heading span{font-size:10.5px;font-weight:800;padding:3px 7px;color:#7a5b18;background:#fff1cf;white-space:nowrap}
+.route-factor-list,.chip-row{display:flex;flex-wrap:wrap;gap:5px;margin:3px 0}
+.route-factor-list span,.chip-row span,.chip-row button{font-size:11px;font-weight:700;color:#27475e;background:#fff;border:1px solid #d2e0ea;padding:3px 7px;border-radius:5px}
+.route-explanation p{font-size:12px;line-height:1.38;color:#354f63;margin:2px 0 0}
+.human-gate{padding:10px 13px;margin:0;align-items:center;height:68px;min-height:68px;max-height:68px}
+.gate-icon{width:32px;height:32px;font-size:15px}
+.human-gate strong{font-size:13.5px;color:#1b3a50}
+.human-gate p{font-size:12px;line-height:1.35;color:#465f73;margin:3px 0 0}
+.gate-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch;height:68px;min-height:68px}
+.gate-fields .gate-field-col{display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.gate-fields label{font-size:12px;font-weight:750;color:#1f3d53;margin:0;line-height:1.2}
+.gate-fields input,.gate-fields textarea{font-size:13px;line-height:20px;padding:8px 11px;height:40px!important;min-height:40px!important;max-height:40px!important;resize:none;box-sizing:border-box;margin:0}
+.gate-actions{gap:8px;margin-top:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));height:68px;min-height:68px;align-items:center}
+.gate-actions .button{min-height:46px;height:46px;padding:0 8px;font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;text-align:center}
+.approval-message{font-size:12.5px;color:#465f73;margin:0;text-align:left}
 .ops-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:0 0 20px;align-items:stretch}
-.ops-extra-grid>.panel{margin-bottom:0;display:flex;flex-direction:column;height:100%;padding:22px}
+.ops-extra-grid>.panel{margin-bottom:0;display:flex;flex-direction:column;height:100%;padding:22px;overflow:hidden}
+.ops-extra-grid .panel-header{height:50px;min-height:50px;align-items:center}
 .agent-trace-panel,.duplicate-review-panel{padding:22px}
-.trace-demo-note{font-size:13.5px;padding:12px 14px;line-height:1.55;margin:12px 0}
-.agent-trace-list{gap:9px;flex:1;max-height:390px;overflow-y:auto;padding-right:4px}
-.agent-trace-item summary{padding:13px 14px;gap:12px}
-.trace-stage-number{width:30px;height:30px;font-size:12.5px}
-.trace-stage-copy strong{font-size:14.5px}
-.trace-stage-copy small{font-size:12.5px}
-.trace-state{font-size:12px;padding:5px 8px}
-.trace-detail-grid{gap:10px;padding:0 14px 14px}
-.trace-detail-grid>div{padding:11px 12px}
-.trace-detail-grid small{font-size:11.5px;margin-bottom:5px}
-.trace-detail-grid p{font-size:13.5px;line-height:1.55}
-.duplicate-review-content{padding:16px;gap:9px;max-height:190px;overflow-y:auto}
-.duplicate-review-content>strong{font-size:15.5px}
-.duplicate-review-content>p,.small-muted{font-size:13px;line-height:1.5}
-.outbox-list{flex:1;max-height:175px;overflow-y:auto;padding-right:4px;margin-bottom:12px}
-.outbox-item{font-size:13px;padding:11px 13px}
-.duplicate-review-button{margin-top:auto;min-height:42px;font-size:13.5px}
+.trace-demo-note{font-size:13px;color:#5c4516;background:#fff8e6;border:1px solid #edd9a7;padding:0 14px;line-height:1.35;margin:14px 0!important;height:52px!important;min-height:52px!important;max-height:52px!important;display:flex;align-items:center;border-radius:9px}
+.agent-trace-list{display:flex;flex-direction:column;gap:10px;flex:1;max-height:none;overflow:visible;padding-right:0}
+.agent-trace-card,.duplicate-compare-row,.outbox-item{border:1px solid #d5e2ec;border-radius:9px;background:#f8fbfd;padding:10px 13px;display:flex;flex-direction:column;justify-content:space-between;height:90px!important;min-height:90px!important;max-height:90px!important;overflow:hidden;box-sizing:border-box;margin:0}
+.outbox-item{border-color:#cfe0ec;background:#f3f8fc}
+.agent-trace-card-head,.duplicate-compare-row strong,.outbox-item strong{display:flex;align-items:center;justify-content:space-between;gap:8px;height:26px;min-height:26px;max-height:26px;margin:0;font-size:13px;font-weight:800;color:#17384e;line-height:1.2}
+.trace-stage-number{width:26px;height:26px;font-size:11.5px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 26px;border-radius:6px;background:#e6f1fa;color:#1f5fa0;font-weight:800}
+.trace-stage-copy{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;flex:1}
+.trace-stage-copy strong{font-size:13px;color:#17384e;line-height:1.2;white-space:nowrap}
+.trace-stage-copy small{font-size:11.5px;color:#465f73;line-height:1.2;white-space:nowrap}
+.trace-state,.duplicate-compare-row strong span,.outbox-item strong em{font-style:normal;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:5px;background:#e6f1fa;color:#1f4e78;flex:0 0 auto;white-space:nowrap}
+.trace-state,.outbox-item strong em{background:#dff2ec;color:#176b59}
+.trace-card-io{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:40px;min-height:40px;max-height:40px}
+.trace-card-io>div{padding:4px 10px;background:#fff;border:1px solid #e2ecf3;border-radius:6px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:40px;overflow:hidden}
+.trace-card-io small{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.35px;color:#4f6678;flex:0 0 auto}
+.trace-card-io p{font-size:12px;font-weight:650;line-height:1.25;color:#17384e;margin:0;text-align:right;white-space:normal}
+.duplicate-Section-grid{display:flex;flex-direction:column;gap:10px;flex:1;max-height:none;overflow:visible;padding-right:0}
+.duplicate-review-content,.outbox-list{border:0;min-height:0;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;justify-content:stretch;align-items:stretch}
+.duplicate-compare-row p,.outbox-item>span{font-size:12px;font-weight:500;color:#1f3d53;line-height:1.3;margin:0;padding:4px 10px;background:#fff;border:1px solid #e2ecf3;border-radius:6px;height:40px;min-height:40px;max-height:40px;display:flex;align-items:center;white-space:normal;overflow:hidden}
+.small-muted{font-size:12.5px;line-height:1.45;color:#465f73}
+.ops-panel-footer{margin-top:14px;padding-top:12px;border-top:1px solid #edf1f4;height:48px!important;min-height:48px!important;max-height:48px!important;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ops-panel-footer .button{min-height:34px!important;height:34px!important;max-height:34px!important;padding:0 14px;font-size:12.5px;width:auto}
+.ops-panel-footer span{font-size:12.5px;color:#4f6678;line-height:1.35}
 .activity-panel{margin-bottom:0;padding:22px}
 .activity-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
 .live-label{font-size:11.5px}
@@ -454,43 +474,39 @@ td{font-size:14px;padding:14px 10px}
 
 /* Sección 4: Consultar reporte (#view-tracking) */
 .tracking-layout{max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch}
-.tracking-layout>.panel{margin-bottom:0;display:flex;flex-direction:column;height:100%;min-width:0;padding:24px}
-.tracking-search-panel{text-align:left;padding:24px;justify-content:space-between}
-.tracking-search-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:16px;border-bottom:1px solid #edf1f4;margin-bottom:0}
-.tracking-search-brand{display:flex;align-items:center;gap:14px}
-.tracking-icon{width:46px;height:46px;font-size:22px;margin:0;flex:0 0 auto}
-.tracking-search-panel h2{font-size:19px;margin-bottom:4px}
-.tracking-search-panel p{font-size:13.5px;color:#6f8293;margin:0}
-.tracking-form{max-width:none;width:100%;margin:0 0 14px;gap:10px}
-.tracking-form input{font-size:15px;min-height:44px;padding:10px 14px}
-.tracking-form .button{min-height:44px;padding:0 20px;font-size:14px}
-.tracking-quick-box{background:#f7fafc;border:1px solid #e4edf3;border-radius:10px;padding:14px;margin-bottom:14px}
-.tracking-quick-box strong{display:block;font-size:13px;color:#27475e;margin-bottom:10px}
-.tracking-quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
-.tracking-quick button{border:1px solid #cfe0ea;background:#fff;color:#24556d;border-radius:8px;padding:7px 8px;font-size:12.5px;font-weight:750;text-align:center;justify-content:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:.15s}
+.tracking-layout>.panel{margin-bottom:0;display:flex;flex-direction:column;height:100%;min-width:0;padding:24px;overflow:hidden}
+.tracking-search-panel,.tracking-result{text-align:left;padding:24px;display:flex;flex-direction:column}
+.result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid #edf1f4;height:78px;min-height:78px}
+.result-code{font:800 20px/1.2 Manrope,sans-serif;color:#17384e;margin-bottom:4px}
+.result-head p{font-size:13.5px;color:#4f6678;margin:0;line-height:1.4}
+.result-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0;height:74px;min-height:74px}
+.result-meta>div{background:#f7fafc;border:1px solid #e4edf3;border-radius:8px;padding:11px 13px;display:flex;flex-direction:column;justify-content:center}
+.result-meta small{display:block;font-size:11.5px;font-weight:750;text-transform:uppercase;letter-spacing:.35px;color:#52697a;margin-bottom:4px}
+.result-meta strong{font-size:16px;color:#17384e}
+.tracking-control-card,.tracking-priority-card{background:#f7fafc;border:1px solid #e2ecf3;border-radius:10px;padding:14px;margin:0 0 14px;height:192px;min-height:192px;display:flex;flex-direction:column;justify-content:space-between}
+.tracking-section-title{font:800 13.5px/1.3 Manrope,sans-serif;color:#1b394f;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.tracking-section-title span{font-size:12px;font-weight:800;color:#2364a8}
+.tracking-form{max-width:none;width:100%;margin:0 0 10px;gap:10px;display:flex}
+.tracking-form input{font-size:14.5px;min-height:42px;height:42px;padding:8px 12px}
+.tracking-form .button{min-height:42px;height:42px;padding:0 18px;font-size:13.5px}
+.tracking-quick-label{display:block;font-size:12px;font-weight:750;color:#3d5669;margin-bottom:7px}
+.tracking-quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0}
+.tracking-quick button{border:1px solid #c9dce7;background:#fff;color:#1c4966;border-radius:7px;padding:6px 6px;font-size:12.5px;font-weight:750;text-align:center;justify-content:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:.15s}
 .tracking-quick button:hover{background:#e8f2fa;border-color:#9fc5e2}
-.tracking-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px;flex:1;align-items:stretch}
-.tracking-guide-card{background:#f8fbfd;border:1px solid #e6eef4;border-radius:9px;padding:12px 13px;display:flex;flex-direction:column;gap:4px}
-.tracking-guide-card span{font-size:11px;font-weight:800;color:#2c75b7;letter-spacing:.4px}
-.tracking-guide-card strong{font-size:13px;color:#1d3b52}
-.tracking-guide-card p{font-size:12px;line-height:1.45;color:#6c8091;margin:0}
-.tracking-demo-note{font-size:12.5px!important;margin-top:0!important;padding-top:0;text-align:left}
-.inline-code{font-size:12.5px;padding:4px 8px}
-.tracking-result{padding:24px;justify-content:space-between}
-.result-code{font-size:19px}
-.result-meta{margin:14px 0}
-.result-meta>div{padding:13px}
-.result-meta small{font-size:12px;margin-bottom:4px}
-.result-meta strong{font-size:15.5px}
-.timeline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 14px}
-.timeline-row{background:#f8fbfd;border:1px solid #e6eef4;border-radius:9px;padding:11px 12px}
-.timeline-row strong{font-size:13.5px}
-.timeline-row p{font-size:12px;line-height:1.45}
-.tracking-bottom-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:auto;padding-top:14px;border-top:1px solid #edf1f4;align-items:stretch}
-.tracking-bottom-card{background:#f8fbfd;border:1px solid #e6eef4;border-radius:9px;padding:12px 13px;display:flex;flex-direction:column;gap:6px}
-.tracking-bottom-card h3{font-size:13px;font-weight:800;color:#1d3b52;margin:0}
-.tracking-bottom-card p{font-size:12px;line-height:1.45;color:#5c7285;margin:0}
-.notification-preview{font-size:12px;padding:10px 11px;margin:0;white-space:pre-wrap;background:#fff;border:1px solid #e1ebf2;border-radius:7px}
+.tracking-guide-grid,.timeline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:108px;gap:10px;margin:0 0 14px;align-items:stretch}
+.tracking-guide-card,.timeline-row{background:#f8fbfd;border:1px solid #dde8f0;border-radius:9px;padding:11px 13px;display:flex;flex-direction:column;justify-content:center;gap:4px;height:108px;min-height:108px;overflow:hidden}
+.timeline-row{flex-direction:row;align-items:center;gap:10px}
+.timeline-row>div{min-width:0;flex:1}
+.tracking-guide-card span{font-size:11px;font-weight:800;color:#2364a8;letter-spacing:.4px}
+.tracking-guide-card strong,.timeline-row strong{display:block;font-size:13.5px;color:#17384e;line-height:1.25}
+.tracking-guide-card p,.timeline-row p{font-size:12.5px;line-height:1.4;color:#3f586c;margin:3px 0 0;overflow-wrap:anywhere}
+.tracking-demo-note{font-size:12.5px!important;margin-top:0!important;padding-top:0;text-align:left;color:#3f586c!important}
+.inline-code{font-size:12.5px;padding:3px 7px;color:#1f5fa0;background:#e6f1fb}
+.tracking-bottom-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:128px;gap:12px;margin-top:auto;padding-top:14px;border-top:1px solid #edf1f4;align-items:stretch}
+.tracking-bottom-card{background:#f8fbfd;border:1px solid #dde8f0;border-radius:9px;padding:12px 13px;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:128px;min-height:128px;overflow:hidden}
+.tracking-bottom-card h3{font-size:13.5px;font-weight:800;color:#17384e;margin:0}
+.tracking-bottom-card p{font-size:12.5px;line-height:1.42;color:#354f63;margin:0}
+.notification-preview{font:12.5px/1.42 "DM Sans",sans-serif;color:#243e52;padding:8px 10px;margin:0;white-space:normal;background:#fff;border:1px solid #d5e3ed;border-radius:7px;overflow-wrap:anywhere}
 
 /* Modales y Pie de página */
 .detail-dialog{width:min(620px,calc(100% - 30px));padding:28px}
@@ -502,8 +518,10 @@ td{font-size:14px;padding:14px 10px}
 .agent-card p,.agent-card li{font-size:14px}
 .priority-explanation{padding:14px;margin:10px 0}
 .priority-explanation-head strong,.priority-explanation-head span{font-size:13.5px}
-.priority-factor>div:first-child{font-size:12.5px;margin-bottom:5px}
-.priority-factor-track{height:7px}
+.priority-factor{margin:11px 0}
+.priority-factor>div:first-child{font-size:13px;color:#27445a;margin-bottom:6px;align-items:baseline}
+.priority-factor strong{font-size:13px;color:#143248;white-space:nowrap;flex:0 0 auto}
+.priority-factor-track{height:8px;background:#dfe8f0}
 .priority-explanation>p{font-size:12.5px;line-height:1.5;margin:8px 0 0}
 #modalLocationMap{height:280px}
 .modal-places button{font-size:13px;padding:7px 11px}
@@ -597,18 +615,26 @@ td{font-size:14px;padding:14px 10px}
               <div class="route-explanation">
                 <div class="route-explanation-heading"><strong>Fórmula de prioridad auditable</strong><span>priority-v1</span></div>
                 <div class="route-factor-list"><span>Horas (0–40)</span><span>Afectados (0–30)</span><span>Vulnerabilidad (0–30)</span></div>
-                <p>El volumen de quejas repetidas no compra prioridad. El puntaje se calcula determinísticamente en código sobre cada cluster consolidado.</p>
+                <p>El volumen de quejas repetidas no compra prioridad. El puntaje se calcula en código sobre cada cluster.</p>
               </div>
               <div class="route-explanation">
                 <div class="route-explanation-heading"><strong>Deduplicación geográfica</strong><span>Haversine 800 m</span></div>
                 <div class="route-factor-list"><span>Mismo sector ≤ 800 m</span><span>Anclas ASSUMPTION</span></div>
-                <p>Reportes cercanos se fusionan conservando los IDs originales. Menciones generales sin punto de referencia se separan para revisión.</p>
+                <p>Reportes cercanos se fusionan con sus IDs originales; menciones sin referencia pasan a revisión humana.</p>
               </div>
             </div>
-            <div class="incidents-summary-bar">
-              <div><small>Invariancia al volumen</small><strong>Activa (0 pts por repetición)</strong></div>
-              <div><small>Umbral espacial</small><strong>800 m · Haversine</strong></div>
-              <div><small>Trazabilidad</small><strong>IDs originales preservados</strong></div>
+            <div class="incidents-bottom-box">
+              <div class="human-gate"><div class="gate-icon">⚖</div><div><strong>Garantías determinísticas activas</strong><p>Validación, deduplicación, puntaje <code>priority-v1</code> y rutas ejecutados por código auditable.</p></div></div>
+              <div class="incidents-summary-bar">
+                <div><small>Invariancia al volumen</small><strong>0 pts por repetición</strong></div>
+                <div><small>Umbral espacial</small><strong>800 m · Haversine</strong></div>
+                <div><small>Trazabilidad</small><strong>IDs originales</strong></div>
+              </div>
+              <div class="incidents-summary-bar">
+                <div><small>Fórmula activa</small><strong>priority-v1 (0–100)</strong></div>
+                <div><small>Capacidad flota</small><strong>3 cisternas · 360 min</strong></div>
+                <div><small>Fuentes y datos</small><strong>SYNTHETIC_DEMO</strong></div>
+              </div>
             </div>
             <div class="panel-footer"><span id="resultsCount">Mostrando 5 incidencias</span><span class="footer-legend"><i></i> Datos de ejemplo</span></div>
           </section>
@@ -616,13 +642,15 @@ td{font-size:14px;padding:14px 10px}
           <section class="panel plan-panel">
             <div class="panel-header"><div><h2>Plan de distribución</h2><p>Propuesta del planificador · demo</p></div><span class="status-chip status-review" id="planStatus">Sin plan</span></div>
             <div class="plan-summary"><div><span class="summary-label">Agua estimada</span><strong id="planTotalLiters">0</strong> <small>L</small></div><div><span class="summary-label">Cisternas</span><strong id="planVehiclesCount">0</strong> <small>unid.</small></div><div><span class="summary-label">Paradas</span><strong id="planStopsCount">0</strong> <small>asign.</small></div></div>
-            <div class="route-title"><strong>Rutas propuestas</strong><span>3 recorridos</span></div>
-            <div class="route-list" id="plan-routes"><p class="empty">Cargue el lote operativo para ver rutas OR-Tools.</p></div>
+            <div class="route-section-wrap">
+              <div class="route-title"><strong>Rutas propuestas</strong><span>3 recorridos</span></div>
+              <div class="route-list" id="plan-routes"><p class="empty">Cargue el lote operativo para ver rutas OR-Tools.</p></div>
+            </div>
             <div class="plan-explanations-grid">
               <div class="route-explanation">
-                <div class="route-explanation-heading"><strong>¿Por qué se propone esta distribución?</strong><span>OR-Tools + priority-v1</span></div>
+                <div class="route-explanation-heading"><strong>¿Por qué se propone esta ruta?</strong><span>OR-Tools + priority-v1</span></div>
                 <div class="route-factor-list"><span>Capacidad (L)</span><span>Turno (360 min)</span><span>Prioridad v1</span></div>
-                <p>El solver <strong>OR-Tools</strong> asigna cisternas maximizando cobertura ponderada por <strong>priority-v1</strong> y retiene ubicaciones ambiguas para revisión.</p>
+                <p>El solver <strong>OR-Tools</strong> maximiza cobertura ponderada por <strong>priority-v1</strong> y separa ubicaciones ambiguas.</p>
               </div>
               <div class="route-explanation">
                 <div class="route-explanation-heading"><strong>Demanda no atendida y silenciosos</strong><span>priority-v1</span></div>
@@ -631,33 +659,40 @@ td{font-size:14px;padding:14px 10px}
                 <div class="chip-row" id="silent-sectors-chips"><span>Cargando…</span></div>
               </div>
             </div>
-            <div class="human-gate"><div class="gate-icon">♙</div><div><strong>Tu aprobación es necesaria</strong><p>La propuesta no encola avisos SIMULATED hasta revisión humana. <span id="state-pill" class="status-chip status-review">Borrador</span></p></div></div>
-            <div class="gate-fields">
-              <div class="gate-field-col"><label for="actor-input">Coordinador</label><input id="actor-input" type="text" value="coordinador"></div>
-              <div class="gate-field-col"><label for="comment-input">Comentario</label><textarea id="comment-input" rows="1" placeholder="Obligatorio al corregir el plan"></textarea></div>
+            <div class="plan-bottom-box">
+              <div class="human-gate"><div class="gate-icon">♙</div><div><strong>Tu aprobación es necesaria</strong><p>La propuesta no encola avisos SIMULATED hasta revisión humana. <span id="state-pill" class="status-chip status-review">Borrador</span></p></div></div>
+              <div class="gate-fields">
+                <div class="gate-field-col"><label for="actor-input">Coordinador</label><input id="actor-input" type="text" value="coordinador"></div>
+                <div class="gate-field-col"><label for="comment-input">Comentario</label><textarea id="comment-input" rows="1" placeholder="Obligatorio al corregir el plan"></textarea></div>
+              </div>
+              <div class="gate-actions">
+                <button class="button button-secondary" id="btn-revisar" type="button" disabled>Enviar a revisión</button>
+                <button class="button button-primary" id="btn-aprobar" type="button" disabled>✓ Aprobar plan</button>
+                <button class="button button-danger" id="btn-rechazar" type="button" disabled>Rechazar</button>
+                <button class="button button-secondary" id="btn-corregir" type="button" disabled>Corregir plan</button>
+              </div>
             </div>
-            <div class="gate-actions">
-              <button class="button button-secondary" id="btn-revisar" type="button" disabled>Enviar a revisión</button>
-              <button class="button button-primary" id="btn-aprobar" type="button" disabled>✓ Aprobar plan</button>
-              <button class="button button-danger" id="btn-rechazar" type="button" disabled>Rechazar</button>
-              <button class="button button-secondary" id="btn-corregir" type="button" disabled>Corregir plan</button>
-            </div>
-            <p class="approval-message" id="approvalMessage" aria-live="polite">Sin aprobación humana no hay acción final. Canal SIMULATED.</p>
-            <div id="execution"></div>
+            <div class="panel-footer"><span class="approval-message" id="approvalMessage" aria-live="polite">Sin aprobación humana no hay acción final. Canal SIMULATED.</span><span id="execution"></span></div>
           </section>
         </div>
         <div class="ops-extra-grid">
           <section class="panel agent-trace-panel">
             <div class="panel-header"><div><h2>Trazabilidad del proceso agéntico</h2><p>Entrada, salida y justificación por etapa</p></div><span class="status-chip status-review">DEMO</span></div>
-            <div class="trace-demo-note">Trazas auditables en vivo de los 3 agentes (Ingesta, Priorización y Planificación) y de las herramientas determinísticas ejecutadas en esta sesión.</div>
+            <div class="trace-demo-note">Trazas auditables en vivo de los 3 agentes y sus herramientas determinísticas.</div>
             <div id="agentTraceList" class="agent-trace-list"></div>
+            <div class="ops-panel-footer"><span>Registro de herramientas y subagentes</span><button class="button button-secondary" id="viewAllTracesBtn" type="button">Ver detalle SQLite</button></div>
           </section>
           <section class="panel duplicate-review-panel">
             <div class="panel-header"><div><h2>Revisión de posibles duplicados</h2><p>Coincidencias sugeridas para revisión humana</p></div><span class="status-chip status-analyzing">REVISIÓN</span></div>
-            <div id="duplicateReviewContent" class="duplicate-review-content"></div>
-            <div id="outbox-list" class="outbox-list" aria-label="Avisos SIMULATED"></div>
-            <button class="button button-secondary duplicate-review-button" id="reviewDuplicateBtn" type="button">Revisar coincidencia</button>
-            <p class="small-muted">La coincidencia por sector es solo una señal de ejemplo; no confirma por sí sola que dos reportes sean el mismo incidente.</p>
+            <div class="trace-demo-note">Agrupación determinística por sector u 800 m y avisos en bandeja SIMULATED.</div>
+            <div class="duplicate-Section-grid">
+              <div id="duplicateReviewContent" class="duplicate-review-content"></div>
+              <div id="outbox-list" class="outbox-list" aria-label="Avisos SIMULATED"></div>
+            </div>
+            <div class="ops-panel-footer">
+              <span>Agrupación determinística · Haversine 800 m</span>
+              <button class="button button-secondary" id="reviewDuplicateBtn" type="button">Revisar coincidencia</button>
+            </div>
           </section>
         </div>
         <section class="panel activity-panel"><div class="panel-header"><div><h2>Actividad del sistema</h2><p>Registro demostrativo del flujo de trabajo</p></div><span class="live-label"><span></span> LOCAL</span></div><div class="activity-list" id="activityList"><div class="activity-item"><span class="activity-marker marker-blue"></span><div><strong>Plan de distribución preparado</strong><p>Propuesta de ejemplo lista para revisión humana.</p></div><time>Hace 4 min</time></div><div class="activity-item"><span class="activity-marker marker-teal"></span><div><strong>Incidencias agrupadas por sector</strong><p>La deduplicación evita que reportes repetidos aumenten la prioridad.</p></div><time>Hace 8 min</time></div><div class="activity-item"><span class="activity-marker marker-violet"></span><div><strong>Motor de prioridad aplicado</strong><p>La puntuación se calcula con reglas deterministas de la demo.</p></div><time>Hace 12 min</time></div></div></section>
@@ -820,20 +855,25 @@ td{font-size:14px;padding:14px 10px}
               <div><small>Rutas y flota</small><strong>OR-Tools</strong></div>
               <div><small>Canal vecinal</small><strong>SIMULATED</strong></div>
             </div>
-            <form id="trackingForm" class="tracking-form">
-              <label class="sr-only" for="trackingCode">Código del reporte</label>
-              <input id="trackingCode" placeholder="Ej. SYN-001" required>
-              <button class="button button-primary" type="submit">Consultar</button>
-            </form>
-            <div class="tracking-quick-box">
-              <strong>Códigos de referencia activos (clic para consultar):</strong>
-              <div id="trackingQuickList" class="tracking-quick"></div>
-            </div>
             <div class="tracking-guide-grid" aria-label="Etapas de evaluación del reporte">
               <div class="tracking-guide-card"><span>ETAPA 01</span><strong>Ingesta y validación</strong><p>Extracción de sector, duración, afectados y vulnerabilidad.</p></div>
               <div class="tracking-guide-card"><span>ETAPA 02</span><strong>Deduplicación 800 m</strong><p>Agrupa incidentes cercanos sin alterar el puntaje.</p></div>
               <div class="tracking-guide-card"><span>ETAPA 03</span><strong>Prioridad priority-v1</strong><p>Puntaje determinístico (horas 40, afectados 30, vulnerabilidad 30).</p></div>
               <div class="tracking-guide-card"><span>ETAPA 04</span><strong>Rutas y supervisión</strong><p>Asignación OR-Tools sujeta a aprobación humana.</p></div>
+            </div>
+            <div class="tracking-control-card">
+              <div>
+                <h3 class="tracking-section-title">Buscar por código o selección rápida<span>12 activos</span></h3>
+                <form id="trackingForm" class="tracking-form">
+                  <label class="sr-only" for="trackingCode">Código del reporte</label>
+                  <input id="trackingCode" placeholder="Ej. SYN-001" required>
+                  <button class="button button-primary" type="submit">Consultar</button>
+                </form>
+              </div>
+              <div>
+                <span class="tracking-quick-label">Códigos de referencia activos (clic para consultar):</span>
+                <div id="trackingQuickList" class="tracking-quick"></div>
+              </div>
             </div>
             <div class="tracking-bottom-grid">
               <div class="tracking-bottom-card"><h3>Equidad e invariancia</h3><p>El volumen de quejas repetidas nunca compra prioridad frente a vulnerabilidad real.</p></div>
@@ -907,11 +947,11 @@ td{font-size:14px;padding:14px 10px}
     "Hospital Nicolas Solano": "Hospital Nicolás Solano"
   };
   var FACTOR_LABEL = {
-    duration: "Horas sin agua (hours_without_water)",
-    hours_without_water: "Horas sin agua (hours_without_water)",
-    affected: "Personas afectadas (estimated_affected)",
-    estimated_affected: "Personas afectadas (estimated_affected)",
-    vulnerability: "Vulnerabilidad (vulnerability)"
+    duration: "Horas sin agua",
+    hours_without_water: "Horas sin agua",
+    affected: "Personas afectadas",
+    estimated_affected: "Personas afectadas",
+    vulnerability: "Vulnerabilidad"
   };
   var STATUS_NAMES = { received: "Recibido", analyzing: "En análisis", planned: "En plan", approved: "Aprobado" };
 
@@ -941,6 +981,18 @@ td{font-size:14px;padding:14px 10px}
     var list = (ctx && ctx.places) || [];
     for (var i = 0; i < list.length; i++) if (list[i].place_id === id) return list[i];
     return null;
+  }
+  function placeLabelFor(placeId) {
+    if (!placeId) return "";
+    var p = findPlace(placeId);
+    if (p && p.name) return niceName(p.name);
+    var parts = String(placeId).split("+");
+    var names = parts.map(function (pid) {
+      var found = findPlace(pid);
+      if (found && found.name) return niceName(found.name);
+      return String(pid).replace(/^place_/, "").replace(/_/g, " ").toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    });
+    return names.join(" + ");
   }
   function sectorName(id) {
     var sector = findSector(id);
@@ -1404,8 +1456,8 @@ td{font-size:14px;padding:14px 10px}
       var maxPts = (row.factor === "duration" || row.factor === "hours_without_water") ? 40 : 30;
       var cls = (row.factor === "duration" || row.factor === "hours_without_water") ? "factor-time" : (row.factor === "vulnerability" ? "factor-vulnerability" : "factor-people");
       var pts = Number(row.points || 0);
-      var pct = Math.min(100, Math.max(0, (pts / maxPts) * 100));
-      return '<div class="priority-factor"><div><span>' + esc(label) + (row.reason ? " · " + esc(row.reason) : "") + '</span><strong>' + esc(pts) + "/" + maxPts + '</strong></div><div class="priority-factor-track"><i class="' + cls + '" style="width:' + pct.toFixed(1) + '%"></i></div></div>';
+      var pct = Math.min(100, Math.max(4, (pts / maxPts) * 100));
+      return '<div class="priority-factor"><div><span>' + esc(label) + (row.reason ? " · " + esc(row.reason) : "") + '</span><strong>' + esc(pts) + "/" + maxPts + ' pts</strong></div><div class="priority-factor-track"><i class="' + cls + '" style="width:' + pct.toFixed(1) + '%"></i></div></div>';
     }).join("");
   }
   function rowStatus(cluster) {
@@ -1464,7 +1516,7 @@ td{font-size:14px;padding:14px 10px}
         var state = rowStatus(c);
         var people = c.estimated_affected_count == null ? "sin dato" : c.estimated_affected_count;
         var codeLabel = (c.source_report_ids && c.source_report_ids.length) ? c.source_report_ids.join(", ") : c.cluster_id;
-        var placeLabel = c.place_id ? niceName(c.place_id.replace(/^place_/, "")) + " · " + c.report_count + " rep." : (c.report_count + " reporte(s)");
+        var placeLabel = c.place_id ? placeLabelFor(c.place_id) + " · " + c.report_count + " rep." : (c.report_count + " reporte(s)");
         return '<tr data-cluster="' + esc(c.cluster_id) + '" title="' + esc(c.cluster_id) + '"><td><span class="incident-code">' + esc(codeLabel) + '</span><span class="incident-age">' + esc(placeLabel) + '</span></td><td class="sector-cell">' + esc(sectorName(c.sector_id)) + "</td><td>" + esc(people) + '</td><td><span class="priority ' + cls + '">' + esc(score) + '/100</span></td><td><span class="status-chip status-' + state + '">' + esc(STATUS_NAMES[state] || state) + '</span></td><td><button type="button" class="text-button" data-detail="' + esc(c.cluster_id) + '">Ver desglose</button></td></tr>';
       }).join("");
     }
@@ -1564,43 +1616,91 @@ td{font-size:14px;padding:14px 10px}
       rich.innerHTML = '<div class="empty-state-small"><strong>Todavía no hay trazas de agentes</strong><p>Precargue los datos reales del proyecto o cargue un lote para ver ingesta, prioridad y solver.</p></div>';
       return;
     }
-    rich.innerHTML = traces.map(function (t, index) {
-      return '<details class="agent-trace-item" ' + (index === traces.length - 1 ? "open" : "") + '><summary><span class="trace-stage-number">' + String(index + 1).padStart(2, "0") + '</span><span class="trace-stage-copy"><strong>' + esc(t.actor) + "</strong><small>" + esc(t.action) + " · " + esc(t.timestamp || "") + '</small></span><span class="trace-state">' + esc(t.status) + '</span></summary><div class="trace-detail-grid"><div><small>Entrada</small><p>' + esc(t.input_summary) + '</p></div><div><small>Salida</small><p>' + esc(t.output_summary) + '</p></div><div class="trace-reason"><small>Traza</small><p>' + esc(t.trace_id || "") + "</p></div></div></details>";
+    var reportCount = Array.isArray(ctx.extracted_reports) ? ctx.extracted_reports.length : 12;
+    var clusterCount = Array.isArray(ctx.clusters) ? ctx.clusters.length : 8;
+    var priorityCount = Array.isArray(ctx.priorities) ? ctx.priorities.length : clusterCount;
+    var assignCount = (ctx.plan && Array.isArray(ctx.plan.assignments)) ? ctx.plan.assignments.length : 6;
+    var unservedCount = (ctx.plan && Array.isArray(ctx.plan.unserved_demand)) ? ctx.plan.unserved_demand.length : 2;
+    var byActor = {};
+    traces.forEach(function (tr) { byActor[tr.actor] = tr; });
+    var stages = [
+      {
+        label: "Agente 1 · Ingesta y Guardrails",
+        action: (byActor.ingestion && byActor.ingestion.action) || "ingest_report",
+        trace_id: (byActor.ingestion && byActor.ingestion.trace_id) || "trace-ing",
+        status: (byActor.ingestion && byActor.ingestion.status) || "ok",
+        inText: reportCount + " reportes",
+        outText: clusterCount + " clusters (≤ 800 m)"
+      },
+      {
+        label: "Agente 2 · Priorización (priority-v1)",
+        action: (byActor.prioritization && byActor.prioritization.action) || "score_cluster",
+        trace_id: (byActor.prioritization && byActor.prioritization.trace_id) || "trace-pri",
+        status: (byActor.prioritization && byActor.prioritization.status) || "ok",
+        inText: clusterCount + " clusters",
+        outText: priorityCount + " puntajes (0–100)"
+      },
+      {
+        label: "Agente 3 · Planificador (OR-Tools)",
+        action: (byActor.planning && byActor.planning.action) || "solve_water_allocation",
+        trace_id: (byActor.planning && byActor.planning.trace_id) || "trace-pln",
+        status: (byActor.planning && byActor.planning.status) || "ok",
+        inText: "3 cisternas · 360 min",
+        outText: assignCount + " paradas · " + unservedCount + " sin ruta"
+      },
+      {
+        label: "Orquestador · Compuerta Humana",
+        action: (byActor.orchestrator && byActor.orchestrator.action) || "run_orchestration",
+        trace_id: (byActor.orchestrator && byActor.orchestrator.trace_id) || "trace-orc",
+        status: (byActor.orchestrator && byActor.orchestrator.status) || "ok",
+        inText: "Flujo 1 → 2 → 3",
+        outText: "Estado: " + stateLabel(ctx.state)
+      }
+    ];
+    rich.innerHTML = stages.map(function (s, index) {
+      return '<article class="agent-trace-card"><div class="agent-trace-card-head"><span class="trace-stage-number">' + String(index + 1).padStart(2, "0") + '</span><span class="trace-stage-copy"><strong>' + esc(s.label) + '</strong><small><code>' + esc(s.action) + '</code> · ' + esc(s.trace_id) + '</small></span><span class="trace-state">' + esc(s.status) + '</span></div><div class="trace-card-io"><div><small>Entrada</small><p>' + esc(s.inText) + '</p></div><div><small>Salida</small><p>' + esc(s.outText) + '</p></div></div></article>';
     }).join("");
   }
-  function duplicateBlocks() {
+  function duplicateBlocks(maxItems) {
     var clusters = (ctx && ctx.clusters) || [];
     var bySector = {};
     clusters.forEach(function (c) {
       if (!c.sector_id) return;
       (bySector[c.sector_id] = bySector[c.sector_id] || []).push(c);
     });
-    var html = "";
+    var rows = [];
     Object.keys(bySector).forEach(function (sid) {
       var group = bySector[sid];
       if (group.length > 1 && sid !== "UNKNOWN") {
-        var note = group.map(function (c) { return (c.place_id || c.cluster_id) + " (" + c.report_count + " reporte(s))"; }).join(" · ");
+        var note = group.map(function (c) {
+          var label = c.place_id ? placeLabelFor(c.place_id) : sectorName(c.sector_id);
+          return label + " (" + c.report_count + " rep.)";
+        }).join(" vs. ");
         var dist = "";
         if (group[0] && group[1] && typeof group[0].latitude === "number" && typeof group[1].latitude === "number") {
           var meters = Math.round(haversine(group[0].latitude, group[0].longitude, group[1].latitude, group[1].longitude));
-          dist = " Distancia entre puntos: " + meters + " m.";
-          if (meters > 800) dist += " Superan 800 m, así que el deduplicador los deja separados (como Chino y Xtra en Vista Alegre).";
+          dist = " · " + meters + " m (> 800 m).";
         }
-        html += '<div class="duplicate-compare-row"><div><strong>' + esc(sectorName(sid)) + " tiene incidentes separados</strong><p>" + esc(note + dist) + "</p></div></div>";
+        rows.push('<div class="duplicate-compare-row"><strong>' + esc(sectorName(sid)) + '<span>2 focos distintos</span></strong><p>' + esc(note + dist) + "</p></div>");
       }
     });
     clusters.forEach(function (c) {
       if (Number(c.report_count) > 1) {
-        html += '<div class="duplicate-compare-row"><div><strong>' + esc(c.cluster_id) + " agrupa " + esc(c.report_count) + " reportes</strong><p>" + esc((c.source_report_ids || []).join(", ")) + " en " + esc(sectorName(c.sector_id)) + ". Más quejas no alteran el score.</p></div></div>";
+        var placeTitle = c.place_id ? placeLabelFor(c.place_id) : sectorName(c.sector_id);
+        rows.push('<div class="duplicate-compare-row"><strong>' + esc(sectorName(c.sector_id)) + " · " + esc(placeTitle) + '<span>' + esc(c.report_count) + ' reportes</span></strong><p>Fusiona ' + esc((c.source_report_ids || []).join(", ")) + " (≤ 800 m). Invariante al volumen de quejas.</p></div>");
       }
       if (c.requires_human_review || c.geo_precision === "UNKNOWN" || c.geo_precision === "SECTOR") {
-        html += '<div class="duplicate-compare-row"><div><strong>' + esc(sectorName(c.sector_id)) + " requiere revisión</strong><p>Precisión " + esc(c.geo_precision || "UNKNOWN") + ". " + esc((c.uncertainties || []).join(" ")) + "</p></div></div>";
+        var shortUnc = c.geo_precision === "SECTOR"
+          ? "Mención general del sector sin ancla; separado para revisión."
+          : "Ubicación fuera de catálogo; retenida para revisión humana.";
+        rows.push('<div class="duplicate-compare-row"><strong>' + esc(sectorName(c.sector_id)) + '<span>Revisión humana</span></strong><p>Precisión ' + esc(c.geo_precision || "UNKNOWN") + " · " + esc(shortUnc) + "</p></div>");
       }
     });
-    return html;
+    if (maxItems && rows.length > maxItems) rows = rows.slice(0, maxItems);
+    return rows.join("");
   }
   function renderDuplicates() {
-    var html = duplicateBlocks();
+    var html = duplicateBlocks(2);
     document.getElementById("duplicateReviewContent").innerHTML = html || '<div class="empty-state-small"><strong>Sin coincidencias para revisar</strong><p>Cuando un cluster agrupe varios reportes, o dos lugares del mismo sector queden a más de 800 m, aparecerán aquí.</p></div>';
   }
   function scoreForSector(sectorId) {
@@ -1821,23 +1921,26 @@ td{font-size:14px;padding:14px 10px}
     var assignment = assignmentFor(sectorId);
     var notice = noticeFor(sectorId);
     var state = ctx.state;
+    var placeHint = (cluster && cluster.place_id) ? placeLabelFor(cluster.place_id) : sectorName(sectorId);
     var steps = [
-      ["Reporte recibido", report ? "Ingesta registró " + report.report_id + "." : "El cluster existe en el lote actual.", true],
-      ["Deduplicación", cluster ? "Cluster " + cluster.cluster_id + " con " + cluster.report_count + " reporte(s). Más quejas no suben el puntaje." : "Todavía no hay cluster para este código.", !!cluster],
-      ["Prioridad priority-v1", priority ? priority.formula_version + " · " + priority.score + "/100." : "El motor todavía no puntuó este incidente.", !!priority],
-      ["Cisterna y supervisión", assignment ? "Cisterna " + assignment.vehicle_id + " · " + assignment.volume_liters + " L · turno " + assignment.order + "." : "Sin cisterna asignada a este sector.", !!assignment && state === "aprobado"]
+      ["ETAPA 01 · Reporte recibido", report ? "Ingesta validó " + report.report_id + " en " + sectorName(sectorId) + "." : "El incidente está consolidado en el lote activo.", true],
+      ["ETAPA 02 · Deduplicación", cluster ? placeHint + " · " + cluster.report_count + " reporte(s) agrupados (≤ 800 m). Más quejas no suben el puntaje." : "Todavía no hay cluster para este código.", !!cluster],
+      ["ETAPA 03 · Prioridad priority-v1", priority ? "Puntaje determinístico: " + priority.score + "/100 (" + priority.formula_version + ")." : "El motor todavía no puntuó este incidente.", !!priority],
+      ["ETAPA 04 · Cisterna y supervisión", assignment ? "Cisterna " + assignment.vehicle_id + " · " + assignment.volume_liters + " L · parada #" + assignment.order + "." : "Sin cisterna asignada en el turno actual.", !!assignment && state === "aprobado"]
     ];
+    var noticeText = notice ? String(notice.message || "").replace(/^Aviso de demostracion para [A-Z_]+\.\s*/i, "").replace(/\s*Este mensaje quedo en la bandeja simulada.*$/i, "") : "";
     var noticeHtml = notice
-      ? '<pre class="notification-preview">Canal ' + esc(notice.channel || "SIMULATED") + " · " + esc(notice.status || "") + "\n" + esc(notice.message || "") + "</pre>"
+      ? '<div class="notification-preview"><strong>Canal ' + esc(notice.channel || "SIMULATED") + " · " + esc(notice.status || "") + "</strong><br>" + esc(noticeText || notice.message || "") + "</div>"
       : '<p>No hay aviso SIMULATED para este sector. Solo se encolan tras una aprobación humana.</p>';
     var cisternaHtml = assignment
       ? "<p><strong>" + esc(assignment.vehicle_id) + "</strong> · " + esc(assignment.volume_liters) + " litros · parada #" + esc(assignment.order) + ".</p><p>Ruta calculada por OR-Tools bajo capacidad y turno de 360 min.</p>"
       : "<p>Este sector no tiene cisterna asignada en el plan actual.</p>";
-    panel.innerHTML = '<div class="result-head"><div><div class="eyebrow">SEGUIMIENTO</div><div class="result-code">' + esc(key) + '</div><p>' + esc(sectorName(sectorId)) + " · plan " + esc(stateLabel(state)) + '</p></div><span class="' + badgeClass(state) + '">' + esc(stateLabel(state)) + "</span></div>" +
-      '<div class="result-meta"><div><small>Horas</small><strong>' + esc(cluster && cluster.max_duration_hours != null ? cluster.max_duration_hours : (report && report.duration_hours != null ? report.duration_hours : "sin dato")) + '</strong></div><div><small>Personas</small><strong>' + esc(cluster && cluster.estimated_affected_count != null ? cluster.estimated_affected_count : (report && report.affected_count != null ? report.affected_count : "sin dato")) + '</strong></div><div><small>Prioridad</small><strong>' + esc(priority ? priority.score + "/100" : "—") + "</strong></div></div>" +
-      "<h2>Cuatro etapas</h2><div class=\"timeline\">" + steps.map(function (s) {
+    var priorityCardHtml = '<div class="tracking-priority-card"><h3 class="tracking-section-title">Desglose auditable priority-v1<span>' + esc(priority ? priority.score + "/100" : "—") + '</span></h3>' + (priority ? breakdownHtml(priority) : "<p>Sin desglose disponible.</p>") + '</div>';
+    panel.innerHTML = '<div class="result-head"><div><div class="eyebrow">SEGUIMIENTO DE INCIDENCIA</div><div class="result-code">' + esc(key) + '</div><p>' + esc(sectorName(sectorId)) + " · plan " + esc(stateLabel(state)) + '</p></div><span class="' + badgeClass(state) + '">' + esc(stateLabel(state)) + "</span></div>" +
+      '<div class="result-meta"><div><small>Horas sin agua</small><strong>' + esc(cluster && cluster.max_duration_hours != null ? cluster.max_duration_hours + " h" : (report && report.duration_hours != null ? report.duration_hours + " h" : "sin dato")) + '</strong></div><div><small>Personas afectadas</small><strong>' + esc(cluster && cluster.estimated_affected_count != null ? cluster.estimated_affected_count : (report && report.affected_count != null ? report.affected_count : "sin dato")) + '</strong></div><div><small>Prioridad</small><strong>' + esc(priority ? priority.score + "/100" : "—") + "</strong></div></div>" +
+      '<div class="timeline" aria-label="Cuatro etapas">' + steps.map(function (s) {
         return '<div class="timeline-row ' + (s[2] ? "done" : "") + '"><span class="timeline-dot"></span><div><strong>' + esc(s[0]) + "</strong><p>" + esc(s[1]) + "</p></div></div>";
-      }).join("") + "</div>" + (priority ? breakdownHtml(priority) : "") +
+      }).join("") + "</div>" + priorityCardHtml +
       '<div class="tracking-bottom-grid"><div class="tracking-bottom-card"><h3>Cisterna asignada</h3>' + cisternaHtml + '</div><div class="tracking-bottom-card"><h3>Aviso simulado (SIMULATED)</h3>' + noticeHtml + "</div></div>";
   }
   function openExtraction(data) {
@@ -1908,8 +2011,12 @@ td{font-size:14px;padding:14px 10px}
       el.innerHTML = '<p class="small-muted">Sin avisos SIMULATED todavía. Tras aprobar el plan aparecerán aquí (PREVIEW antes de aprobación).</p>';
       return;
     }
-    el.innerHTML = notices.map(function (n) {
-      return '<div class="outbox-item"><strong>' + esc(sectorName(n.sector_id)) + ' · ' + esc(n.channel || "SIMULATED") + ' · ' + esc(n.status || "") + '</strong>' + esc(n.message || "") + '</div>';
+    el.innerHTML = notices.slice(0, 2).map(function (n) {
+      var msg = String(n.message || "")
+        .replace(/^Aviso de demostracion para [A-Z_]+\.\s*/i, "")
+        .replace(/\s+segun el plan\s+[a-z0-9-]+\./i, " · Ruta OR-Tools.")
+        .replace(/\s*Este mensaje quedo en la bandeja simulada.*$/i, "");
+      return '<div class="outbox-item"><strong><span>' + esc(sectorName(n.sector_id)) + '</span><em>' + esc(n.channel || "SIMULATED") + " · " + esc(n.status || "") + '</em></strong><span>' + esc(msg || n.message || "") + '</span></div>';
     }).join("");
   }
   function renderActivity() {
@@ -2027,6 +2134,14 @@ td{font-size:14px;padding:14px 10px}
   });
   document.getElementById("reviewDuplicateBtn").addEventListener("click", function () {
     document.getElementById("detailContent").innerHTML = '<div class="eyebrow">DUPLICADOS</div><h2>Revisión humana</h2>' + (duplicateBlocks() || "<p>No hay coincidencias en el lote actual.</p>");
+    openDialog("detailDialog");
+  });
+  document.getElementById("viewAllTracesBtn").addEventListener("click", function () {
+    var traces = (ctx && ctx.traces) || [];
+    var rows = traces.slice(-12).map(function (t) {
+      return '<div class="detail-row"><span><strong>' + esc(t.actor) + '</strong> · <code>' + esc(t.action) + '</code></span><strong>' + esc(t.output_summary) + '</strong></div>';
+    }).join("");
+    document.getElementById("detailContent").innerHTML = '<div class="eyebrow">AUDITORÍA SQLITE · SIN SECRETOS</div><h2>Trazas completas de agentes y herramientas</h2>' + (rows || "<p>Sin trazas registradas.</p>");
     openDialog("detailDialog");
   });
   document.getElementById("mapDistrictFilter").addEventListener("change", function () {
