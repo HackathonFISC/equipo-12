@@ -7,10 +7,11 @@ for a new batch of reports.
 from __future__ import annotations
 
 import json
+import sqlite3
 from datetime import UTC, datetime
 
 from src.communication.outbox import notices_for_panel
-from src.config import PROJECT_ROOT
+from src.config import PROJECT_ROOT, load_runtime_config
 from src.contracts import (
     DecisionAction,
     ExecutionResult,
@@ -71,7 +72,7 @@ _OPERATIONAL_PRELOAD_REPORTS: tuple[dict[str, str], ...] = (
     {
         "report_id": "OP-102",
         "raw_text": (
-            "En Burunga llevamos 48 horas sin agua, somos 80 familias "
+            "En Burunga llevamos 48 horas sin agua, somos 60 familias "
             "con ninos y adultos mayores sin suministro."
         ),
         "source_channel": "whatsapp",
@@ -98,7 +99,7 @@ _OPERATIONAL_PRELOAD_REPORTS: tuple[dict[str, str], ...] = (
     {
         "report_id": "OP-105",
         "raw_text": (
-            "En Guadalupe llevamos 60 horas sin agua, 100 familias "
+            "En Guadalupe llevamos 60 horas sin agua, 80 familias "
             "y un centro de salud afectados."
         ),
         "source_channel": "phone",
@@ -257,9 +258,7 @@ class CoordinatorService:
         self._execution = None
 
     def _persist(self, output: EngineOutput, clusters: list[NormalizedIncidentCluster]) -> None:
-        plan_id, payload_json = self._payload_json_for(output, clusters)
-        self._store.create_plan(plan_id, payload_json, state=PlanState.BORRADOR)
-        self._remember_draft(plan_id, payload_json, output)
+        self._persist_or_update(output, clusters)
 
     def _persist_or_update(
         self,
@@ -281,6 +280,7 @@ class CoordinatorService:
                     """,
                     (PlanState.BORRADOR.value, payload_json, now, plan_id),
                 )
+                conn.execute("DELETE FROM outbox WHERE plan_id = ?", (plan_id,))
                 conn.commit()
             finally:
                 conn.close()
@@ -368,6 +368,89 @@ class CoordinatorService:
         )
         self._persist_or_update(output, list(result.clusters))
         return self.snapshot()
+
+    def reset(self) -> dict[str, object]:
+        """Clear in-memory session state for a new coordinator cycle (SQLite history kept)."""
+        if self._plan_id is not None:
+            conn = self._store._connect(same_thread=False)
+            try:
+                conn.execute("DELETE FROM outbox WHERE plan_id = ?", (self._plan_id,))
+                conn.commit()
+            finally:
+                conn.close()
+        self._reports = []
+        self._report_inputs = {}
+        self._extracted = []
+        self._traces = []
+        self._plan_id = None
+        self._payload_json = None
+        self._submitted = False
+        self._state = None
+        self._execution = None
+        self._draft = None
+        return self.snapshot()
+
+    def health_check(self) -> dict[str, object]:
+        status = "ok"
+        sectors: list[dict[str, object]] = []
+        places: list[dict[str, object]] = []
+        samples: list[dict[str, object]] = []
+        db_ok = False
+
+        for filename, key, bucket in (
+            ("sectors_panama_oeste.json", "sectors", "sectors"),
+            ("places_panama_oeste.json", "places", "places"),
+            ("sample_citizen_reports.json", "reports", "samples"),
+        ):
+            path = _FIXTURES_DIR / filename
+            try:
+                if not path.is_file():
+                    raise ValueError(f"missing {filename}")
+                raw = path.read_bytes()
+                if not raw.strip():
+                    raise ValueError(f"empty {filename}")
+                raw.decode("utf-8")
+                payload = json.loads(raw.decode("utf-8"))
+                if not isinstance(payload, dict):
+                    raise ValueError(f"invalid {filename}")
+                items = payload.get(key)
+                if not isinstance(items, list):
+                    raise ValueError(f"invalid {filename}")
+                if bucket == "sectors":
+                    sectors = [i for i in items if isinstance(i, dict)]
+                elif bucket == "places":
+                    places = [i for i in items if isinstance(i, dict)]
+                else:
+                    samples = [i for i in items if isinstance(i, dict)]
+            except (OSError, ValueError, json.JSONDecodeError):
+                status = "degraded"
+
+        if len(sectors) != 11 or len(places) < 15 or len(samples) < 7:
+            status = "degraded"
+
+        try:
+            conn = self._store._connect()
+            try:
+                conn.execute("SELECT 1").fetchone()
+                db_ok = True
+            finally:
+                conn.close()
+        except sqlite3.Error:
+            status = "degraded"
+
+        return {
+            "status": status,
+            "modo": load_runtime_config().modo,
+            "formula_version": "priority-v1",
+            "solver": "ortools",
+            "fixtures": {
+                "sectors": len(sectors),
+                "places": len(places),
+                "sample_reports": len(samples),
+            },
+            "db_ok": db_ok,
+            "state": self._state.value.lower() if self._state else None,
+        }
 
     def submit_for_review(self) -> None:
         if self._plan_id is None:

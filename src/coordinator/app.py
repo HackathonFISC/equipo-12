@@ -91,6 +91,13 @@ def serve(
                 _json_response(self, 200, payload)
                 return
 
+            if path_only == "/api/health":
+                with lock:
+                    payload = service.health_check()
+                http_status = 200 if payload.get("status") == "ok" else 503
+                _json_response(self, http_status, payload)
+                return
+
             _json_response(self, 404, {"error": "not found"})
 
         def do_POST(self) -> None:
@@ -207,6 +214,16 @@ def serve(
                     except ValueError as exc:
                         _json_response(self, 400, {"error": str(exc)})
                         return
+                _json_response(self, 200, payload)
+                return
+
+            if path_only == "/api/reset":
+                _body, err_status, err_msg = _read_json_body(self)
+                if err_status is not None:
+                    _json_response(self, err_status, {"error": err_msg or "bad request"})
+                    return
+                with lock:
+                    payload = service.reset()
                 _json_response(self, 200, payload)
                 return
 

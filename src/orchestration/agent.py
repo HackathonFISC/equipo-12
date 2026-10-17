@@ -168,14 +168,16 @@ def _call_outside_run(function: Any, /, *args: Any, **kwargs: Any) -> Any:
     outcome: dict[str, Any] = {}
 
     def invoke() -> None:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         try:
             outcome["value"] = function(*args, **kwargs)
         except Exception as exc:  # noqa: BLE001 — re-raised on the caller thread
             outcome["error"] = exc
         finally:
-            loop = asyncio.get_event_loop()
             if not loop.is_closed():
                 loop.close()
+            asyncio.set_event_loop(None)
 
     def target() -> None:
         contextvars.Context().run(invoke)
@@ -271,7 +273,8 @@ def orchestrate(
     else:
         selected = runtime.model_name
     try:
-        result = _AGENT.run_sync(
+        result = _call_outside_run(
+            _AGENT.run_sync,
             f"reports={len(reports)}",
             deps=deps,
             model=selected,

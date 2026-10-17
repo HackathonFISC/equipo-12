@@ -189,6 +189,9 @@ def _route_with_ortools(
     )
     for vehicle, truck in enumerate(trucks):
         time_dimension.CumulVar(routing.End(vehicle)).SetMax(truck.shift_minutes)
+    for node, stop in enumerate(stops, start=1):
+        penalty = 1_000_000 + (len(stops) - stop.rank) * 100_000
+        routing.AddDisjunction([manager.NodeToIndex(node)], penalty)
 
     parameters = pywrapcp.DefaultRoutingSearchParameters()
     parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC

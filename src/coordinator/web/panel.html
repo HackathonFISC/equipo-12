@@ -494,7 +494,7 @@ td{font-size:14px;padding:15px 10px}
         <button class="nav-item" data-view="tracking"><span class="nav-icon">◎</span><span>Consultar reporte</span></button>
       </nav>
       <div class="sidebar-bottom">
-        <div class="demo-note"><span class="demo-dot"></span><div><strong>Modo demostración</strong><small>Datos de ejemplo · Sin conexión al backend</small></div></div>
+        <div class="demo-note"><span class="demo-dot"></span><div><strong>Motor local activo</strong><small>SYNTHETIC_DEMO · 3 agentes + OR-Tools + SQLite</small></div></div>
         <div class="profile"><div class="avatar">AO</div><div><strong>AguaJusta Oeste</strong><small id="profileRoleLabel">Vista de coordinación</small></div><span class="profile-more">•••</span></div>
       </div>
     </aside>
@@ -528,7 +528,7 @@ td{font-size:14px;padding:15px 10px}
             <div class="panel-header"><div><h2>Sectores afectados</h2><p>Selecciona un sector para ver su resumen</p></div><span class="map-count" id="mapSectorCount">6</span></div>
             <div class="map-area-filter"><label for="mapDistrictFilter">Área</label><select id="mapDistrictFilter"><option value="all">Todas las áreas</option><option value="Arraiján">Arraiján</option><option value="La Chorrera">La Chorrera</option></select></div>
             <div id="mapSectorList" class="map-sector-list"></div>
-            <div class="map-side-footer"><span class="map-footer-icon">↗</span><p>La prioridad oficial se mostrará aquí cuando el frontend se conecte al motor de prioridad del backend.</p></div>
+            <div class="map-side-footer"><span class="map-footer-icon">↗</span><p>Prioridad calculada en vivo por el motor determinístico <strong>priority-v1</strong> (horas sin agua, afectados y vulnerabilidad; invariante al volumen de quejas).</p></div>
           </aside>
         </div>
         <div class="map-bottom-grid">
@@ -541,9 +541,9 @@ td{font-size:14px;padding:15px 10px}
       <section class="view" id="view-admin">
         <div class="page-heading">
           <div><div class="eyebrow">OPERACIONES · PANAMÁ OESTE</div><h1>Centro de coordinación</h1><p class="page-subtitle">Una vista clara de las incidencias y de la planificación de suministro.</p></div>
-          <div class="admin-head-actions"><button class="button button-secondary" id="preload-reports" type="button">↻ Cargar lote operativo</button><button class="button button-primary" id="createFromAdmin" type="button"><span>＋</span> Nuevo reporte</button></div>
+          <div class="admin-head-actions"><button class="button button-secondary" id="reset-session" type="button">↺ Reiniciar ciclo</button><button class="button button-secondary" id="preload-reports" type="button">↻ Cargar lote operativo</button><button class="button button-primary" id="createFromAdmin" type="button"><span>＋</span> Nuevo reporte</button></div>
         </div>
-        <div class="demo-banner"><div class="banner-symbol">✳</div><div><strong>Estás viendo una simulación interactiva</strong><p>Los reportes, puntajes y rutas son ilustrativos. Ninguna cisterna ha sido despachada.</p></div><button class="banner-close" id="closeBanner" aria-label="Cerrar aviso">×</button></div>
+        <div class="demo-banner"><div class="banner-symbol">✳</div><div><strong>Supervisión humana obligatoria · SYNTHETIC_DEMO</strong><p>Puntajes calculados con <code>priority-v1</code> y rutas con <code>OR-Tools</code>. Ninguna cisterna se despacha sin aprobación humana; los avisos vecinales quedan en bandeja <code>SIMULATED</code>.</p></div><button class="banner-close" id="closeBanner" aria-label="Cerrar aviso">×</button></div>
         <details class="batch-details" id="batchDetails"><summary>Cargar lote personalizado (texto)</summary><label for="reports-input">Un reporte por línea</label><textarea id="reports-input" placeholder="48 horas sin agua y 15 personas por el chino de Vista Alegre"></textarea><button class="button button-primary" id="load-reports" type="button">Cargar lote</button></details>
         <div class="metrics-grid">
           <article class="metric-card"><div class="metric-top"><span>Reportes registrados</span><span class="metric-icon blue">▤</span></div><div class="metric-value" id="metricReports">24</div><div class="metric-foot"><span class="neutral-dot"></span> Casos recibidos en la demo</div></article>
@@ -566,9 +566,9 @@ td{font-size:14px;padding:15px 10px}
             <div class="route-title"><strong>Rutas propuestas</strong><span>3 recorridos</span></div>
             <div class="route-list" id="plan-routes"><p class="empty">Cargue el lote operativo para ver rutas OR-Tools.</p></div>
             <div class="route-explanation">
-              <div class="route-explanation-heading"><strong>¿Por qué se propone esta distribución?</strong><span>Explicación de demo</span></div>
+              <div class="route-explanation-heading"><strong>¿Por qué se propone esta distribución?</strong><span>OR-Tools + priority-v1</span></div>
               <div class="route-factor-list"><span>Capacidad de cisternas</span><span>Duración del recorrido</span><span>Prioridad de sectores</span><span>Ventanas de entrega</span></div>
-              <p>Las rutas y cantidades visibles son de ejemplo, no el resultado de un solver real. En integración se mostrarán las restricciones efectivas, las paradas asignadas y la explicación que entregue el planificador determinístico.</p>
+              <p>El solver determinístico <strong>OR-Tools</strong> asigna cisternas maximizando cobertura ponderada por <strong>priority-v1</strong> bajo límites estrictos de capacidad (L) y turno (360 min), reteniendo ubicaciones ambiguas para revisión humana.</p>
             </div>
             <div class="route-explanation">
               <div class="route-explanation-heading"><strong>Demanda no atendida y sectores silenciosos</strong><span>priority-v1</span></div>
@@ -596,7 +596,7 @@ td{font-size:14px;padding:15px 10px}
         <div class="ops-extra-grid">
           <section class="panel agent-trace-panel">
             <div class="panel-header"><div><h2>Trazabilidad del proceso agéntico</h2><p>Entrada, salida y justificación por etapa</p></div><span class="status-chip status-review">DEMO</span></div>
-            <div class="trace-demo-note">Estas trazas son ilustrativas y locales; al integrar el backend se reemplazarán por eventos reales de los agentes.</div>
+            <div class="trace-demo-note">Trazas auditables en vivo de los 3 agentes (Ingesta, Priorización y Planificación) y de las herramientas determinísticas ejecutadas en esta sesión.</div>
             <div id="agentTraceList" class="agent-trace-list"></div>
           </section>
           <section class="panel duplicate-review-panel">
@@ -1901,6 +1901,12 @@ td{font-size:14px;padding:15px 10px}
   document.getElementById("createFromAdmin").addEventListener("click", function () { navigate("citizen"); });
   document.getElementById("mapNewReport").addEventListener("click", function () { navigate("citizen"); });
   document.getElementById("goTracking").addEventListener("click", function () { navigate("tracking"); });
+  document.getElementById("reset-session").addEventListener("click", function () {
+    postJson("/api/reset", {}).then(function (data) {
+      applyContext(data);
+      showToast("Ciclo reiniciado. Puede cargar un nuevo lote o precargar los fixtures operativos.");
+    }).catch(function (err) { showToast(err.message); });
+  });
   document.getElementById("preload-reports").addEventListener("click", function () {
     postJson("/api/preload", {}).then(function (data) {
       applyContext(data);
