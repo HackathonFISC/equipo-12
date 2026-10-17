@@ -166,6 +166,9 @@ def validate_fixtures(fixtures_dir: Path | None = None) -> list[str]:
     reports = _require_object(_read_json(root / REPORTS_FILENAME), REPORTS_FILENAME)
     sector_ids = _validate_sectors(sectors)
     _validate_reports(reports)
+    from src.ingestion.geolocator import validate_places
+
+    validate_places(root)
     return sector_ids
 
 

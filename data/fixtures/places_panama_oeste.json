@@ -1,0 +1,140 @@
+{
+  "note": "ASSUMPTION demo anchors for incident grouping. Not a survey and not an IDAAN layer.",
+  "places": [
+    {
+      "place_id": "VISTA_ALEGRE_CHINO",
+      "sector_id": "ARRAIJAN_VISTA_ALEGRE",
+      "name": "Chino de Vista Alegre",
+      "latitude": 8.95,
+      "longitude": -79.7,
+      "provenance": "ASSUMPTION",
+      "aliases": ["chino de vista alegre"]
+    },
+    {
+      "place_id": "VISTA_ALEGRE_XTRA",
+      "sector_id": "ARRAIJAN_VISTA_ALEGRE",
+      "name": "Xtra de Vista Alegre",
+      "latitude": 8.95,
+      "longitude": -79.716,
+      "provenance": "ASSUMPTION",
+      "aliases": ["xtra de vista alegre"]
+    },
+    {
+      "place_id": "BURUNGA_CENTRO",
+      "sector_id": "ARRAIJAN_BURUNGA",
+      "name": "Burunga",
+      "latitude": 8.97,
+      "longitude": -79.68,
+      "provenance": "ASSUMPTION",
+      "aliases": ["burunga"]
+    },
+    {
+      "place_id": "LOMA_COVA",
+      "sector_id": "ARRAIJAN_BURUNGA",
+      "name": "Loma Cova",
+      "latitude": 8.973,
+      "longitude": -79.68,
+      "provenance": "ASSUMPTION",
+      "aliases": ["loma cova"]
+    },
+    {
+      "place_id": "NUEVO_CHORRILLO",
+      "sector_id": "ARRAIJAN_NUEVO_CHORRILLO",
+      "name": "Nuevo Chorrillo",
+      "latitude": 8.93,
+      "longitude": -79.72,
+      "provenance": "ASSUMPTION",
+      "aliases": ["nuevo chorrillo"]
+    },
+    {
+      "place_id": "VACAMONTE",
+      "sector_id": "ARRAIJAN_VACAMONTE",
+      "name": "Vacamonte",
+      "latitude": 8.91,
+      "longitude": -79.7,
+      "provenance": "ASSUMPTION",
+      "aliases": ["vacamonte"]
+    },
+    {
+      "place_id": "CERRO_SILVESTRE",
+      "sector_id": "ARRAIJAN_CERRO_SILVESTRE",
+      "name": "Cerro Silvestre",
+      "latitude": 8.94,
+      "longitude": -79.66,
+      "provenance": "ASSUMPTION",
+      "aliases": ["cerro silvestre"]
+    },
+    {
+      "place_id": "ARRAIJAN_CABECERA_CENTRO",
+      "sector_id": "ARRAIJAN_CABECERA",
+      "name": "Arraijan cabecera",
+      "latitude": 8.938,
+      "longitude": -79.65,
+      "provenance": "ASSUMPTION",
+      "aliases": ["arraijan cabecera", "centro de arraijan"]
+    },
+    {
+      "place_id": "BARRIO_COLON",
+      "sector_id": "CHORRERA_BARRIO_COLON",
+      "name": "Barrio Colon",
+      "latitude": 8.88,
+      "longitude": -79.782,
+      "provenance": "ASSUMPTION",
+      "aliases": ["barrio colon"]
+    },
+    {
+      "place_id": "HOSPITAL_NICOLAS_SOLANO",
+      "sector_id": "CHORRERA_BARRIO_COLON",
+      "name": "Hospital Nicolas Solano",
+      "latitude": 8.882,
+      "longitude": -79.782,
+      "provenance": "ASSUMPTION",
+      "aliases": ["hospital nicolas solano"]
+    },
+    {
+      "place_id": "BARRIO_BALBOA",
+      "sector_id": "CHORRERA_BARRIO_BALBOA",
+      "name": "Barrio Balboa",
+      "latitude": 8.885,
+      "longitude": -79.77,
+      "provenance": "ASSUMPTION",
+      "aliases": ["barrio balboa"]
+    },
+    {
+      "place_id": "PARQUE_FEUILLET",
+      "sector_id": "CHORRERA_BARRIO_BALBOA",
+      "name": "Parque Feuillet",
+      "latitude": 8.8865,
+      "longitude": -79.77,
+      "provenance": "ASSUMPTION",
+      "aliases": ["parque feuillet"]
+    },
+    {
+      "place_id": "GUADALUPE",
+      "sector_id": "CHORRERA_GUADALUPE",
+      "name": "Guadalupe",
+      "latitude": 8.89,
+      "longitude": -79.82,
+      "provenance": "ASSUMPTION",
+      "aliases": ["guadalupe"]
+    },
+    {
+      "place_id": "EL_COCO",
+      "sector_id": "CHORRERA_EL_COCO",
+      "name": "El Coco",
+      "latitude": 8.87,
+      "longitude": -79.85,
+      "provenance": "ASSUMPTION",
+      "aliases": ["el coco"]
+    },
+    {
+      "place_id": "PUERTO_CAIMITO",
+      "sector_id": "CHORRERA_PUERTO_CAIMITO",
+      "name": "Puerto Caimito",
+      "latitude": 8.872,
+      "longitude": -79.83,
+      "provenance": "ASSUMPTION",
+      "aliases": ["puerto caimito"]
+    }
+  ]
+}

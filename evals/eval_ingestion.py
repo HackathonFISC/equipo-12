@@ -31,6 +31,7 @@ class IngestionEvalCase:
     expected_duration: int | None
     expected_affected: int | None
     expected_review: bool
+    incident_group: str = ""
 
     def as_input(self) -> ReportInput:
         return ReportInput(
@@ -52,6 +53,7 @@ CASES: tuple[IngestionEvalCase, ...] = (
         48,
         15,
         False,
+        "vista-chino",
     ),
     IngestionEvalCase(
         "EVAL-02",
@@ -62,6 +64,7 @@ CASES: tuple[IngestionEvalCase, ...] = (
         72,
         80,
         False,
+        "vista-xtra",
     ),
     IngestionEvalCase(
         "EVAL-03",
@@ -162,6 +165,7 @@ CASES: tuple[IngestionEvalCase, ...] = (
         None,
         None,
         True,
+        "vista-chino",
     ),
     IngestionEvalCase(
         "EVAL-13",
@@ -239,20 +243,20 @@ def _dedup_accuracy(extracted: list[ReportExtracted]) -> float:
         if case.expected_guardrail in _REJECTED:
             rejected_ids.add(case.case_id)
             continue
-        expected.setdefault(case.expected_sector, []).append(case.case_id)
+        group = case.incident_group or case.expected_sector
+        expected.setdefault(group, []).append(case.case_id)
     clusters = deduplicate_reports(extracted)
-    actual = {
-        cluster.sector_id.value: list(cluster.source_report_ids) for cluster in clusters
-    }
-    if any(report_id in rejected_ids for ids in actual.values() for report_id in ids):
+    actual_sets = {frozenset(cluster.source_report_ids) for cluster in clusters}
+    expected_sets = {frozenset(ids) for ids in expected.values()}
+    if any(
+        report_id in rejected_ids
+        for cluster in clusters
+        for report_id in cluster.source_report_ids
+    ):
         return 0.0
-    if set(actual) != set(expected):
-        return _ratio(
-            sum(1 for sector in expected if actual.get(sector) == expected[sector]),
-            len(expected),
-        )
-    matches = sum(1 for sector, ids in expected.items() if actual.get(sector) == ids)
-    return _ratio(matches, len(expected))
+    if actual_sets != expected_sets:
+        return _ratio(len(actual_sets & expected_sets), len(expected_sets))
+    return 1.0
 
 
 def run_ingestion_evals(results_path: Path | None = None) -> dict[str, object]:

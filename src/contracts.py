@@ -55,6 +55,12 @@ class GuardrailStatus(StrEnum):
     REJECTED_ABSURD = "REJECTED_ABSURD"
 
 
+class GeoPrecision(StrEnum):
+    POINT = "POINT"
+    SECTOR = "SECTOR"
+    UNKNOWN = "UNKNOWN"
+
+
 class DecisionAction(StrEnum):
     APPROVE = "APPROVE"
     REJECT = "REJECT"
@@ -99,6 +105,10 @@ class ReportExtracted(_ClosedModel):
     guardrail_status: GuardrailStatus
     guardrail_reason: str = ""
     provenance: ProvenanceTag
+    place_id: str = ""
+    latitude: float | None = None
+    longitude: float | None = None
+    geo_precision: GeoPrecision = GeoPrecision.UNKNOWN
 
 
 ReporteExtraido = ReportExtracted
@@ -116,6 +126,10 @@ class NormalizedIncidentCluster(_ClosedModel):
     requires_human_review: bool
     uncertainties: list[str] = []
     provenance_tags: list[ProvenanceTag] = []
+    place_id: str = ""
+    latitude: float | None = None
+    longitude: float | None = None
+    geo_precision: GeoPrecision = GeoPrecision.UNKNOWN
 
     @model_validator(mode="after")
     def _report_count_matches_sources(self) -> Self:
@@ -201,6 +215,7 @@ __all__ = [
     "ExecutionResult",
     "FactorBreakdown",
     "FactorNote",
+    "GeoPrecision",
     "GuardrailStatus",
     "HumanDecision",
     "NormalizedIncidentCluster",

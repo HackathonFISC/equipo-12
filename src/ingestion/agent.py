@@ -25,6 +25,7 @@ from src.contracts import (
     VulnerabilityFlag,
 )
 from src.ingestion.catalog import resolve_sector_candidate, validate_fixtures
+from src.ingestion.geolocator import geolocate_report
 from src.ingestion.guardrails import (
     enforce_post_extraction_guardrails,
     extract_text_signals,
@@ -368,6 +369,7 @@ def ingest_report(
         ),
         report.raw_text,
     )
+    extracted = geolocate_report(extracted, report.raw_text)
     traces = _tool_traces(report, result.all_messages())
     traces.append(
         _trace(

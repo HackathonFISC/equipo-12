@@ -6,6 +6,7 @@ import unittest
 
 from src.contracts import (
     EvidenceType,
+    GeoPrecision,
     GuardrailStatus,
     ProvenanceTag,
     ReportExtracted,
@@ -86,6 +87,37 @@ class DeduplicatorTests(unittest.TestCase):
         )
         self.assertEqual(clusters[0].source_report_ids, ["A"])
         self.assertFalse(any("BAD" in cluster.source_report_ids for cluster in clusters))
+
+    def test_far_landmarks_in_one_sector_stay_apart(self) -> None:
+        clusters = deduplicate_reports(
+            [
+                _report(
+                    "CHINO",
+                    raw_location_mention="por el chino de Vista Alegre",
+                ),
+                _report(
+                    "XTRA",
+                    raw_location_mention="Xtra de Vista Alegre",
+                ),
+            ]
+        )
+        groups = {frozenset(cluster.source_report_ids) for cluster in clusters}
+        self.assertEqual(groups, {frozenset({"CHINO"}), frozenset({"XTRA"})})
+        self.assertTrue(all(cluster.geo_precision is GeoPrecision.POINT for cluster in clusters))
+
+    def test_nearby_landmarks_in_one_sector_merge(self) -> None:
+        clusters = deduplicate_reports(
+            [
+                _report("LOMA", raw_location_mention="Loma Cova"),
+                _report("BURUNGA", raw_location_mention="Burunga"),
+            ]
+        )
+        self.assertEqual(len(clusters), 1)
+        self.assertEqual(clusters[0].source_report_ids, ["LOMA", "BURUNGA"])
+        self.assertEqual(clusters[0].sector_id, SectorId.ARRAIJAN_BURUNGA)
+        self.assertIn("LOMA_COVA", clusters[0].place_id)
+        self.assertIn("BURUNGA_CENTRO", clusters[0].place_id)
+        self.assertTrue(clusters[0].requires_human_review)
 
 
 if __name__ == "__main__":

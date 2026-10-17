@@ -16,6 +16,7 @@ from src.contracts import (
     ExecutionResult,
     FactorBreakdown,
     FactorNote,
+    GeoPrecision,
     GuardrailStatus,
     HumanDecision,
     NormalizedIncidentCluster,
@@ -37,6 +38,7 @@ _ENUMS = (
     VulnerabilityFlag,
     GuardrailStatus,
     DecisionAction,
+    GeoPrecision,
 )
 
 _EXPECTED_MEMBERS = {
@@ -78,6 +80,7 @@ _EXPECTED_MEMBERS = {
         "REJECTED_ABSURD",
     },
     DecisionAction: {"APPROVE", "REJECT", "CORRECT"},
+    GeoPrecision: {"POINT", "SECTOR", "UNKNOWN"},
 }
 
 _MODELS = (
