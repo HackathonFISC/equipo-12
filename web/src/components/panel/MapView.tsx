@@ -39,10 +39,12 @@ function heatPoints(snapshot: MapViewProps["snapshot"]): number[][] {
       typeof cluster.latitude === "number" && typeof cluster.longitude === "number",
   );
   if (clustered.length > 0) {
+    // Peso alto para que la firma de calor se vea saturada como el ejemplo:
+    // 1-2 reportes ya entran en verde→amarillo, 4+ llegan a rojo.
     return clustered.map((cluster) => [
       cluster.latitude as number,
       cluster.longitude as number,
-      Math.min(1, Math.max(0.28, (cluster.report_count || 1) / 6)),
+      Math.min(1, Math.max(0.55, (cluster.report_count || 1) / 4)),
     ]);
   }
   return snapshot.places
@@ -50,7 +52,7 @@ function heatPoints(snapshot: MapViewProps["snapshot"]): number[][] {
       (place) =>
         typeof place.latitude === "number" && typeof place.longitude === "number",
     )
-    .map((place) => [Number(place.latitude), Number(place.longitude), 0.4]);
+    .map((place) => [Number(place.latitude), Number(place.longitude), 0.6]);
 }
 
 function token(name: string): string {
@@ -133,20 +135,21 @@ export function MapView({
       window.setTimeout(() => map?.invalidateSize(), 80);
 
       // Firmas de calor: heatLayer si el plugin (leaflet.heat por CDN) está.
-      const water = token("--color-water");
-      const info = token("--color-info");
-      const pending = token("--color-pending");
+      // Gradiente espectral verde→amarillo→rojo como el ejemplo del equipo.
+      const heatLow = token("--color-heat-low");
+      const heatMid = token("--color-heat-mid");
+      const heatHigh = token("--color-heat-high");
       const points = heatPoints(snapshot);
       if (typeof leaflet.heatLayer === "function" && points.length > 0) {
         const gradient: Record<number, string> = {};
-        if (water) gradient[0.2] = water;
-        if (info) gradient[0.55] = info;
-        if (pending) gradient[0.9] = pending;
+        if (heatLow) gradient[0.2] = heatLow;
+        if (heatMid) gradient[0.55] = heatMid;
+        if (heatHigh) gradient[0.9] = heatHigh;
         heatLayer = leaflet.heatLayer(points, {
-          radius: 32,
-          blur: 24,
+          radius: 34,
+          blur: 26,
           maxZoom: 14,
-          minOpacity: 0.28,
+          minOpacity: 0.45,
           gradient,
         });
         heatLayer.addTo(instance);
