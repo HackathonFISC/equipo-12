@@ -60,6 +60,7 @@ function token(name: string): string {
 };
 
 export function MapView({
+  role,
   snapshot,
   districtFilter,
   selectedSectorId,
@@ -68,6 +69,7 @@ export function MapView({
   onSelectSector,
 }: MapViewProps) {
   const mapDivRef = useRef<HTMLDivElement>(null);
+  const citizen = role === "citizen";
 
   const visible = useMemo(
     () =>
@@ -93,6 +95,7 @@ export function MapView({
     let map: LeafletLike | null = null;
     let heatLayer: LeafletLike | null = null;
     let markers: (LeafletLike & { clearLayers: () => void }) | null = null;
+    let resizeObserver: ResizeObserver | null = null;
 
     async function init() {
       const container = mapDivRef.current;
@@ -133,6 +136,12 @@ export function MapView({
         maxZoom: 11,
       });
       window.setTimeout(() => map?.invalidateSize(), 80);
+      // El portal ciudadano mantiene el mapa montado aunque su vista esté
+      // oculta: al recuperar tamaño (hidden -> visible) hay que reajustarlo.
+      resizeObserver = new ResizeObserver(() => {
+        map?.invalidateSize();
+      });
+      resizeObserver.observe(container);
 
       // Firmas de calor: heatLayer si el plugin (leaflet.heat por CDN) está.
       // Gradiente espectral verde→amarillo→rojo como el ejemplo del equipo.
@@ -178,6 +187,7 @@ export function MapView({
     void init();
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
       heatLayer = null;
       markers = null;
       map?.remove();
@@ -189,28 +199,49 @@ export function MapView({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-            Mapa de afectaciones
+            {citizen ? "Mapa comunitario" : "Mapa operativo"}
           </p>
           <h1 className="font-display text-2xl font-bold text-ink">
-            Panamá Oeste · calor de reportes
+            {citizen
+              ? "Mapa comunitario de afectaciones"
+              : "Panamá Oeste · mapa operativo"}
           </h1>
+          {citizen ? (
+            <p className="mt-1 max-w-xl text-sm text-muted">
+              Vea dónde se concentran los reportes de falta de agua. Los puntos agrupan
+              reportes del mismo sector (800 m o menos); repetir no sube la prioridad.
+            </p>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="synthetic">SYNTHETIC_DEMO</Badge>
-          <a
-            id="mapNewReport"
-            href="/ciudadano"
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-transparent bg-water px-3 py-2 text-sm font-medium text-white shadow-xs hover:bg-water-deep"
-          >
-            Registrar reporte
-          </a>
+          {citizen ? (
+            <a
+              id="mapNewReport"
+              href="/ciudadano"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-transparent bg-water px-3 py-2 text-sm font-medium text-white shadow-xs hover:bg-water-deep"
+            >
+              Registrar reporte
+            </a>
+          ) : null}
         </div>
       </div>
 
-      <Callout variant="warning" title="Datos ilustrativos">
-        El calor refleja reportes recibidos, no la prioridad del motor. Las anclas de
-        ubicación son de demostración <Badge variant="synthetic">ASSUMPTION</Badge>.
-      </Callout>
+      {citizen ? (
+        <Callout variant="warning" title="Datos ilustrativos">
+          El calor refleja los reportes recibidos en la demo, no la prioridad del motor.
+          Las anclas de ubicación son de demostración{" "}
+          <Badge variant="synthetic">ASSUMPTION</Badge> y los avisos al residente son{" "}
+          <Badge variant="simulated">SIMULATED</Badge>.
+        </Callout>
+      ) : (
+        <Callout variant="warning" title="Lectura operativa">
+          El calor refleja reportes recibidos, no la prioridad del motor. Cruce este mapa
+          con el puntaje priority-v1 del panel lateral y la demanda no cubierta del
+          centro de coordinación. Las anclas de ubicación son de demostración{" "}
+          <Badge variant="synthetic">ASSUMPTION</Badge>.
+        </Callout>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.7fr)_320px]">
         <Card className="p-0">
